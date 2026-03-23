@@ -7,6 +7,44 @@
 <meta name="description" content="Solar. Battery. EV. One tool built for Australia using real NASA climate data, live NEM tariffs, and plain language anyone can understand.">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
+
+/* ── ONBOARDING ──────────────────────────────────────────────────────────── */
+.ob-overlay{position:fixed;inset:0;background:rgba(13,27,20,.6);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px}
+.ob-overlay.open{display:flex}
+.ob-box{background:white;border-radius:20px;max-width:480px;width:100%;padding:32px 36px;box-shadow:0 32px 80px rgba(13,27,20,.2)}
+.ob-logo{display:flex;align-items:center;gap:9px;margin-bottom:24px}
+.ob-logo-name{font-size:22px;font-weight:700;color:#0D1B14;letter-spacing:-.4px}
+.ob-title{font-size:24px;font-weight:700;color:#0D1B14;letter-spacing:-.4px;margin-bottom:6px;line-height:1.2}
+.ob-sub{font-size:14px;color:#666;margin-bottom:24px;line-height:1.6}
+.ob-field{margin-bottom:16px}
+.ob-label{font-size:12px;font-weight:500;color:#444;margin-bottom:6px}
+.ob-input{width:100%;font-size:14px;padding:11px 14px;border-radius:10px;border:1.5px solid #e0e0e0;outline:none;transition:border-color .2s;font-family:inherit}
+.ob-input:focus{border-color:#1D9E75}
+.ob-roles{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:20px}
+.ob-role{border:1.5px solid #e0e0e0;border-radius:12px;padding:12px 14px;cursor:pointer;transition:all .2s}
+.ob-role:hover{border-color:#1D9E75;background:#f9fdf9}
+.ob-role.sel{border-color:#1D9E75;background:#E1F5EE}
+.ob-role-title{font-size:13px;font-weight:600;color:#0D1B14;margin-bottom:2px}
+.ob-role-sub{font-size:11px;color:#888}
+.ob-role.sel .ob-role-title{color:#085041}
+.ob-role.sel .ob-role-sub{color:#0F6E56}
+.ob-btn{width:100%;padding:13px;border-radius:12px;background:#1D9E75;color:white;border:none;font-size:14px;font-weight:600;cursor:pointer;letter-spacing:-.2px;transition:background .2s}
+.ob-btn:hover{background:#085041}
+.ob-skip{text-align:center;margin-top:12px;font-size:12px;color:#aaa;cursor:pointer}
+.ob-skip:hover{color:#666}
+/* ── PRO GATE ─────────────────────────────────────────────────────────────── */
+.pro-gate{background:#FAEEDA;border:1px solid #EF9F27;border-radius:12px;padding:18px 20px;text-align:center;margin:12px 0}
+.pro-gate-badge{display:inline-flex;align-items:center;gap:6px;background:#EF9F27;color:#412402;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;margin-bottom:10px;letter-spacing:.03em}
+.pro-gate-title{font-size:16px;font-weight:700;color:#412402;margin-bottom:6px}
+.pro-gate-sub{font-size:13px;color:#633806;margin-bottom:14px;line-height:1.5}
+.pro-gate-btn{display:inline-block;padding:10px 24px;border-radius:10px;background:#0D1B14;color:#E1F5EE;font-size:13px;font-weight:600;border:none;cursor:pointer;transition:background .2s}
+.pro-gate-btn:hover{background:#085041}
+.pro-gate-list{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:14px}
+.pro-gate-item{background:white;border:0.5px solid #EF9F27;border-radius:20px;padding:4px 12px;font-size:12px;color:#633806}
+/* ── SIDEBAR PRO LOCK ─────────────────────────────────────────────────────── */
+.sb-item.locked{opacity:.55;position:relative}
+.sb-lock{font-size:10px;background:#FAEEDA;color:#633806;padding:1px 6px;border-radius:20px;margin-left:auto;font-weight:500}
+
 /* ── RESET & BASE ─────────────────────────────────────────────────────────── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -446,6 +484,49 @@ footer{padding:28px 40px;background:var(--gdp);border-top:1px solid rgba(255,255
 </footer>
 
 
+
+<!-- ── ONBOARDING MODAL ─────────────────────────────────────────────────────── -->
+<div class="ob-overlay" id="ob-overlay">
+  <div class="ob-box">
+    <div class="ob-logo">
+      <svg width="32" height="32" viewBox="0 0 48 48" fill="none">
+        <rect width="48" height="48" rx="12" fill="white" stroke="#D3F0E4" stroke-width="1"/>
+        <circle cx="18" cy="20" r="9" fill="#1D9E75"/>
+        <rect x="20" y="30" width="8" height="8" rx="2" fill="#EF9F27" transform="rotate(-5 24 34)"/>
+        <rect x="31" y="30" width="7" height="7" rx="1.5" fill="#378ADD" transform="rotate(5 34 33)"/>
+      </svg>
+      <span class="ob-logo-name">jouli</span>
+    </div>
+    <div class="ob-title" id="ob-title">Let's personalise<br>your energy design.</div>
+    <div class="ob-sub">Jouli tailors the numbers and advice to your situation. Takes 20 seconds.</div>
+    <div class="ob-field">
+      <div class="ob-label">First name (optional)</div>
+      <input class="ob-input" id="ob-name" placeholder="e.g. Sarah" oninput="updateObGreeting()"/>
+    </div>
+    <div class="ob-label" style="margin-bottom:8px">What describes you best?</div>
+    <div class="ob-roles">
+      <div class="ob-role sel" id="ob-role-homeowner" onclick="selectRole('homeowner')">
+        <div class="ob-role-title">Homeowner</div>
+        <div class="ob-role-sub">Exploring solar or battery</div>
+      </div>
+      <div class="ob-role" id="ob-role-ev" onclick="selectRole('ev')">
+        <div class="ob-role-title">EV owner</div>
+        <div class="ob-role-sub">Want to charge smarter</div>
+      </div>
+      <div class="ob-role" id="ob-role-installer" onclick="selectRole('installer')">
+        <div class="ob-role-title">Installer</div>
+        <div class="ob-role-sub">Building proposals</div>
+      </div>
+      <div class="ob-role" id="ob-role-curious" onclick="selectRole('curious')">
+        <div class="ob-role-title">Just curious</div>
+        <div class="ob-role-sub">Exploring my options</div>
+      </div>
+    </div>
+    <button class="ob-btn" onclick="finishOnboarding()">Start my Jouli design →</button>
+    <div class="ob-skip" onclick="skipOnboarding()">Skip — take me straight in</div>
+  </div>
+</div>
+
 <!-- ── MODALS ──────────────────────────────────────────────────────────────── -->
 <div class="modal-overlay" id="modal-privacy" onclick="if(event.target===this)closeModal('privacy')">
   <div class="modal-box">
@@ -679,25 +760,22 @@ function showLanding(){
   document.getElementById('app').className='app-shell';
 }
 function openApp(){
-  // Reset state for fresh session
-  STATE.city='melbourne';
-  STATE.liveIrr=null;
-  STATE.liveName=null;
-  STATE.sysKw=10;
-  STATE.annualGen=null;
-  STATE.annualSav=null;
-  STATE.pb=null;
-  // Reset sidebar to blank
+  STATE.city='melbourne'; STATE.liveIrr=null; STATE.liveName=null;
+  STATE.sysKw=10; STATE.annualGen=null; STATE.annualSav=null; STATE.pb=null;
+  USER = { name:'', role:'homeowner', isPro:false };
   ['sb-loc-val','sb-load-val','sb-solar-val','sb-gen-val','sb-saving-val','sb-bat-val'].forEach(function(id){
-    var el=document.getElementById(id);
-    if(el)el.textContent='—';
+    var el=document.getElementById(id); if(el)el.textContent='\u2014';
   });
-  // Show app at Location step
+  ['sb-bat','sb-ev','sb-v2g'].forEach(function(id){
+    var el=document.getElementById(id);
+    if(el){el.className='sb-item';var lock=el.querySelector('.sb-lock');if(lock)lock.remove();}
+  });
   document.getElementById('landing').className='view';
   document.getElementById('app').className='app-shell active';
-  document.getElementById('app-loc-label').textContent='Select location';
-  goStep('loc');
+  document.getElementById('ob-overlay').classList.add('open');
+  document.body.style.overflow='hidden';
 }
+
 function goStep(s){
   const steps=['loc','load','solar','bat','ev','v2g','econ','report'];
   steps.forEach(st=>{
@@ -755,6 +833,12 @@ function renderLoc(c){
   </div>
   <div class="btn-row"><button class="btn-primary btn" onclick="goStep('load')">Continue to load profiler →</button></div>
   `;
+}
+function updateLocGreeting(){
+  var g = document.getElementById('loc-greeting');
+  var gs = document.getElementById('loc-greeting-sub');
+  if(g && USER.name) g.textContent = 'Hi '+USER.name+' \u2014 step 1 of 8';
+  if(gs) gs.textContent = getPersonalisedGreeting ? getPersonalisedGreeting() : 'Choose your location to start.';
 }
 function selectCity(k){
   STATE.city=k;
@@ -1014,6 +1098,11 @@ async function lookupPostcode() {
 var BAT_CHEM = 'lfp';
 
 function renderBat(c){
+  if(!USER.isPro){
+    c.innerHTML = '<div class="sec-head"><div class="sec-title2">Battery sizing engine</div><div class="sec-sub2">Model your battery size, chemistry, and autonomy</div></div>' +
+    renderProGate('Battery sizing', ['Recommended kWh size','LFP vs NMC chemistry','Autonomy analysis','Seasonal performance','Product comparisons']);
+    return;
+  }
   const sysKw=STATE.sysKw||10;
   const irr=(STATE.liveIrr)||CITIES[STATE.city||'melbourne'].irr;
   const annGen=Math.round(sysKw*(irr.reduce((a,b)=>a+b,0)/12)*0.80*365);
@@ -1101,6 +1190,11 @@ const EV_SOLAR_CURVE=[0,0,0,0,0,0,0.2,1.0,2.8,5.5,7.8,9.2,9.6,8.9,7.2,5.0,2.6,0.
 let selEVCar=0;
 
 function renderEV(c){
+  if(!USER.isPro){
+    c.innerHTML = '<div class="sec-head"><div class="sec-title2">EV charging scheduler</div><div class="sec-sub2">Find the cheapest time to charge your EV</div></div>' +
+    renderProGate('EV charging scheduler', ['Solar optimised charging','Off-peak vs peak comparison','Annual saving vs petrol','8 Australian EVs','Tariff optimisation']);
+    return;
+  }
   c.innerHTML=`
   <div class="sec-head"><div class="sec-title2">EV charging scheduler</div><div class="sec-sub2">Find the cheapest time to charge — solar, off-peak, or spot price</div></div>
   <div style="background:#E6F1FB;border-radius:12px;padding:16px 20px;margin-bottom:14px;border:0.5px solid #85B7EB;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
@@ -1181,6 +1275,11 @@ function calcEV(){
 let V2G_MODE='v2h';
 
 function renderV2G(c){
+  if(!USER.isPro){
+    c.innerHTML = '<div class="sec-head"><div class="sec-title2">V2G / V2H modeller</div><div class="sec-sub2">Use your EV as a home battery</div></div>' +
+    renderProGate('V2G / V2H modeller', ['V2H home backup economics','V2G grid sell revenue','VPP participation revenue','Battery degradation model','AU compatibility guide']);
+    return;
+  }
   c.innerHTML=`
   <div class="sec-head"><div class="sec-title2">V2G / V2H modeller</div><div class="sec-sub2">Use your EV as a home battery — bidirectional charging economics</div></div>
   <div style="display:flex;gap:8px;margin-bottom:14px">
@@ -1267,6 +1366,91 @@ document.addEventListener('keydown',function(e){
     ['privacy','terms','accuracy','contact'].forEach(function(n){closeModal(n);});
   }
 });
+
+
+// ── ONBOARDING ───────────────────────────────────────────────────────────────
+var USER = { name: '', role: 'homeowner', isPro: false };
+var ob_role = 'homeowner';
+
+function updateObGreeting(){
+  var name = document.getElementById('ob-name').value.trim();
+  var title = document.getElementById('ob-title');
+  if(title) title.innerHTML = name
+    ? 'Hey '+name+', let\'s personalise<br>your energy design.'
+    : 'Let\'s personalise<br>your energy design.';
+}
+
+function selectRole(r){
+  ob_role = r;
+  ['homeowner','ev','installer','curious'].forEach(function(id){
+    var el = document.getElementById('ob-role-'+id);
+    if(el) el.className = 'ob-role' + (id===r?' sel':'');
+  });
+}
+
+function finishOnboarding(){
+  USER.name = document.getElementById('ob-name').value.trim();
+  USER.role = ob_role;
+  document.getElementById('ob-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+  applyPersonalisation();
+  goStep('loc');
+}
+
+function skipOnboarding(){
+  document.getElementById('ob-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+  goStep('loc');
+}
+
+function applyPersonalisation(){
+  // Update app loc label with name if provided
+  var label = document.getElementById('app-loc-label');
+  if(label && USER.name) label.textContent = 'Hi '+USER.name+' · Step 1 of 8';
+
+  // Update sidebar items based on role — lock Pro features
+  var proSteps = ['sb-bat','sb-ev','sb-v2g'];
+  proSteps.forEach(function(id){
+    var el = document.getElementById(id);
+    if(el && !USER.isPro){
+      el.className = 'sb-item locked';
+      if(!el.querySelector('.sb-lock')){
+        var lock = document.createElement('span');
+        lock.className = 'sb-lock';
+        lock.textContent = 'Pro';
+        el.appendChild(lock);
+      }
+    }
+  });
+}
+
+// Personalised greeting in loc step
+function getPersonalisedGreeting(){
+  var name = USER.name ? 'Hi '+USER.name+' — ' : '';
+  var roleMsg = {
+    homeowner: 'your system design starts here.',
+    ev: 'let\'s find the best way to charge your EV with solar.',
+    installer: 'build a professional proposal in minutes.',
+    curious: 'let\'s see what solar could do for you.',
+  };
+  return name + (roleMsg[USER.role] || roleMsg.homeowner);
+}
+
+// ── PRO GATE ─────────────────────────────────────────────────────────────────
+function renderProGate(module, features){
+  return '<div class="pro-gate">' +
+    '<div class="pro-gate-badge">⭐ Pro feature</div>' +
+    '<div class="pro-gate-title">'+module+' is a Jouli Pro feature</div>' +
+    '<div class="pro-gate-sub">Upgrade to Pro to unlock '+module.toLowerCase()+' — and everything else you need to design the perfect system.</div>' +
+    '<div class="pro-gate-list">' + features.map(function(f){return '<div class="pro-gate-item">'+f+'</div>';}).join('') + '</div>' +
+    '<button class="pro-gate-btn" onclick="showUpgradeModal()">Unlock Pro — $14/month →</button>' +
+    '</div>' +
+    '<div style="font-size:12px;color:#888;margin-top:8px;text-align:center">Already have Pro? <span style="color:#1D9E75;cursor:pointer" onclick="showToast('Sign in coming soon!')">Sign in →</span></div>';
+}
+
+function showUpgradeModal(){
+  showToast('Stripe payments coming very soon — join the waitlist!');
+}
 
 </script>
 </body>
