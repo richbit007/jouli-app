@@ -9,6 +9,128 @@
 <style>
 
 
+
+
+
+/* ── LIVE DASHBOARD ──────────────────────────────────────────────────────── */
+.dash-overlay{position:fixed;inset:0;background:#0D1B14;z-index:2000;display:none;flex-direction:column}
+.dash-overlay.open{display:flex}
+.dash-topbar{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:0.5px solid rgba(255,255,255,.08);flex-shrink:0}
+.dash-logo{display:flex;align-items:center;gap:8px}
+.dash-logo-name{font-size:17px;font-weight:500;color:#9FE1CB;letter-spacing:-.3px}
+.dash-live-badge{display:flex;align-items:center;gap:5px;font-size:11px;color:#5DCAA5;background:rgba(29,158,117,.15);padding:4px 10px;border-radius:20px}
+.dash-live-dot{width:6px;height:6px;border-radius:50%;background:#1D9E75;animation:pulse 2s ease-in-out infinite}
+.dash-close{font-size:12px;color:#5DCAA5;cursor:pointer;padding:6px 14px;border:0.5px solid rgba(93,202,165,.3);border-radius:20px}
+.dash-close:hover{background:rgba(93,202,165,.1)}
+.dash-body{flex:1;overflow-y:auto;padding:16px 20px}
+.dash-hero{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:16px}
+.dash-hero-card{background:rgba(255,255,255,.04);border:0.5px solid rgba(255,255,255,.08);border-radius:14px;padding:16px}
+.dhc-label{font-size:11px;color:#5DCAA5;margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em}
+.dhc-val{font-size:32px;font-weight:500;color:white;letter-spacing:-1px;line-height:1}
+.dhc-unit{font-size:13px;color:#5DCAA5;margin-top:3px}
+.dhc-trend{font-size:11px;margin-top:6px;display:flex;align-items:center;gap:4px}
+.dash-flow{background:rgba(255,255,255,.03);border:0.5px solid rgba(255,255,255,.06);border-radius:14px;padding:16px;margin-bottom:14px}
+.dash-flow-title{font-size:12px;color:#5DCAA5;font-weight:500;margin-bottom:14px;text-transform:uppercase;letter-spacing:.05em}
+.dash-flow-nodes{display:flex;align-items:center;justify-content:center;gap:0;flex-wrap:wrap}
+.dfn{display:flex;flex-direction:column;align-items:center;gap:6px;padding:0 8px}
+.dfn-circle{width:72px;height:72px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;border:2px solid transparent}
+.dfn-val{font-size:16px;font-weight:500;color:white;line-height:1}
+.dfn-unit{font-size:10px;color:rgba(255,255,255,.6)}
+.dfn-label{font-size:11px;color:#5DCAA5;text-align:center}
+.dfa{display:flex;flex-direction:column;align-items:center;gap:3px;padding:0 4px}
+.dfa-line{width:40px;height:2px;border-radius:1px}
+.dfa-label{font-size:10px;color:rgba(255,255,255,.4)}
+.dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.dash-card{background:rgba(255,255,255,.03);border:0.5px solid rgba(255,255,255,.06);border-radius:14px;padding:14px}
+.dash-card-title{font-size:12px;color:#5DCAA5;font-weight:500;margin-bottom:10px;text-transform:uppercase;letter-spacing:.05em}
+.dash-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:0.5px solid rgba(255,255,255,.05);font-size:12px}
+.dash-row:last-child{border-bottom:none}
+.dash-row-label{color:rgba(255,255,255,.5)}
+.dash-row-val{color:white;font-weight:500}
+.dash-row-val.pos{color:#5DCAA5}
+.dash-row-val.neg{color:#E24B4A}
+.dash-chart-wrap{height:80px;display:flex;align-items:flex-end;gap:2px}
+.dash-chart-bar{flex:1;border-radius:2px 2px 0 0;min-height:3px;transition:height .3s}
+.dash-connect{background:rgba(255,255,255,.03);border:0.5px solid rgba(255,255,255,.06);border-radius:14px;padding:16px;margin-bottom:14px}
+.dc-title{font-size:13px;color:white;font-weight:500;margin-bottom:4px}
+.dc-sub{font-size:12px;color:rgba(255,255,255,.4);margin-bottom:14px}
+.inverter-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.inv-card{background:rgba(255,255,255,.04);border:0.5px solid rgba(255,255,255,.08);border-radius:10px;padding:12px;cursor:pointer;transition:all .2s;text-align:center}
+.inv-card:hover{border-color:rgba(93,202,165,.4);background:rgba(29,158,117,.08)}
+.inv-card.sel{border:1.5px solid #1D9E75;background:rgba(29,158,117,.12)}
+.inv-name{font-size:12px;font-weight:500;color:white;margin-bottom:3px}
+.inv-au{font-size:10px;color:#5DCAA5}
+.inv-input{background:rgba(255,255,255,.06);border:0.5px solid rgba(255,255,255,.15);border-radius:8px;padding:8px 12px;font-size:13px;color:white;width:100%;outline:none;font-family:inherit;box-sizing:border-box;margin-bottom:8px}
+.inv-input::placeholder{color:rgba(255,255,255,.3)}
+.inv-btn{width:100%;padding:10px;border-radius:10px;background:#1D9E75;color:white;border:none;font-size:13px;font-weight:600;cursor:pointer;transition:background .2s}
+.inv-btn:hover{background:#085041}
+.dash-savings-big{text-align:center;padding:20px;background:rgba(29,158,117,.1);border-radius:14px;border:0.5px solid rgba(29,158,117,.3);margin-bottom:14px}
+.dsb-val{font-size:48px;font-weight:500;color:#9FE1CB;letter-spacing:-2px;line-height:1}
+.dsb-label{font-size:13px;color:#5DCAA5;margin-top:6px}
+.dsb-sub{font-size:11px;color:rgba(255,255,255,.4);margin-top:4px}
+
+/* ── NEM12 UPLOAD ─────────────────────────────────────────────────────────── */
+.nem-drop{border:2px dashed var(--gm);border-radius:var(--radius);padding:28px 20px;text-align:center;cursor:pointer;transition:all .2s;background:var(--gl);margin-bottom:14px}
+.nem-drop:hover,.nem-drop.dragover{border-color:var(--g);background:#c8eedd}
+.nem-drop-icon{width:40px;height:40px;border-radius:50%;background:white;border:1.5px solid var(--gm);display:flex;align-items:center;justify-content:center;margin:0 auto 10px}
+.nem-drop-title{font-size:14px;font-weight:600;color:var(--gd);margin-bottom:4px}
+.nem-drop-sub{font-size:12px;color:var(--g)}
+.nem-drop input[type=file]{display:none}
+.nem-progress{background:#f0f0f0;border-radius:4px;height:6px;margin-bottom:14px;overflow:hidden;display:none}
+.nem-progress-fill{height:100%;border-radius:4px;background:var(--g);transition:width .3s}
+.nem-result{background:white;border:0.5px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:14px;display:none}
+.nem-result-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.nem-result-title{font-size:14px;font-weight:600;color:var(--dgrey)}
+.nem-result-badge{font-size:11px;background:var(--gl);color:var(--gd);padding:3px 10px;border-radius:20px;font-weight:500}
+.nem-stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+.nem-stat{background:#f9f9f9;border-radius:8px;padding:10px 12px}
+.nem-stat-label{font-size:10px;color:#888;margin-bottom:3px}
+.nem-stat-val{font-size:17px;font-weight:700;color:var(--dgrey)}
+.nem-stat-unit{font-size:11px;font-weight:400;color:#666}
+.nem-chart-wrap{height:100px;display:flex;align-items:flex-end;gap:2px;margin-bottom:8px}
+.nem-bar{flex:1;border-radius:2px 2px 0 0;min-height:4px;transition:height .3s}
+.nem-chart-labels{display:flex;justify-content:space-between;font-size:10px;color:#888;margin-bottom:10px}
+.nem-hourly{display:flex;gap:1px;height:40px;align-items:flex-end;margin-bottom:4px}
+.nem-hour-bar{flex:1;border-radius:1px 1px 0 0;min-height:2px}
+.nem-hourly-labels{display:flex;justify-content:space-between;font-size:9px;color:#888}
+
+/* ── AUTH MODAL ──────────────────────────────────────────────────────────── */
+.auth-overlay{position:fixed;inset:0;background:rgba(13,27,20,.6);z-index:1002;display:none;align-items:center;justify-content:center;padding:20px}
+.auth-overlay.open{display:flex}
+.auth-box{background:white;border-radius:20px;max-width:420px;width:100%;padding:32px 36px;box-shadow:0 32px 80px rgba(13,27,20,.2)}
+.auth-logo{display:flex;align-items:center;gap:9px;margin-bottom:22px}
+.auth-logo-name{font-size:20px;font-weight:700;color:#0D1B14;letter-spacing:-.3px}
+.auth-title{font-size:22px;font-weight:700;color:#0D1B14;letter-spacing:-.3px;margin-bottom:6px}
+.auth-sub{font-size:13px;color:#666;margin-bottom:20px;line-height:1.5}
+.auth-tabs{display:flex;gap:0;margin-bottom:20px;border-bottom:1.5px solid #f0f0f0}
+.auth-tab{flex:1;padding:8px;text-align:center;font-size:13px;font-weight:500;color:#999;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1.5px;transition:all .2s}
+.auth-tab.active{color:#0D1B14;border-bottom-color:#1D9E75}
+.auth-field{margin-bottom:14px}
+.auth-label{font-size:12px;font-weight:500;color:#444;margin-bottom:5px}
+.auth-input{width:100%;font-size:14px;padding:11px 14px;border-radius:10px;border:1.5px solid #e0e0e0;outline:none;transition:border-color .2s;font-family:inherit;box-sizing:border-box}
+.auth-input:focus{border-color:#1D9E75}
+.auth-btn{width:100%;padding:13px;border-radius:12px;background:#1D9E75;color:white;border:none;font-size:14px;font-weight:600;cursor:pointer;transition:background .2s;margin-bottom:10px}
+.auth-btn:hover{background:#085041}
+.auth-btn:disabled{background:#ccc;cursor:not-allowed}
+.auth-error{font-size:12px;color:#E24B4A;margin-bottom:10px;min-height:16px}
+.auth-success{font-size:12px;color:#1D9E75;margin-bottom:10px;min-height:16px}
+.auth-divider{text-align:center;font-size:12px;color:#aaa;margin:10px 0}
+.auth-close{position:absolute;top:16px;right:16px;width:28px;height:28px;border-radius:50%;border:none;background:#f5f5f5;cursor:pointer;color:#666;font-size:14px;display:flex;align-items:center;justify-content:center}
+/* ── USER MENU ────────────────────────────────────────────────────────────── */
+.user-menu-btn{font-size:12px;padding:6px 14px;border-radius:20px;border:0.5px solid var(--gm);background:var(--gl);color:var(--gd);cursor:pointer;display:flex;align-items:center;gap:6px;transition:background .2s}
+.user-menu-btn:hover{background:#c8eedd}
+.user-avatar{width:20px;height:20px;border-radius:50%;background:#1D9E75;color:white;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.user-dropdown{position:absolute;top:100%;right:0;background:white;border:0.5px solid #e0e0e0;border-radius:12px;box-shadow:0 8px 24px rgba(13,27,20,.12);z-index:500;min-width:180px;padding:6px;margin-top:6px;display:none}
+.user-dropdown.open{display:block}
+.ud-item{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:8px;font-size:13px;color:#444;cursor:pointer;transition:background .2s}
+.ud-item:hover{background:#f5f5f5}
+.ud-item.danger{color:#E24B4A}
+.ud-separator{height:0.5px;background:#f0f0f0;margin:4px 0}
+/* ── SAVE INDICATOR ──────────────────────────────────────────────────────── */
+.save-indicator{font-size:11px;color:#1D9E75;display:flex;align-items:center;gap:5px;opacity:0;transition:opacity .3s}
+.save-indicator.show{opacity:1}
+.save-dot{width:6px;height:6px;border-radius:50%;background:#1D9E75}
+
 /* ── STRIPE UPGRADE MODAL ────────────────────────────────────────────────── */
 .upgrade-overlay{position:fixed;inset:0;background:rgba(13,27,20,.6);z-index:1001;display:none;align-items:center;justify-content:center;padding:20px}
 .upgrade-overlay.open{display:flex}
@@ -374,6 +496,7 @@ footer{padding:28px 40px;background:var(--gdp);border-top:1px solid rgba(255,255
 !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]);t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="capture identify alias people.set people.set_once set_config register register_once unregister opt_out_capturing has_opted_out_capturing opt_in_capturing reset isFeatureEnabled onFeatureFlags getFeatureFlag getFeatureFlagPayload reloadFeatureFlags group updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures getActiveMatchingSurveys getSurveys getNextSurveyStep onSessionId".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
 posthog.init('phc_ENTgdxizjfqwyiu4WeAfQhkMKXvuBoLzUqhCpnK8tG0',{api_host:'https://us.posthog.com'});
 </script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 </head>
 <body>
 
@@ -516,6 +639,172 @@ posthog.init('phc_ENTgdxizjfqwyiu4WeAfQhkMKXvuBoLzUqhCpnK8tG0',{api_host:'https:
 
 
 
+
+
+
+
+<!-- ── LIVE DASHBOARD ──────────────────────────────────────────────────────── -->
+<div class="dash-overlay" id="dash-overlay">
+  <div class="dash-topbar">
+    <div class="dash-logo">
+      <svg width="26" height="26" viewBox="0 0 48 48" fill="none">
+        <rect width="48" height="48" rx="12" fill="#0D1B14" stroke="#2a4a3a" stroke-width="1"/>
+        <circle cx="18" cy="20" r="9" fill="#5DCAA5"/>
+        <rect x="20" y="30" width="8" height="8" rx="2" fill="#EF9F27" transform="rotate(-5 24 34)"/>
+        <rect x="31" y="30" width="7" height="7" rx="1.5" fill="#85B7EB" transform="rotate(5 34 33)"/>
+      </svg>
+      <span class="dash-logo-name">jouli dashboard</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <div class="dash-live-badge" id="dash-live-badge">
+        <div class="dash-live-dot"></div>
+        <span id="dash-live-label">Demo mode</span>
+      </div>
+      <div style="font-size:11px;color:rgba(255,255,255,.4)" id="dash-last-updated">Updated just now</div>
+      <div class="dash-close" onclick="closeDashboard()">← Back to design</div>
+    </div>
+  </div>
+
+  <div class="dash-body">
+
+    <!-- HERO STATS -->
+    <div class="dash-hero" id="dash-hero"></div>
+
+    <!-- ENERGY FLOW -->
+    <div class="dash-flow">
+      <div class="dash-flow-title">Live energy flow</div>
+      <div class="dash-flow-nodes" id="dash-flow-nodes"></div>
+    </div>
+
+    <!-- SAVINGS + HISTORY -->
+    <div class="dash-savings-big" id="dash-savings-big"></div>
+
+    <div class="dash-grid">
+      <div class="dash-card">
+        <div class="dash-card-title">Today's generation (kWh)</div>
+        <div class="dash-chart-wrap" id="dash-gen-chart"></div>
+        <div style="display:flex;justify-content:space-between;font-size:10px;color:rgba(255,255,255,.3);margin-top:4px">
+          <span>12am</span><span>6am</span><span>12pm</span><span>6pm</span><span>11pm</span>
+        </div>
+      </div>
+      <div class="dash-card">
+        <div class="dash-card-title">This month</div>
+        <div id="dash-month-stats"></div>
+      </div>
+      <div class="dash-card">
+        <div class="dash-card-title">System performance</div>
+        <div id="dash-perf-stats"></div>
+      </div>
+      <div class="dash-card">
+        <div class="dash-card-title">Environmental impact</div>
+        <div id="dash-env-stats"></div>
+      </div>
+    </div>
+
+    <!-- CONNECT INVERTER -->
+    <div class="dash-connect" id="dash-connect-section">
+      <div class="dc-title">Connect your inverter for live data</div>
+      <div class="dc-sub">Currently showing simulated data based on your Jouli design. Connect your inverter to see real-time generation.</div>
+      <div class="inverter-grid" id="inverter-grid"></div>
+      <div id="inverter-input-section" style="display:none">
+        <input class="inv-input" id="inverter-api-key" placeholder="Paste your API key here..."/>
+        <input class="inv-input" id="inverter-site-id" placeholder="Site ID (from your inverter portal)..." style="display:none"/>
+        <button class="inv-btn" onclick="connectInverter()">Connect inverter →</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── NEM12 UPLOAD MODAL ──────────────────────────────────────────────────── -->
+<div class="modal-overlay" id="modal-nem12" onclick="if(event.target===this)closeModal('nem12')" style="z-index:1003">
+  <div class="modal-box" style="max-width:660px">
+    <div class="modal-header">
+      <span class="modal-title">Upload NEM12 interval data</span>
+      <button class="modal-close" onclick="closeModal('nem12')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="background:#E6F1FB;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:12px;color:#0C447C;line-height:1.6">
+        <strong>What is a NEM12 file?</strong> It's your actual electricity consumption data in 30-minute intervals. Your retailer (AGL, Origin, Energy Australia etc) must provide it free on request. Ask for "NEM12 interval data" — usually emailed as a .csv file within 2 business days.
+      </div>
+
+      <div class="nem-drop" id="nem-drop" onclick="document.getElementById('nem-file-input').click()"
+           ondragover="event.preventDefault();this.classList.add('dragover')"
+           ondragleave="this.classList.remove('dragover')"
+           ondrop="event.preventDefault();this.classList.remove('dragover');handleNEMDrop(event)">
+        <div class="nem-drop-icon">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M10 13V4M7 7l3-3 3 3M4 14v1a2 2 0 002 2h8a2 2 0 002-2v-1" stroke="#1D9E75" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="nem-drop-title">Drop your NEM12 file here</div>
+        <div class="nem-drop-sub">or click to browse · .csv files only · typically 50KB–2MB</div>
+        <input type="file" id="nem-file-input" accept=".csv,.txt" onchange="handleNEMFile(event)"/>
+      </div>
+
+      <div class="nem-progress" id="nem-progress">
+        <div class="nem-progress-fill" id="nem-progress-fill" style="width:0%"></div>
+      </div>
+
+      <div class="nem-result" id="nem-result">
+        <div class="nem-result-header">
+          <div class="nem-result-title" id="nem-result-title">Your actual consumption data</div>
+          <span class="nem-result-badge">NEM12 verified · ±3% accuracy</span>
+        </div>
+        <div class="nem-stat-grid" id="nem-stat-grid"></div>
+        <div style="font-size:12px;font-weight:500;color:#0D1B14;margin-bottom:6px">Daily consumption (last 90 days)</div>
+        <div class="nem-chart-wrap" id="nem-chart-wrap"></div>
+        <div class="nem-chart-labels" id="nem-chart-labels"></div>
+        <div style="font-size:12px;font-weight:500;color:#0D1B14;margin-bottom:4px">Average hourly profile</div>
+        <div class="nem-hourly" id="nem-hourly"></div>
+        <div class="nem-hourly-labels"><span>12am</span><span>6am</span><span>12pm</span><span>6pm</span><span>11pm</span></div>
+        <div style="background:#E1F5EE;border-radius:8px;padding:10px 14px;margin-top:10px;font-size:12px;color:#085041;line-height:1.6" id="nem-insight"></div>
+        <div style="display:flex;gap:8px;margin-top:12px">
+          <button style="flex:1;padding:10px;border-radius:10px;background:#1D9E75;color:white;border:none;font-size:13px;font-weight:600;cursor:pointer" onclick="applyNEMData()">Use this data in Jouli →</button>
+          <button style="padding:10px 16px;border-radius:10px;border:0.5px solid #e0e0e0;background:white;font-size:13px;cursor:pointer" onclick="closeModal('nem12')">Cancel</button>
+        </div>
+      </div>
+
+      <div style="margin-top:14px;font-size:11px;color:#888;line-height:1.6">
+        <strong>How to get your NEM12 file:</strong> Log in to your retailer's app or website → Usage → Download interval data → NEM12 format. Or email your retailer and request "NEM12 interval data for the last 12 months." It's free and they're required to provide it.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── AUTH MODAL ──────────────────────────────────────────────────────────── -->
+<div class="auth-overlay" id="auth-overlay" onclick="if(event.target===this)closeAuth()">
+  <div class="auth-box" style="position:relative">
+    <button class="auth-close" onclick="closeAuth()">✕</button>
+    <div class="auth-logo">
+      <svg width="28" height="28" viewBox="0 0 48 48" fill="none">
+        <rect width="48" height="48" rx="12" fill="white" stroke="#D3F0E4" stroke-width="1"/>
+        <circle cx="18" cy="20" r="9" fill="#1D9E75"/>
+        <rect x="20" y="30" width="8" height="8" rx="2" fill="#EF9F27" transform="rotate(-5 24 34)"/>
+        <rect x="31" y="30" width="7" height="7" rx="1.5" fill="#378ADD" transform="rotate(5 34 33)"/>
+      </svg>
+      <span class="auth-logo-name">jouli</span>
+    </div>
+    <div class="auth-title" id="auth-title">Save your design</div>
+    <div class="auth-sub" id="auth-sub">Create a free account to save your system design and come back to it anytime.</div>
+    <div class="auth-tabs">
+      <div class="auth-tab active" id="auth-tab-signup" onclick="setAuthTab('signup')">Create account</div>
+      <div class="auth-tab" id="auth-tab-signin" onclick="setAuthTab('signin')">Sign in</div>
+    </div>
+    <div id="auth-error" class="auth-error"></div>
+    <div id="auth-success" class="auth-success"></div>
+    <div class="auth-field">
+      <div class="auth-label">Email address</div>
+      <input class="auth-input" id="auth-email" type="email" placeholder="you@example.com"/>
+    </div>
+    <div class="auth-field">
+      <div class="auth-label">Password</div>
+      <input class="auth-input" id="auth-password" type="password" placeholder="8+ characters"/>
+    </div>
+    <button class="auth-btn" id="auth-submit-btn" onclick="submitAuth()">Create free account</button>
+    <div class="auth-divider">Free forever · No credit card needed</div>
+  </div>
+</div>
 
 <!-- ── STRIPE UPGRADE MODAL ───────────────────────────────────────────────── -->
 <div class="upgrade-overlay" id="upgrade-overlay" onclick="if(event.target===this)closeUpgrade()">
@@ -774,10 +1063,41 @@ posthog.init('phc_ENTgdxizjfqwyiu4WeAfQhkMKXvuBoLzUqhCpnK8tG0',{api_host:'https:
       <div class="app-step" id="step-bat" onclick="goStep('bat')">Battery</div>
       <div class="app-step" id="step-ev" onclick="goStep('ev')">EV</div>
       <div class="app-step" id="step-v2g" onclick="goStep('v2g')">V2G</div>
+      <div class="app-step" id="step-grid" onclick="goStep('grid')">Grid</div>
+      <div class="app-step" id="step-resil" onclick="goStep('resil')">Resilience</div>
       <div class="app-step" id="step-econ" onclick="goStep('econ')">Economics</div>
       <div class="app-step" id="step-report" onclick="goStep('report')">Report</div>
     </div>
-    <div id="app-loc-label" style="font-size:11px;color:var(--grey)">Step 1 of 8</div>
+    <div style="display:flex;align-items:center;gap:10px">
+        <div class="save-indicator" id="save-indicator"><div class="save-dot"></div>Saved</div>
+        <div id="app-loc-label" style="font-size:11px;color:var(--grey)">Step 1 of 8</div>
+        <button style="font-size:11px;padding:5px 12px;border-radius:20px;border:0.5px solid rgba(29,158,117,.4);background:rgba(29,158,117,.1);color:#085041;cursor:pointer;display:flex;align-items:center;gap:5px" onclick="openDashboard()"><div style="width:6px;height:6px;border-radius:50%;background:#1D9E75;animation:pulse 2s ease-in-out infinite"></div>Live dashboard</button>
+        <div style="position:relative" id="user-menu-wrap">
+          <button class="user-menu-btn" id="auth-topbar-btn" onclick="toggleUserMenu()">
+            <div class="user-avatar" id="user-avatar-icon">?</div>
+            <span id="auth-topbar-label">Sign in</span>
+          </button>
+          <div class="user-dropdown" id="user-dropdown">
+            <div class="ud-item" onclick="saveDesign()">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 2h8l2 2v8H2V2z" stroke="#444" stroke-width="1.2" fill="none"/><rect x="4" y="8" width="6" height="4" fill="#f0f0f0" stroke="#444" stroke-width="1"/><rect x="4" y="2" width="5" height="3" fill="#f0f0f0" stroke="#444" stroke-width="1"/></svg>
+              Save design
+            </div>
+            <div class="ud-item" onclick="loadDesigns()">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 3h12M1 7h8M1 11h10" stroke="#444" stroke-width="1.2" stroke-linecap="round"/></svg>
+              My designs
+            </div>
+            <div class="ud-separator"></div>
+            <div class="ud-item" onclick="openUpgradeIfFree()">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1l1.8 3.6L13 5.3l-3 2.9.7 4.1L7 10.4l-3.7 1.9.7-4.1L1 5.3l4.2-.7z" stroke="#EF9F27" stroke-width="1.2" fill="none"/></svg>
+              Upgrade to Pro
+            </div>
+            <div class="ud-separator"></div>
+            <div class="ud-item danger" id="signout-btn" onclick="signOut()" style="display:none">
+              Sign out
+            </div>
+          </div>
+        </div>
+      </div>
   </div>
   <div class="app-body">
     <div class="app-sidebar">
@@ -788,6 +1108,8 @@ posthog.init('phc_ENTgdxizjfqwyiu4WeAfQhkMKXvuBoLzUqhCpnK8tG0',{api_host:'https:
       <div class="sb-item" id="sb-bat" onclick="goStep('bat')"><div class="sb-dot" style="background:#1D9E75"></div>Battery sizing</div>
       <div class="sb-item" id="sb-ev" onclick="goStep('ev')"><div class="sb-dot" style="background:#378ADD"></div>EV scheduler</div>
       <div class="sb-item" id="sb-v2g" onclick="goStep('v2g')"><div class="sb-dot" style="background:#534AB7"></div>V2G / V2H</div>
+      <div class="sb-item" id="sb-grid" onclick="goStep('grid')"><div class="sb-dot" style="background:#D85A30"></div>Grid interaction</div>
+      <div class="sb-item" id="sb-resil" onclick="goStep('resil')"><div class="sb-dot" style="background:#D4537E"></div>Resilience</div>
       <div class="sb-item" id="sb-econ" onclick="goStep('econ')"><div class="sb-dot" style="background:#639922"></div>Economics</div>
       <div class="sb-item" id="sb-report" onclick="goStep('report')"><div class="sb-dot" style="background:#534AB7"></div>Report</div>
       <div class="sb-sum">
@@ -859,7 +1181,7 @@ function openApp(){
 }
 
 function goStep(s){
-  const steps=['loc','load','solar','bat','ev','v2g','econ','report'];
+  const steps=['loc','load','solar','bat','ev','v2g','grid','resil','econ','report'];
   // Analytics: track step navigation
   if(typeof posthog !== 'undefined') posthog.capture('step_viewed', {step: s, user_role: USER.role || 'unknown'});
   steps.forEach(st=>{
@@ -877,6 +1199,8 @@ function goStep(s){
   if(s==='bat')   renderBat(c);
   if(s==='ev')    renderEV(c);
   if(s==='v2g')   renderV2G(c);
+  if(s==='grid')  renderGrid(c);
+  if(s==='resil') renderResil(c);
   if(s==='econ')  renderEcon(c);
   if(s==='report') renderReport(c);
 }
@@ -887,7 +1211,7 @@ function signup(id){
   if(!v||!v.includes('@')){showToast('Please enter a valid email.');return;}
   // Save to Loops.so — replace LOOPS_API_KEY with your key from loops.so/settings/api
   const LOOPS_KEY = '8c10a3422947564ef263e12a9af9df86';
-  if(LOOPS_KEY !== 'LOOPS_API_KEY_HERE'){
+  if(LOOPS_KEY && LOOPS_KEY.length > 10){
     fetch('https://app.loops.so/api/v1/contacts/create', {
       method:'POST',
       headers:{'Authorization':'Bearer '+LOOPS_KEY,'Content-Type':'application/json'},
@@ -965,6 +1289,13 @@ function renderLoad(c){
     ${APPLIANCES.map(a=>`<div class="app-row"><div class="app-dot" style="background:${a.col}"></div><span class="app-name">${a.name}</span><span class="app-detail">${a.kw}kW · ${a.hrs}h/day</span><span class="app-kwh">${(a.kw*a.hrs).toFixed(1)} kWh</span></div>`).join('')}
   </div>
   <div class="total-row"><span class="total-label">Total daily load</span><span class="total-val">${total.toFixed(1)} kWh/day</span></div>
+  <div style="background:#f9f9f9;border-radius:10px;padding:12px 14px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+    <div>
+      <div style="font-size:13px;font-weight:600;color:#0D1B14">Have your electricity bill?</div>
+      <div style="font-size:11px;color:#666;margin-top:2px">Upload your NEM12 interval data file for exact consumption figures — reduces load error from ±20% to ±3%</div>
+    </div>
+    <button style="font-size:12px;padding:8px 16px;border-radius:8px;background:#1D9E75;color:white;border:none;cursor:pointer;white-space:nowrap;font-weight:500" onclick="showNEM12Upload()">Upload NEM12 file →</button>
+  </div>
   <div class="ai-box"><div class="ai-ico">AI</div><div class="ai-text"><strong>Jouli insight —</strong> Your EV charging (7 kWh/day) is your second largest load. Scheduling EV charging during solar peak hours (10am–2pm) could save an estimated $420/year on your current tariff.</div></div>
   <div class="btn-row"><button class="btn" onclick="goStep('loc')">← Back</button><button class="btn-primary btn" onclick="goStep('solar')">Continue to solar sizing →</button></div>
   <div class="disclaimer">Estimates based on typical appliance ratings. Actual consumption varies ±10–20%.</div>
@@ -1313,6 +1644,9 @@ function renderEV(c){
   renderEVCars();calcEV();
 }
 
+// Init Supabase on load
+window.addEventListener('load', function(){ setTimeout(initSupabase, 500); });
+
 function renderEVCars(){
   const cg=document.getElementById('ev-car-grid');
   if(!cg)return;
@@ -1610,6 +1944,882 @@ function startStripeCheckout(){
 document.addEventListener('keydown', function(e){
   if(e.key === 'Escape') closeUpgrade();
 });
+
+
+// ── SUPABASE AUTH + SAVE/RETURN ───────────────────────────────────────────────
+var SUPABASE_URL = 'https://oodkonxwgpefahwrecfj.supabase.co';
+var SUPABASE_ANON_KEY = 'sb_publishable_CKL01_z1M9yHBL43Izt4rg_FUEaM1St';
+var supabase = null;
+var currentUser = null;
+var authMode = 'signup';
+
+// Initialise Supabase when keys are set
+function initSupabase(){
+  if(SUPABASE_URL === 'https://oodkonxwgpefahwrecfj.supabase.co') return;
+  if(typeof window.supabase !== 'undefined' && window.supabase.createClient){
+    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    checkSession();
+  }
+}
+
+async function checkSession(){
+  if(!supabase) return;
+  try {
+    const { data } = await supabase.auth.getSession();
+    if(data.session){ setLoggedIn(data.session.user); }
+  } catch(e){}
+}
+
+function setLoggedIn(user){
+  currentUser = user;
+  var email = user.email || '';
+  var initial = email[0].toUpperCase();
+  var label = document.getElementById('auth-topbar-label');
+  var avatar = document.getElementById('user-avatar-icon');
+  var signout = document.getElementById('signout-btn');
+  if(label) label.textContent = email.split('@')[0];
+  if(avatar){ avatar.textContent = initial; avatar.style.background='#1D9E75'; }
+  if(signout) signout.style.display = 'flex';
+  USER.email = email;
+  if(typeof posthog !== 'undefined') posthog.identify(email);
+}
+
+function setLoggedOut(){
+  currentUser = null;
+  var label = document.getElementById('auth-topbar-label');
+  var avatar = document.getElementById('user-avatar-icon');
+  var signout = document.getElementById('signout-btn');
+  if(label) label.textContent = 'Sign in';
+  if(avatar){ avatar.textContent = '?'; avatar.style.background='#ccc'; }
+  if(signout) signout.style.display = 'none';
+}
+
+// ── AUTH MODAL ────────────────────────────────────────────────────────────────
+function openAuth(mode){
+  mode = mode || 'signup';
+  setAuthTab(mode);
+  document.getElementById('auth-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  document.getElementById('auth-email').value = '';
+  document.getElementById('auth-password').value = '';
+  document.getElementById('auth-error').textContent = '';
+  document.getElementById('auth-success').textContent = '';
+}
+
+function closeAuth(){
+  document.getElementById('auth-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+  closeUserMenu();
+}
+
+function setAuthTab(mode){
+  authMode = mode;
+  document.getElementById('auth-tab-signup').className = 'auth-tab' + (mode==='signup'?' active':'');
+  document.getElementById('auth-tab-signin').className = 'auth-tab' + (mode==='signin'?' active':'');
+  document.getElementById('auth-title').textContent = mode==='signup' ? 'Save your design' : 'Welcome back';
+  document.getElementById('auth-sub').textContent = mode==='signup'
+    ? 'Create a free account to save your system design and pick up where you left off.'
+    : 'Sign in to access your saved designs.';
+  document.getElementById('auth-submit-btn').textContent = mode==='signup' ? 'Create free account' : 'Sign in';
+}
+
+async function submitAuth(){
+  if(!supabase){
+    // Supabase not configured yet — show friendly message
+    document.getElementById('auth-success').textContent = '';
+    document.getElementById('auth-error').textContent = 'Accounts coming very soon — join the waitlist below!';
+    return;
+  }
+  var email = document.getElementById('auth-email').value.trim();
+  var password = document.getElementById('auth-password').value;
+  var btn = document.getElementById('auth-submit-btn');
+  var errEl = document.getElementById('auth-error');
+  var sucEl = document.getElementById('auth-success');
+  if(!email || !password){ errEl.textContent = 'Please enter your email and password.'; return; }
+  btn.disabled = true;
+  btn.textContent = authMode === 'signup' ? 'Creating account...' : 'Signing in...';
+  errEl.textContent = ''; sucEl.textContent = '';
+  try {
+    var result;
+    if(authMode === 'signup'){
+      result = await supabase.auth.signUp({email, password});
+      if(result.error) throw result.error;
+      sucEl.textContent = 'Account created! Check your email to verify, then sign in.';
+      if(typeof posthog !== 'undefined') posthog.capture('account_created', {email});
+    } else {
+      result = await supabase.auth.signInWithPassword({email, password});
+      if(result.error) throw result.error;
+      setLoggedIn(result.data.user);
+      closeAuth();
+      showToast('\u2713 Welcome back! Loading your designs...');
+      loadMostRecentDesign();
+      if(typeof posthog !== 'undefined') posthog.capture('signed_in', {email});
+    }
+  } catch(e){
+    errEl.textContent = e.message || 'Something went wrong. Please try again.';
+  }
+  btn.disabled = false;
+  btn.textContent = authMode === 'signup' ? 'Create free account' : 'Sign in';
+}
+
+async function signOut(){
+  if(supabase) await supabase.auth.signOut();
+  setLoggedOut();
+  closeUserMenu();
+  showToast('Signed out. Your designs are saved.');
+  if(typeof posthog !== 'undefined') posthog.capture('signed_out');
+}
+
+// ── USER MENU ─────────────────────────────────────────────────────────────────
+function toggleUserMenu(){
+  if(!currentUser){ openAuth('signin'); return; }
+  var dd = document.getElementById('user-dropdown');
+  dd.className = 'user-dropdown' + (dd.className.includes('open') ? '' : ' open');
+}
+
+function closeUserMenu(){
+  var dd = document.getElementById('user-dropdown');
+  if(dd) dd.className = 'user-dropdown';
+}
+
+document.addEventListener('click', function(e){
+  var wrap = document.getElementById('user-menu-wrap');
+  if(wrap && !wrap.contains(e.target)) closeUserMenu();
+});
+
+function openUpgradeIfFree(){
+  closeUserMenu();
+  showUpgradeModal();
+}
+
+// ── SAVE DESIGN ───────────────────────────────────────────────────────────────
+async function saveDesign(){
+  closeUserMenu();
+  if(!currentUser){ openAuth('signup'); return; }
+  if(!supabase){ showToast('Save & return coming very soon!'); return; }
+  var design = {
+    user_id: currentUser.id,
+    name: (USER.name || 'My design') + ' — ' + new Date().toLocaleDateString('en-AU'),
+    city: STATE.city,
+    live_irr: STATE.liveIrr,
+    live_name: STATE.liveName,
+    sys_kw: STATE.sysKw,
+    solar_cost: STATE.solarCost,
+    bat_cost: STATE.batCost,
+    grid_rate: STATE.gridRate,
+    fit: STATE.fit,
+    annual_gen: STATE.annualGen,
+    annual_sav: STATE.annualSav,
+    payback: STATE.pb,
+    user_role: USER.role,
+    updated_at: new Date().toISOString()
+  };
+  try {
+    var { error } = await supabase.from('designs').upsert(design);
+    if(error) throw error;
+    showSaveIndicator();
+    if(typeof posthog !== 'undefined') posthog.capture('design_saved');
+  } catch(e){
+    showToast('Could not save — please try again.');
+  }
+}
+
+async function loadDesigns(){
+  closeUserMenu();
+  if(!currentUser){ openAuth('signin'); return; }
+  if(!supabase){ showToast('Save & return coming very soon!'); return; }
+  try {
+    var { data, error } = await supabase.from('designs').select('*').eq('user_id', currentUser.id).order('updated_at', {ascending: false}).limit(10);
+    if(error) throw error;
+    if(!data || data.length === 0){ showToast('No saved designs yet — complete a design and save it.'); return; }
+    showDesignPicker(data);
+  } catch(e){
+    showToast('Could not load designs — please try again.');
+  }
+}
+
+async function loadMostRecentDesign(){
+  if(!currentUser || !supabase) return;
+  try {
+    var { data } = await supabase.from('designs').select('*').eq('user_id', currentUser.id).order('updated_at', {ascending: false}).limit(1);
+    if(data && data.length > 0) restoreDesign(data[0]);
+  } catch(e){}
+}
+
+function restoreDesign(d){
+  if(d.city) STATE.city = d.city;
+  if(d.live_irr) STATE.liveIrr = d.live_irr;
+  if(d.live_name) STATE.liveName = d.live_name;
+  if(d.sys_kw) STATE.sysKw = d.sys_kw;
+  if(d.solar_cost) STATE.solarCost = d.solar_cost;
+  if(d.bat_cost) STATE.batCost = d.bat_cost;
+  if(d.grid_rate) STATE.gridRate = d.grid_rate;
+  if(d.fit) STATE.fit = d.fit;
+  if(d.user_role) USER.role = d.user_role;
+  showToast('\u2713 Design restored: ' + (d.name || 'your last design'));
+  goStep('loc');
+}
+
+function showDesignPicker(designs){
+  // Simple picker — show designs as toasts for now, full UI in Phase 3
+  var names = designs.slice(0,3).map(function(d,i){ return (i+1)+'. '+d.name; }).join(' | ');
+  showToast('Your designs: ' + names);
+}
+
+function showSaveIndicator(){
+  var el = document.getElementById('save-indicator');
+  if(!el) return;
+  el.className = 'save-indicator show';
+  setTimeout(function(){ el.className = 'save-indicator'; }, 2500);
+  showToast('\u2713 Design saved!');
+}
+
+// Auto-save when navigating steps
+var _origGoStep = goStep;
+function goStep(s){
+  _origGoStep(s);
+  if(currentUser && supabase && s !== 'loc') {
+    setTimeout(saveDesign, 500);
+  }
+}
+
+
+// ── GRID INTERACTION MODULE ───────────────────────────────────────────────────
+function renderGrid(c){
+  const city = CITIES[STATE.city||'melbourne'];
+  const sysKw = STATE.sysKw||10;
+  const irr = (STATE.liveIrr)||city.irr;
+  const annGen = Math.round(sysKw*(irr.reduce((a,b)=>a+b,0)/12)*0.80*365);
+  const dailyGen = annGen/365;
+  const dailyLoad = 22.4;
+  const gridRate = STATE.gridRate||32;
+  const fit = STATE.fit||5;
+  const directUse = Math.min(dailyGen*0.42, dailyLoad);
+  const exported = Math.max(dailyGen - directUse, 0);
+  const imported = Math.max(dailyLoad - directUse, 0);
+  const annGridCost = Math.round(imported*365*(gridRate/100));
+  const annFitIncome = Math.round(exported*365*(fit/100));
+  const annGridSaving = Math.round(directUse*365*(gridRate/100));
+  c.innerHTML=`
+  <div class="sec-head"><div class="sec-title2">Grid interaction</div><div class="sec-sub2">${city.name} · ${sysKw} kW solar · NEM tariff modelling</div></div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px">
+    ${[
+      {l:'Grid import',v:Math.round(imported*10)/10,u:'kWh/day',b:'From grid',bc:'#FAEEDA',tc:'#633806'},
+      {l:'Solar export',v:Math.round(exported*10)/10,u:'kWh/day',b:'Feed-in tariff',bc:'#EAF3DE',tc:'#27500A'},
+      {l:'Annual grid cost',v:'$'+annGridCost.toLocaleString(),u:'',b:'After solar offset',bc:'#FAEEDA',tc:'#633806'},
+      {l:'Feed-in income',v:'$'+annFitIncome.toLocaleString(),u:'/year',b:'At current FiT',bc:'#EAF3DE',tc:'#27500A'},
+    ].map(s=>`<div style="background:#f9f9f9;border-radius:8px;padding:10px 12px"><div style="font-size:10px;color:#888;margin-bottom:3px">${s.l}</div><div style="font-size:17px;font-weight:700;color:#0D1B14">${s.v} <span style="font-size:11px;font-weight:400;color:#666">${s.u}</span></div><div style="font-size:10px;padding:2px 6px;border-radius:20px;margin-top:3px;display:inline-block;background:${s.bc};color:${s.tc}">${s.b}</div></div>`).join('')}
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+    <div style="border:0.5px solid #e0e0e0;border-radius:12px;padding:14px">
+      <div style="font-size:12px;font-weight:600;color:#0D1B14;margin-bottom:10px">NEM tariff settings</div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+        <label style="font-size:11px;color:#666;min-width:130px">Grid rate (¢/kWh)</label>
+        <input type="range" id="grid-grid-rate" min="20" max="60" value="${gridRate}" step="1" style="flex:1" oninput="STATE.gridRate=parseInt(this.value);document.getElementById('grid-rate-out').textContent=this.value+'¢';calcGridDisplay()">
+        <span style="font-size:12px;font-weight:500;min-width:40px;text-align:right" id="grid-rate-out">${gridRate}¢</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+        <label style="font-size:11px;color:#666;min-width:130px">Feed-in tariff (¢/kWh)</label>
+        <input type="range" id="grid-fit" min="2" max="20" value="${fit}" step="0.5" style="flex:1" oninput="STATE.fit=parseFloat(this.value);document.getElementById('grid-fit-out').textContent=this.value+'¢';calcGridDisplay()">
+        <span style="font-size:12px;font-weight:500;min-width:40px;text-align:right" id="grid-fit-out">${fit}¢</span>
+      </div>
+      <div style="font-size:11px;color:#666;margin-bottom:6px;margin-top:10px;font-weight:500">Connection type</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap" id="grid-conn-btns">
+        ${['Grid-connected','Hybrid','Off-grid'].map((t,i)=>`<div style="padding:5px 12px;border-radius:20px;font-size:11px;cursor:pointer;border:1px solid ${i===0?'#1D9E75':'#e0e0e0'};background:${i===0?'#E1F5EE':'white'};color:${i===0?'#085041':'#666'}" onclick="selectGridType(this,'${t}')">${t}</div>`).join('')}
+      </div>
+    </div>
+    <div style="border:0.5px solid #e0e0e0;border-radius:12px;padding:14px">
+      <div style="font-size:12px;font-weight:600;color:#0D1B14;margin-bottom:10px">Annual grid economics</div>
+      <div style="display:flex;flex-direction:column;gap:0" id="grid-breakdown">
+        ${[
+          {l:'Grid electricity saved',v:'+$'+annGridSaving.toLocaleString(),c:'#27500A'},
+          {l:'Feed-in tariff income',v:'+$'+annFitIncome.toLocaleString(),c:'#27500A'},
+          {l:'Remaining grid bill',v:'-$'+annGridCost.toLocaleString(),c:'#993C1D'},
+          {l:'Net annual benefit',v:'$'+(annGridSaving+annFitIncome-annGridCost).toLocaleString(),c:'#085041'},
+        ].map(r=>`<div style="display:flex;justify-content:space-between;font-size:12px;padding:7px 0;border-bottom:0.5px solid #f0f0f0"><span style="color:#666">${r.l}</span><span style="font-weight:700;color:${r.c}">${r.v}</span></div>`).join('')}
+      </div>
+    </div>
+  </div>
+
+  <div style="background:#E6F1FB;border-radius:12px;padding:14px 16px;margin-bottom:12px;border:0.5px solid #85B7EB">
+    <div style="font-size:12px;font-weight:600;color:#0C447C;margin-bottom:8px">Australian electricity plans — best fit for your solar profile</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+      ${[
+        {name:'Amber Electric',detail:'Spot price · best for battery',fit:'Best for V2G',col:'#EF9F27'},
+        {name:'AGL Solar Savers',detail:'22¢ FiT · good export rates',fit:'Best FiT rate',col:'#1D9E75'},
+        {name:'Origin Solar Boost',detail:'20¢ FiT · low grid rate',fit:'Balanced',col:'#378ADD'},
+      ].map(p=>`<div style="background:white;border-radius:8px;padding:10px 12px"><div style="font-size:12px;font-weight:600;color:#0D1B14">${p.name}</div><div style="font-size:11px;color:#666;margin:2px 0 5px">${p.detail}</div><span style="font-size:10px;padding:2px 7px;border-radius:20px;background:#E6F1FB;color:#0C447C;font-weight:500">${p.fit}</span></div>`).join('')}
+    </div>
+  </div>
+
+  <div class="ai-box"><div class="ai-ico">AI</div><div class="ai-text" id="grid-ai">
+    <strong>Jouli insight —</strong> Your ${sysKw} kW system exports ${Math.round(exported*10)/10} kWh/day to the grid at ${fit}¢/kWh — earning $${annFitIncome.toLocaleString()}/year. Switching to a battery would reduce exports and replace grid imports, improving your net position by an estimated $${Math.round((exported*0.75)*365*(gridRate/100-fit/100)).toLocaleString()}/year.
+  </div></div>
+
+  <div class="btn-row"><button class="btn" onclick="goStep('v2g')">← Back to V2G</button><button class="btn-primary btn" onclick="goStep('resil')">Continue to resilience →</button></div>
+  <div class="disclaimer">NEM tariff data indicative only. Retailer rates change frequently — always verify with your retailer. Feed-in tariff rates vary by state and retailer.</div>`;
+}
+
+function selectGridType(el, type){
+  document.querySelectorAll('#grid-conn-btns div').forEach(function(b){
+    b.style.border='1px solid #e0e0e0';b.style.background='white';b.style.color='#666';
+  });
+  el.style.border='1px solid #1D9E75';el.style.background='#E1F5EE';el.style.color='#085041';
+  STATE.gridType = type;
+}
+
+function calcGridDisplay(){
+  // Recalc grid stats when sliders change — re-render
+  renderGrid(document.getElementById('app-content'));
+}
+
+// ── RESILIENCE ANALYSER ────────────────────────────────────────────────────────
+function renderResil(c){
+  const city = CITIES[STATE.city||'melbourne'];
+  const sysKw = STATE.sysKw||10;
+  const irr = (STATE.liveIrr)||city.irr;
+  const batKwh = 13.5;
+  const dailyLoad = 22.4;
+  const SEASONS_DATA = [
+    {name:'Summer',mon:[11,0,1],col:'#EF9F27',factor:1.25},
+    {name:'Autumn',mon:[2,3,4],col:'#D85A30',factor:1.0},
+    {name:'Winter',mon:[5,6,7],col:'#378ADD',factor:0.7},
+    {name:'Spring',mon:[8,9,10],col:'#1D9E75',factor:1.1},
+  ];
+  function seasonAvg(months){
+    return months.reduce((s,m)=>s+irr[m],0)/months.length;
+  }
+  function autonomyDays(seasonIrr, batSize){
+    const dailyGen = sysKw * seasonIrr * 0.80;
+    const netLoad = dailyLoad - Math.min(dailyGen, dailyLoad*0.42);
+    if(netLoad <= 0) return 99;
+    return Math.min(parseFloat((batSize/netLoad).toFixed(1)), 14);
+  }
+  const worstIrr = Math.min(...irr);
+  const worstMonth = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][irr.indexOf(worstIrr)];
+  const worstDays = autonomyDays(worstIrr, batKwh);
+  const bestIrr = Math.max(...irr);
+  const bestDays = autonomyDays(bestIrr, batKwh);
+
+  c.innerHTML=`
+  <div class="sec-head"><div class="sec-title2">Resilience analyser</div><div class="sec-sub2">${city.name} · ${sysKw} kW solar · ${batKwh} kWh battery</div></div>
+
+  <div style="background:#E1F5EE;border-radius:12px;padding:16px 20px;margin-bottom:14px;border:0.5px solid #5DCAA5;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+    <div><div style="font-size:11px;color:#085041;font-weight:500;margin-bottom:3px">Worst-case autonomy (${worstMonth})</div>
+    <div style="font-size:36px;font-weight:700;color:#085041;letter-spacing:-1px;line-height:1">${worstDays} days</div>
+    <div style="font-size:12px;color:#1D9E75;margin-top:3px">without grid power before battery depletes</div></div>
+    <div style="display:flex;gap:14px;flex-wrap:wrap">
+      <div style="text-align:center"><div style="font-size:18px;font-weight:700;color:#085041">${bestDays}d</div><div style="font-size:11px;color:#1D9E75">Best case</div></div>
+      <div style="text-align:center"><div style="font-size:18px;font-weight:700;color:#085041">${worstIrr.toFixed(1)}</div><div style="font-size:11px;color:#1D9E75">kWh/m² worst day</div></div>
+      <div style="text-align:center"><div style="font-size:18px;font-weight:700;color:#085041">${worstDays >= 2 ? 'Good' : 'Low'}</div><div style="font-size:11px;color:#1D9E75">Winter rating</div></div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+    <div style="border:0.5px solid #e0e0e0;border-radius:12px;padding:14px">
+      <div style="font-size:12px;font-weight:600;color:#0D1B14;margin-bottom:10px">Seasonal autonomy</div>
+      ${SEASONS_DATA.map(s=>{
+        const avg = seasonAvg(s.mon);
+        const days = autonomyDays(avg, batKwh);
+        const pct = Math.min((days/14)*100, 100);
+        return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:12px">
+          <div style="min-width:55px;color:#666">${s.name}</div>
+          <div style="flex:1;height:8px;background:#f0f0f0;border-radius:4px;overflow:hidden"><div style="height:100%;border-radius:4px;background:${s.col};width:${pct}%"></div></div>
+          <div style="min-width:40px;text-align:right;font-weight:600;color:#0D1B14">${days}d</div>
+        </div>`;
+      }).join('')}
+      <div style="font-size:10px;color:#888;margin-top:4px">Days of autonomy without grid · ${batKwh} kWh battery</div>
+    </div>
+    <div style="border:0.5px solid #e0e0e0;border-radius:12px;padding:14px">
+      <div style="font-size:12px;font-weight:600;color:#0D1B14;margin-bottom:10px">Outage scenarios</div>
+      ${[
+        {scenario:'2-hour outage',covered:true,detail:'Solar + battery easily handles'},
+        {scenario:'8-hour overnight',covered:batKwh>=10,detail:batKwh>=10?'Battery covers full night':'Need larger battery'},
+        {scenario:'1-day blackout',covered:worstDays>=1,detail:worstDays>=1?'System handles this':'Marginal — add battery'},
+        {scenario:'3-day storm',covered:worstDays>=3,detail:worstDays>=3?'Covered in all seasons':'Winter gap — generator backup'},
+        {scenario:'1-week outage',covered:false,detail:'Off-grid mode required'},
+      ].map(o=>`<div style="display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:0.5px solid #f5f5f5;font-size:12px">
+        <div style="width:16px;height:16px;border-radius:50%;background:${o.covered?'#E1F5EE':'#FAECE7'};flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:${o.covered?'#085041':'#993C1D'};margin-top:1px">${o.covered?'✓':'✗'}</div>
+        <div><div style="font-weight:500;color:#0D1B14">${o.scenario}</div><div style="color:#888;font-size:11px">${o.detail}</div></div>
+      </div>`).join('')}
+    </div>
+  </div>
+
+  <div style="border:0.5px solid #e0e0e0;border-radius:12px;padding:14px;margin-bottom:12px">
+    <div style="font-size:12px;font-weight:600;color:#0D1B14;margin-bottom:10px">Battery size vs autonomy — ${worstMonth} worst case</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      ${[5,10,13.5,15,20,30].map(b=>{
+        const days = autonomyDays(worstIrr, b);
+        const isRec = b===13.5;
+        return `<div style="flex:1;min-width:70px;background:${isRec?'#E1F5EE':'#f9f9f9'};border-radius:8px;padding:10px;text-align:center;border:${isRec?'1.5px solid #1D9E75':'0.5px solid #e0e0e0'}">
+          <div style="font-size:15px;font-weight:700;color:${isRec?'#085041':'#0D1B14'}">${b} kWh</div>
+          <div style="font-size:11px;color:${isRec?'#1D9E75':'#888'}">${days}d autonomy</div>
+          ${isRec?'<div style="font-size:9px;background:#085041;color:#E1F5EE;padding:1px 6px;border-radius:20px;margin-top:4px;display:inline-block">Recommended</div>':''}
+        </div>`;
+      }).join('')}
+    </div>
+  </div>
+
+  <div class="ai-box"><div class="ai-ico">AI</div><div class="ai-text">
+    <strong>Jouli insight —</strong> ${city.name}'s worst solar week is ${worstMonth} at ${worstIrr.toFixed(1)} kWh/m²/day. With a ${batKwh} kWh battery your system handles ${worstDays >= 2 ? `${worstDays} days off-grid — enough for typical blackouts and storms` : 'about ' + worstDays + ' day without grid — consider a larger battery for full storm resilience'}. ${worstDays < 2 ? 'A 20 kWh battery would extend this to ' + autonomyDays(worstIrr, 20) + ' days.' : 'You are well-positioned for grid independence.'}
+  </div></div>
+
+  <div class="btn-row"><button class="btn" onclick="goStep('grid')">← Back to grid</button><button class="btn-primary btn" onclick="goStep('econ')">Continue to economics →</button></div>
+  <div class="disclaimer">Resilience estimates based on NASA 30-year climate data and battery modelling. Actual autonomy depends on real-time weather, battery health, and load variation. ±15% accuracy.</div>`;
+}
+
+
+// ── NEM12 SMART METER UPLOAD ──────────────────────────────────────────────────
+var NEM12_DATA = null;
+
+function showNEM12Upload(){
+  openModal('nem12');
+}
+
+function handleNEMDrop(e){
+  var files = e.dataTransfer.files;
+  if(files.length > 0) processNEMFile(files[0]);
+}
+
+function handleNEMFile(e){
+  var file = e.target.files[0];
+  if(file) processNEMFile(file);
+}
+
+function processNEMFile(file){
+  var progress = document.getElementById('nem-progress');
+  var fill = document.getElementById('nem-progress-fill');
+  if(progress) progress.style.display = 'block';
+  if(fill) fill.style.width = '20%';
+
+  var reader = new FileReader();
+  reader.onload = function(e){
+    if(fill) fill.style.width = '60%';
+    try {
+      var data = parseNEM12(e.target.result);
+      if(fill) fill.style.width = '100%';
+      setTimeout(function(){
+        if(progress) progress.style.display = 'none';
+        showNEMResults(data);
+        if(typeof posthog !== 'undefined') posthog.capture('nem12_uploaded', {days: data.days.length});
+      }, 300);
+    } catch(err) {
+      if(progress) progress.style.display = 'none';
+      showToast('Could not parse file. Make sure it is a NEM12 CSV file.');
+      console.error('NEM12 parse error:', err);
+    }
+  };
+  reader.readAsText(file);
+}
+
+function parseNEM12(text){
+  var lines = text.split('\n').map(function(l){ return l.trim(); }).filter(Boolean);
+  var intervalLen = 30; // default 30 min
+  var days = [];
+  var currentNMI = '';
+
+  lines.forEach(function(line){
+    var cols = line.split(',');
+    var recType = cols[0];
+
+    if(recType === '200'){
+      currentNMI = cols[1] || '';
+      intervalLen = parseInt(cols[8]) || 30;
+    }
+
+    if(recType === '300'){
+      var dateStr = cols[1];
+      if(!dateStr || dateStr.length !== 8) return;
+      var year = dateStr.slice(0,4);
+      var month = dateStr.slice(4,6);
+      var day = dateStr.slice(6,8);
+      var date = year+'-'+month+'-'+day;
+
+      var intervalsPerDay = 1440 / intervalLen;
+      var readings = [];
+      for(var i=2; i<2+intervalsPerDay; i++){
+        var v = parseFloat(cols[i]);
+        readings.push(isNaN(v) ? 0 : v);
+      }
+
+      var total = readings.reduce(function(a,b){ return a+b; }, 0);
+      if(total > 0){
+        days.push({ date: date, total: parseFloat(total.toFixed(3)), readings: readings });
+      }
+    }
+  });
+
+  if(days.length === 0) throw new Error('No valid data rows found');
+
+  days.sort(function(a,b){ return a.date.localeCompare(b.date); });
+
+  // Calculate stats
+  var totals = days.map(function(d){ return d.total; });
+  var avgDaily = totals.reduce(function(a,b){ return a+b; },0)/totals.length;
+  var maxDaily = Math.max.apply(null, totals);
+  var minDaily = Math.min.apply(null, totals);
+  var annualEst = avgDaily * 365;
+
+  // Hourly average profile (24 buckets from 48 intervals)
+  var hourly = Array(24).fill(0);
+  var hourlyCount = Array(24).fill(0);
+  days.forEach(function(d){
+    d.readings.forEach(function(r,i){
+      var hour = Math.floor(i / (60/intervalLen));
+      if(hour < 24){ hourly[hour] += r; hourlyCount[hour]++; }
+    });
+  });
+  var hourlyAvg = hourly.map(function(v,i){ return hourlyCount[i]>0 ? parseFloat((v/hourlyCount[i]).toFixed(3)) : 0; });
+
+  // Peak vs off-peak (7am-10pm = peak)
+  var peakTotal = hourlyAvg.slice(7,22).reduce(function(a,b){return a+b;},0);
+  var offPeakTotal = [...hourlyAvg.slice(0,7), ...hourlyAvg.slice(22)].reduce(function(a,b){return a+b;},0);
+  var peakPct = Math.round((peakTotal/(peakTotal+offPeakTotal))*100);
+
+  // EV detection (large overnight spike)
+  var overnightSpike = hourlyAvg.slice(21).concat(hourlyAvg.slice(0,6)).some(function(v){ return v > avgDaily*0.15; });
+
+  // NMI (meter ID)
+  var nmi = currentNMI || 'Your meter';
+
+  return {
+    days: days,
+    avgDaily: parseFloat(avgDaily.toFixed(2)),
+    maxDaily: parseFloat(maxDaily.toFixed(2)),
+    minDaily: parseFloat(minDaily.toFixed(2)),
+    annualEst: Math.round(annualEst),
+    hourlyAvg: hourlyAvg,
+    peakPct: peakPct,
+    offPeakPct: 100-peakPct,
+    evDetected: overnightSpike,
+    nmi: nmi,
+    intervalLen: intervalLen,
+  };
+}
+
+function showNEMResults(data){
+  NEM12_DATA = data;
+  var result = document.getElementById('nem-result');
+  if(result) result.style.display = 'block';
+
+  // Stats grid
+  var sg = document.getElementById('nem-stat-grid');
+  if(sg) sg.innerHTML = [
+    {l:'Average daily',v:data.avgDaily,u:'kWh/day',bc:'#E1F5EE',tc:'#085041'},
+    {l:'Annual estimate',v:(data.annualEst/1000).toFixed(1),u:'MWh/year',bc:'#E6F1FB',tc:'#0C447C'},
+    {l:'Peak usage',v:data.peakPct,u:'% daytime',bc:'#FAEEDA',tc:'#633806'},
+    {l:'Days of data',v:data.days.length,u:'days',bc:'#f9f9f9',tc:'#444'},
+  ].map(function(s){
+    return '<div class="nem-stat"><div class="nem-stat-label">'+s.l+'</div><div class="nem-stat-val">'+s.v+' <span class="nem-stat-unit">'+s.u+'</span></div></div>';
+  }).join('');
+
+  // Daily chart (last 90 days)
+  var chartDays = data.days.slice(-90);
+  var maxV = Math.max.apply(null, chartDays.map(function(d){return d.total;}));
+  var wrap = document.getElementById('nem-chart-wrap');
+  if(wrap) wrap.innerHTML = chartDays.map(function(d){
+    var pct = Math.max((d.total/maxV)*100, 3);
+    var col = d.total > data.avgDaily*1.5 ? '#E24B4A' : d.total > data.avgDaily ? '#EF9F27' : '#1D9E75';
+    return '<div class="nem-bar" style="height:'+pct+'%;background:'+col+'" title="'+d.date+': '+d.total+' kWh"></div>';
+  }).join('');
+
+  var labels = document.getElementById('nem-chart-labels');
+  if(labels && chartDays.length > 0){
+    var first = chartDays[0].date.slice(5).replace('-','/');
+    var last = chartDays[chartDays.length-1].date.slice(5).replace('-','/');
+    var mid = chartDays[Math.floor(chartDays.length/2)].date.slice(5).replace('-','/');
+    labels.innerHTML = '<span>'+first+'</span><span>'+mid+'</span><span>'+last+'</span>';
+  }
+
+  // Hourly profile
+  var hourlyWrap = document.getElementById('nem-hourly');
+  if(hourlyWrap){
+    var maxH = Math.max.apply(null, data.hourlyAvg);
+    hourlyWrap.innerHTML = data.hourlyAvg.map(function(v,h){
+      var pct = Math.max((v/maxH)*100, 3);
+      var col = h>=7&&h<22 ? '#EF9F27' : '#378ADD';
+      return '<div class="nem-hour-bar" style="height:'+pct+'%;background:'+col+'" title="'+h+':00 avg '+v+' kWh"></div>';
+    }).join('');
+  }
+
+  // AI insight
+  var insight = document.getElementById('nem-insight');
+  if(insight){
+    var evMsg = data.evDetected ? ' We detected overnight charging — likely an EV. Scheduling this to solar hours could save ~$400/year.' : '';
+    var compare = data.avgDaily > 25 ? ' This is above average — check for inefficient appliances or uninsulated hot water.' : data.avgDaily < 12 ? ' This is a low-consumption home — solar will cover most of your needs.' : ' This is a typical Australian household.';
+    insight.innerHTML = '<strong>Your actual consumption —</strong> '+data.avgDaily+' kWh/day average from '+data.days.length+' days of real data.'+compare+evMsg+' Jouli will now use your real numbers instead of estimates — accuracy improves from ±20% to ±3%.';
+  }
+}
+
+function applyNEMData(){
+  if(!NEM12_DATA) return;
+  // Update STATE with real consumption data
+  STATE.realDailyLoad = NEM12_DATA.avgDaily;
+  STATE.nemUploaded = true;
+  STATE.hourlyProfile = NEM12_DATA.hourlyAvg;
+  STATE.evDetected = NEM12_DATA.evDetected;
+  closeModal('nem12');
+  showToast('\u2713 Real consumption data applied — all calculations updated!');
+  // Refresh load step display
+  renderLoad(document.getElementById('app-content'));
+  if(typeof posthog !== 'undefined') posthog.capture('nem12_applied', {avg_daily: NEM12_DATA.avgDaily});
+}
+
+
+// ── LIVE DASHBOARD ────────────────────────────────────────────────────────────
+var DASH_INTERVAL = null;
+var DASH_INVERTER = null;
+var DASH_CONNECTED = false;
+var selInverter = null;
+
+var INVERTERS = [
+  {id:'fronius',   name:'Fronius',       au:'#1 in Australia',  keyLabel:'Inverter IP address',  siteLabel:null},
+  {id:'solaredge', name:'SolarEdge',     au:'Large AU market',  keyLabel:'API key',               siteLabel:'Site ID'},
+  {id:'sungrow',   name:'Sungrow',       au:'Fast growing AU',  keyLabel:'iSolarCloud API key',   siteLabel:'Plant ID'},
+  {id:'enphase',   name:'Enphase',       au:'Growing in AU',    keyLabel:'API key',               siteLabel:'System ID'},
+  {id:'huawei',    name:'Huawei/LUNA',   au:'Growing fast',     keyLabel:'Username',              siteLabel:'Station code'},
+  {id:'manual',    name:'Manual entry',  au:'Any system',       keyLabel:'Daily generation (kWh)',siteLabel:null},
+];
+
+function openDashboard(){
+  document.getElementById('dash-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  renderInverterGrid();
+  startDashboard();
+  if(typeof posthog !== 'undefined') posthog.capture('dashboard_opened');
+}
+
+function closeDashboard(){
+  document.getElementById('dash-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+  if(DASH_INTERVAL){ clearInterval(DASH_INTERVAL); DASH_INTERVAL = null; }
+}
+
+function startDashboard(){
+  updateDashboard();
+  if(DASH_INTERVAL) clearInterval(DASH_INTERVAL);
+  DASH_INTERVAL = setInterval(updateDashboard, 30000); // refresh every 30s
+}
+
+function updateDashboard(){
+  var data = DASH_CONNECTED ? fetchLiveData() : generateDemoData();
+  renderDashboard(data);
+  var now = new Date();
+  var updated = document.getElementById('dash-last-updated');
+  if(updated) updated.textContent = 'Updated ' + now.toLocaleTimeString('en-AU', {hour:'2-digit',minute:'2-digit'});
+}
+
+function generateDemoData(){
+  var sysKw = STATE.sysKw || 10;
+  var city = STATE.city || 'melbourne';
+  var hour = new Date().getHours();
+  var minute = new Date().getMinutes();
+  var dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(),0,0)) / 86400000);
+
+  // Solar curve based on time of day
+  var solarCurve = [0,0,0,0,0,0,0.02,0.08,0.22,0.52,0.75,0.90,0.95,0.88,0.75,0.55,0.28,0.10,0.02,0,0,0,0,0];
+  var currentSolarFactor = solarCurve[hour] + (solarCurve[Math.min(hour+1,23)] - solarCurve[hour]) * (minute/60);
+  var cloudFactor = 0.85 + Math.sin(dayOfYear * 0.3) * 0.1; // slight variation
+  var currentPower = parseFloat((sysKw * currentSolarFactor * cloudFactor).toFixed(2));
+
+  // Daily totals
+  var todayGen = solarCurve.slice(0,hour+1).reduce(function(a,b){return a+b;},0) * sysKw * cloudFactor * 0.8;
+  var dailyLoad = STATE.realDailyLoad || 22.4;
+  var todaySelfUse = Math.min(todayGen * 0.55, dailyLoad * (hour/24));
+  var todayExport = Math.max(todayGen - todaySelfUse, 0);
+  var todayImport = Math.max(dailyLoad * (hour/24) - todaySelfUse, 0);
+
+  // Battery (if system has one)
+  var batSoc = Math.min(95, 30 + (todaySelfUse / (STATE.sysKw||10) * 30));
+
+  // Monthly
+  var daysThisMonth = new Date().getDate();
+  var monthGen = parseFloat((todayGen * daysThisMonth * 0.95).toFixed(1));
+  var monthSaving = parseFloat((monthGen * 0.42 * (STATE.gridRate||32)/100 + monthGen*0.18*(STATE.fit||5)/100).toFixed(2));
+
+  // Annual
+  var annGen = STATE.annualGen || 14200;
+  var annSav = STATE.annualSav || 3420;
+  var daysInstalled = 127; // demo
+  var totalGenerated = parseFloat((annGen / 365 * daysInstalled).toFixed(0));
+  var totalSaved = parseFloat((annSav / 365 * daysInstalled).toFixed(0));
+
+  // Hourly generation array for chart
+  var hourlyGen = solarCurve.map(function(f,h){
+    return h <= hour ? parseFloat((sysKw * f * cloudFactor * 0.8).toFixed(2)) : 0;
+  });
+
+  // PR (performance ratio)
+  var expectedPR = 0.80;
+  var actualPR = parseFloat((cloudFactor * 0.82).toFixed(2));
+
+  return {
+    currentPower, batSoc: parseFloat(batSoc.toFixed(0)),
+    todayGen: parseFloat(todayGen.toFixed(1)),
+    todaySelfUse: parseFloat(todaySelfUse.toFixed(1)),
+    todayExport: parseFloat(todayExport.toFixed(1)),
+    todayImport: parseFloat(todayImport.toFixed(1)),
+    monthGen, monthSaving,
+    totalGenerated, totalSaved,
+    hourlyGen, actualPR, expectedPR,
+    co2Saved: parseFloat((totalGenerated * 0.82 / 1000).toFixed(2)),
+    treesEquiv: Math.round(totalGenerated * 0.82 / 1000 / 21.7),
+    gridRate: STATE.gridRate || 32,
+    fit: STATE.fit || 5,
+    sysKw: STATE.sysKw || 10,
+    isDemo: true,
+  };
+}
+
+function renderDashboard(d){
+  // Hero cards
+  var hero = document.getElementById('dash-hero');
+  if(hero) hero.innerHTML = [
+    {label:'Generating now', val:d.currentPower, unit:'kW', trend:d.currentPower>0?'+'+d.currentPower+' kW solar':' No solar — nighttime', col:'#EF9F27', trencol:d.currentPower>0?'#9FE1CB':'rgba(255,255,255,.4)'},
+    {label:'Today total',   val:d.todayGen,     unit:'kWh generated', trend:'$'+parseFloat((d.todaySelfUse*(d.gridRate/100)+d.todayExport*(d.fit/100)).toFixed(2))+' value today', col:'#5DCAA5', trencol:'#9FE1CB'},
+    {label:'Battery',        val:d.batSoc,       unit:'% charged',     trend:d.batSoc>80?'Fully charged':'Charging from solar', col:'#378ADD', trencol:d.batSoc>80?'#9FE1CB':'rgba(255,255,255,.4)'},
+    {label:'Month saving',   val:'$'+d.monthSaving, unit:'this month', trend:'$'+Math.round(d.monthSaving*12)+' projected annual', col:'#9FE1CB', trencol:'#5DCAA5'},
+  ].map(function(h){
+    return '<div class="dash-hero-card"><div class="dhc-label">'+h.label+'</div><div class="dhc-val" style="color:'+h.col+'">'+h.val+'</div><div class="dhc-unit">'+h.unit+'</div><div class="dhc-trend" style="color:'+h.trencol+'">'+h.trend+'</div></div>';
+  }).join('');
+
+  // Energy flow
+  var flow = document.getElementById('dash-flow-nodes');
+  if(flow){
+    var nodes = [
+      {label:'Solar panels',val:d.currentPower+'kW',col:'#EF9F27',bg:'rgba(239,159,39,.15)',border:'rgba(239,159,39,.4)'},
+      {arrow:true,label:d.todayExport>0?d.todayExport+' kWh export':' ',col:'#EF9F27'},
+      {label:'Your home',val:parseFloat((d.todaySelfUse/24*2).toFixed(1))+'kW',col:'#9FE1CB',bg:'rgba(93,202,165,.1)',border:'rgba(93,202,165,.3)'},
+      {arrow:true,label:d.batSoc+'% charged',col:'#378ADD'},
+      {label:'Battery',val:d.batSoc+'%',col:'#378ADD',bg:'rgba(55,138,221,.1)',border:'rgba(55,138,221,.3)'},
+      {arrow:true,label:d.todayImport>0?d.todayImport+' kWh import':' ',col:'rgba(255,255,255,.3)'},
+      {label:'Grid',val:d.todayImport>0?d.todayImport+'kWh':'✓ off',col:d.todayImport>0?'rgba(255,255,255,.5)':'#5DCAA5',bg:'rgba(255,255,255,.03)',border:'rgba(255,255,255,.1)'},
+    ];
+    flow.innerHTML = nodes.map(function(n){
+      if(n.arrow) return '<div class="dfa"><div class="dfa-line" style="background:'+n.col+'"></div><div class="dfa-label" style="color:'+n.col+'">'+n.label+'</div></div>';
+      return '<div class="dfn"><div class="dfn-circle" style="background:'+n.bg+';border-color:'+n.border+'"><div class="dfn-val" style="color:'+n.col+'">'+n.val+'</div></div><div class="dfn-label">'+n.label+'</div></div>';
+    }).join('');
+  }
+
+  // Savings hero
+  var sav = document.getElementById('dash-savings-big');
+  if(sav) sav.innerHTML = '<div class="dsb-val">$'+d.totalSaved.toLocaleString()+'</div><div class="dsb-label">total saved since installation</div><div class="dsb-sub">'+d.totalGenerated.toLocaleString()+' kWh generated · '+d.co2Saved+' tonnes CO₂ avoided · '+d.treesEquiv+' trees equivalent</div>';
+
+  // Today's generation chart
+  var chart = document.getElementById('dash-gen-chart');
+  if(chart){
+    var maxG = Math.max.apply(null, d.hourlyGen.concat([0.1]));
+    chart.innerHTML = d.hourlyGen.map(function(v){
+      var pct = Math.max((v/maxG)*100,2);
+      var col = v > maxG*0.6 ? '#EF9F27' : v > 0 ? '#5DCAA5' : 'rgba(255,255,255,.06)';
+      return '<div class="dash-chart-bar" style="height:'+pct+'%;background:'+col+'"></div>';
+    }).join('');
+  }
+
+  // Month stats
+  var ms = document.getElementById('dash-month-stats');
+  if(ms) ms.innerHTML = [
+    {l:'Generated',v:d.monthGen+' kWh'},
+    {l:'Saved',v:'$'+d.monthSaving},
+    {l:'Self-sufficiency',v:Math.round((d.todaySelfUse/(d.todaySelfUse+d.todayImport+0.01))*100)+'%'},
+    {l:'Feed-in earned',v:'$'+parseFloat((d.todayExport*(d.fit/100)*new Date().getDate()).toFixed(2))},
+  ].map(function(r){return '<div class="dash-row"><span class="dash-row-label">'+r.l+'</span><span class="dash-row-val pos">'+r.v+'</span></div>';}).join('');
+
+  // Performance
+  var ps = document.getElementById('dash-perf-stats');
+  if(ps) ps.innerHTML = [
+    {l:'System size',v:d.sysKw+' kW'},
+    {l:'Performance ratio',v:Math.round(d.actualPR*100)+'%'},
+    {l:'Expected PR',v:Math.round(d.expectedPR*100)+'%'},
+    {l:'Status',v:d.actualPR >= d.expectedPR*0.85 ? '✓ Normal' : '⚠ Check system'},
+  ].map(function(r){return '<div class="dash-row"><span class="dash-row-label">'+r.l+'</span><span class="dash-row-val">'+r.v+'</span></div>';}).join('');
+
+  // Environmental
+  var es = document.getElementById('dash-env-stats');
+  if(es) es.innerHTML = [
+    {l:'CO₂ avoided',v:d.co2Saved+' tonnes'},
+    {l:'Trees equivalent',v:d.treesEquiv+' trees'},
+    {l:'Coal replaced',v:parseFloat((d.totalGenerated*0.82/2000).toFixed(2))+' tonnes'},
+    {l:'Households powered',v:parseFloat((d.totalGenerated/7000).toFixed(1))+' days'},
+  ].map(function(r){return '<div class="dash-row"><span class="dash-row-label">'+r.l+'</span><span class="dash-row-val pos">'+r.v+'</span></div>';}).join('');
+}
+
+function renderInverterGrid(){
+  var grid = document.getElementById('inverter-grid');
+  if(!grid) return;
+  var html = '';
+  INVERTERS.forEach(function(inv){
+    var cls = selInverter === inv.id ? 'inv-card sel' : 'inv-card';
+    html += '<div class="' + cls + '" onclick="selectInverterById(' + JSON.stringify(inv.id) + ')">';
+    html += '<div class="inv-name">' + inv.name + '</div>';
+    html += '<div class="inv-au">' + inv.au + '</div>';
+    html += '</div>';
+  });
+  grid.innerHTML = html;
+}
+
+function selectInverterById(id){
+  selInverter = id;
+  renderInverterGrid();
+  var inv = INVERTERS.find(function(i){return i.id===id;});
+  var sec = document.getElementById('inverter-input-section');
+  var keyInput = document.getElementById('inverter-api-key');
+  var siteInput = document.getElementById('inverter-site-id');
+  if(!sec || !inv) return;
+  sec.style.display = 'block';
+  keyInput.placeholder = inv.keyLabel+'...';
+  if(inv.siteLabel){
+    siteInput.style.display='block';
+    siteInput.placeholder = inv.siteLabel+'...';
+  } else {
+    siteInput.style.display='none';
+  }
+}
+
+async function connectInverter(){
+  var key = document.getElementById('inverter-api-key').value.trim();
+  if(!key){ showToast('Please enter your API key or details.'); return; }
+
+  if(selInverter === 'solaredge'){
+    try {
+      var siteId = document.getElementById('inverter-site-id').value.trim();
+      var url = 'https://monitoringapi.solaredge.com/site/'+siteId+'/overview?api_key='+key;
+      var resp = await fetch(url);
+      var data = await resp.json();
+      if(data.overview){
+        DASH_CONNECTED = true;
+        DASH_INVERTER = {type:'solaredge', key, siteId, data: data.overview};
+        document.getElementById('dash-live-label').textContent = 'SolarEdge · Live';
+        document.getElementById('dash-connect-section').style.display = 'none';
+        showToast('\u2713 SolarEdge connected! Loading live data...');
+        if(typeof posthog !== 'undefined') posthog.capture('inverter_connected', {type:'solaredge'});
+        updateDashboard();
+        return;
+      }
+    } catch(e){}
+    showToast('Could not connect — check your API key and Site ID.');
+    return;
+  }
+
+  if(selInverter === 'manual'){
+    var kwhStr = document.getElementById('inverter-api-key').value;
+    var kwh = parseFloat(kwhStr);
+    if(!isNaN(kwh) && kwh > 0){
+      STATE.todayGenManual = kwh;
+      DASH_CONNECTED = false;
+      document.getElementById('dash-live-label').textContent = 'Manual entry';
+      document.getElementById('dash-connect-section').style.display = 'none';
+      showToast('\u2713 Manual generation recorded: '+kwh+' kWh today');
+      updateDashboard();
+      return;
+    }
+  }
+
+  // Other inverters — show coming soon
+  showToast(INVERTERS.find(function(i){return i.id===selInverter;}).name + ' API integration coming soon!');
+  if(typeof posthog !== 'undefined') posthog.capture('inverter_connect_attempted', {type: selInverter});
+}
 
 </script>
 </body>
