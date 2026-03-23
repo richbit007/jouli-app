@@ -614,7 +614,7 @@ footer{padding:28px 40px;background:var(--gdp);border-top:1px solid rgba(255,255
       <div class="app-step" id="step-econ" onclick="goStep('econ')">Economics</div>
       <div class="app-step" id="step-report" onclick="goStep('report')">Report</div>
     </div>
-    <div id="app-loc-label" style="font-size:11px;color:var(--grey)">Select location</div>
+    <div id="app-loc-label" style="font-size:11px;color:var(--grey)">Step 1 of 8</div>
   </div>
   <div class="app-body">
     <div class="app-sidebar">
@@ -630,8 +630,8 @@ footer{padding:28px 40px;background:var(--gdp);border-top:1px solid rgba(255,255
       <div class="sb-sum">
         <div class="sb-label">System</div>
         <div class="sb-row"><span>Location</span><span class="sb-val" id="sb-loc-val">—</span></div>
-        <div class="sb-row"><span>Daily load</span><span class="sb-val" id="sb-load-val">22.4 kWh</span></div>
-        <div class="sb-row"><span>Solar</span><span class="sb-val" id="sb-solar-val">10 kW</span></div>
+        <div class="sb-row"><span>Daily load</span><span class="sb-val" id="sb-load-val">—</span></div>
+        <div class="sb-row"><span>Solar</span><span class="sb-val" id="sb-solar-val">—</span></div>
         <div class="sb-row"><span>Battery</span><span class="sb-val" id="sb-bat-val">—</span></div>
         <div class="sb-row"><span>Annual gen.</span><span class="sb-val" id="sb-gen-val">—</span></div>
         <div class="sb-row"><span>Savings</span><span class="sb-val" id="sb-saving-val">—</span></div>
@@ -679,8 +679,23 @@ function showLanding(){
   document.getElementById('app').className='app-shell';
 }
 function openApp(){
+  // Reset state for fresh session
+  STATE.city='melbourne';
+  STATE.liveIrr=null;
+  STATE.liveName=null;
+  STATE.sysKw=10;
+  STATE.annualGen=null;
+  STATE.annualSav=null;
+  STATE.pb=null;
+  // Reset sidebar to blank
+  ['sb-loc-val','sb-load-val','sb-solar-val','sb-gen-val','sb-saving-val','sb-bat-val'].forEach(function(id){
+    var el=document.getElementById(id);
+    if(el)el.textContent='—';
+  });
+  // Show app at Location step
   document.getElementById('landing').className='view';
   document.getElementById('app').className='app-shell active';
+  document.getElementById('app-loc-label').textContent='Select location';
   goStep('loc');
 }
 function goStep(s){
@@ -714,7 +729,13 @@ function signup(id){
 // ── LOCATION STEP ─────────────────────────────────────────────────────────────
 function renderLoc(c){
   c.innerHTML=`
-  <div class="sec-head"><div class="sec-title2">Choose your location</div><div class="sec-sub2">Jouli uses NASA POWER 30-year satellite data for your city</div></div>
+  <div style="background:#E1F5EE;border-radius:12px;padding:14px 18px;margin-bottom:16px;border:0.5px solid #5DCAA5;display:flex;align-items:center;gap:12px">
+    <div style="width:36px;height:36px;border-radius:50%;background:#1D9E75;flex-shrink:0;display:flex;align-items:center;justify-content:center">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="4" fill="white"/><path d="M9 2v2M9 14v2M2 9h2M14 9h2" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>
+    </div>
+    <div><div style="font-size:13px;font-weight:600;color:#085041">Welcome to Jouli</div><div style="font-size:12px;color:#0F6E56;margin-top:1px">Let's build your personalised solar + battery + EV design. Start by choosing your location.</div></div>
+  </div>
+  <div class="sec-head"><div class="sec-title2">Step 1 — Choose your location</div><div class="sec-sub2">Jouli fetches 30 years of NASA satellite data for your exact postcode</div></div>
   <div class="loc-grid">
     ${Object.entries(CITIES).map(([k,v])=>`
     <div class="loc-city ${STATE.city===k?'sel':''}" onclick="selectCity('${k}')">
