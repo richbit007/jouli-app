@@ -304,9 +304,9 @@ footer{padding:28px 40px;background:var(--gdp);border-top:1px solid rgba(255,255
     <span class="nav-name">jouli</span>
   </div>
   <div class="nav-links">
-    <a onclick="scrollTo('how-section')">How it works</a>
-    <a onclick="scrollTo('feat-section')">Features</a>
-    <a onclick="scrollTo('price-section')">Pricing</a>
+    <a onclick="scrollToSection('how-section')">How it works</a>
+    <a onclick="scrollToSection('feat-section')">Features</a>
+    <a onclick="scrollToSection('price-section')">Pricing</a>
   </div>
   <button class="nav-btn" onclick="openApp()">Try Jouli free</button>
 </nav>
@@ -438,6 +438,9 @@ footer{padding:28px 40px;background:var(--gdp);border-top:1px solid rgba(255,255
       <div class="app-step" id="step-solar" onclick="goStep('solar')">Solar</div>
       <div class="app-step" id="step-ev" onclick="goStep('ev')">EV</div>
       <div class="app-step" id="step-v2g" onclick="goStep('v2g')">V2G</div>
+      <div class="app-step" id="step-bat" onclick="goStep('bat')">Battery</div>
+      <div class="app-step" id="step-ev" onclick="goStep('ev')">EV</div>
+      <div class="app-step" id="step-v2g" onclick="goStep('v2g')">V2G</div>
       <div class="app-step" id="step-econ" onclick="goStep('econ')">Economics</div>
       <div class="app-step" id="step-report" onclick="goStep('report')">Report</div>
     </div>
@@ -449,6 +452,7 @@ footer{padding:28px 40px;background:var(--gdp);border-top:1px solid rgba(255,255
       <div class="sb-item active" id="sb-loc" onclick="goStep('loc')"><div class="sb-dot" style="background:#1D9E75"></div>Location</div>
       <div class="sb-item" id="sb-load" onclick="goStep('load')"><div class="sb-dot" style="background:#1D9E75"></div>Load profiler</div>
       <div class="sb-item" id="sb-solar" onclick="goStep('solar')"><div class="sb-dot" style="background:#EF9F27"></div>Solar sizing</div>
+      <div class="sb-item" id="sb-bat" onclick="goStep('bat')"><div class="sb-dot" style="background:#1D9E75"></div>Battery sizing</div>
       <div class="sb-item" id="sb-ev" onclick="goStep('ev')"><div class="sb-dot" style="background:#378ADD"></div>EV scheduler</div>
       <div class="sb-item" id="sb-v2g" onclick="goStep('v2g')"><div class="sb-dot" style="background:#534AB7"></div>V2G / V2H</div>
       <div class="sb-item" id="sb-econ" onclick="goStep('econ')"><div class="sb-dot" style="background:#639922"></div>Economics</div>
@@ -458,6 +462,7 @@ footer{padding:28px 40px;background:var(--gdp);border-top:1px solid rgba(255,255
         <div class="sb-row"><span>Location</span><span class="sb-val" id="sb-loc-val">—</span></div>
         <div class="sb-row"><span>Daily load</span><span class="sb-val" id="sb-load-val">22.4 kWh</span></div>
         <div class="sb-row"><span>Solar</span><span class="sb-val" id="sb-solar-val">10 kW</span></div>
+        <div class="sb-row"><span>Battery</span><span class="sb-val" id="sb-bat-val">—</span></div>
         <div class="sb-row"><span>Annual gen.</span><span class="sb-val" id="sb-gen-val">—</span></div>
         <div class="sb-row"><span>Savings</span><span class="sb-val" id="sb-saving-val">—</span></div>
       </div>
@@ -509,7 +514,7 @@ function openApp(){
   goStep('loc');
 }
 function goStep(s){
-  const steps=['loc','load','solar','econ','report'];
+  const steps=['loc','load','solar','bat','ev','v2g','econ','report'];
   steps.forEach(st=>{
     const el=document.getElementById('step-'+st);
     const sb=document.getElementById('sb-'+st);
@@ -517,16 +522,18 @@ function goStep(s){
     if(sb){sb.className='sb-item'+(st===s?' active':'');}
   });
   const c=document.getElementById('app-content');
+  if(STATE.pbChart){STATE.pbChart.destroy();STATE.pbChart=null;}
+  if(STATE.scChart){STATE.scChart.destroy();STATE.scChart=null;}
   if(s==='loc')   renderLoc(c);
   if(s==='load')  renderLoad(c);
   if(s==='solar') renderSolar(c);
-  if(s==='v2g'){var vv=document.getElementById('view-v2g');if(vv){['view-loc','view-load','view-solar','view-bat','view-ev','view-econ','view-report'].forEach(function(id){var el=document.getElementById(id);if(el)el.style.display='none';});vv.style.display='block';setV2GMode('v2h');}} if(s==='ev'){var ve=document.getElementById('view-ev');if(ve){['view-loc','view-load','view-solar','view-bat','view-econ','view-report'].forEach(function(id){var el=document.getElementById(id);if(el)el.style.display='none';});ve.style.display='block';renderEVCars();calcEV();}} if(s==='bat') { document.getElementById('view-bat').style.display='block'; calcBat(); document.getElementById('step-econ').className='app-step'; } else { var vb=document.getElementById('view-bat'); if(vb) vb.style.display='none'; }
+  if(s==='bat')   renderBat(c);
+  if(s==='ev')    renderEV(c);
+  if(s==='v2g')   renderV2G(c);
   if(s==='econ')  renderEcon(c);
   if(s==='report') renderReport(c);
-  if(STATE.pbChart){STATE.pbChart.destroy();STATE.pbChart=null;}
-  if(STATE.scChart){STATE.scChart.destroy();STATE.scChart=null;}
 }
-function scrollTo(id){const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth'})}
+function scrollToSection(id){const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth'})}
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.className='toast show';setTimeout(()=>t.className='toast',3000);}
 function signup(id){
   const v=document.getElementById(id)?.value||'';
@@ -757,6 +764,304 @@ function downloadReport(){showToast('Generating your PDF report...');setTimeout(
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
 goStep('loc');
+
+// ── NASA POSTCODE LOOKUP ─────────────────────────────────────────────────────
+const FALLBACK_IRR = {
+  '2':  { name:'Sydney, NSW',    lat:-33.87, lon:151.21, irr:[6.1,5.8,5.2,4.3,3.4,2.9,3.2,3.9,4.8,5.6,6.0,6.3] },
+  '3':  { name:'Melbourne, VIC', lat:-37.81, lon:144.96, irr:[4.2,4.8,4.1,3.1,2.3,1.9,2.1,2.7,3.4,4.3,4.9,5.1] },
+  '4':  { name:'Brisbane, QLD',  lat:-27.47, lon:153.03, irr:[6.4,6.0,5.8,5.2,4.5,4.0,4.3,5.0,5.8,6.2,6.5,6.6] },
+  '5':  { name:'Adelaide, SA',   lat:-34.93, lon:138.60, irr:[7.1,6.6,5.9,4.6,3.5,2.9,3.2,4.1,5.3,6.4,7.0,7.3] },
+  '6':  { name:'Perth, WA',      lat:-31.95, lon:115.86, irr:[7.8,7.2,6.5,5.1,4.0,3.4,3.7,4.6,5.8,6.9,7.5,7.9] },
+  '7':  { name:'Hobart, TAS',    lat:-42.88, lon:147.33, irr:[5.9,5.4,4.5,3.2,2.2,1.7,1.9,2.7,3.8,5.0,5.7,6.1] },
+  '08': { name:'Darwin, NT',     lat:-12.46, lon:130.85, irr:[5.8,5.5,6.2,6.8,7.1,7.0,7.3,7.6,7.4,6.9,6.2,5.7] },
+  '09': { name:'Darwin, NT',     lat:-12.46, lon:130.85, irr:[5.8,5.5,6.2,6.8,7.1,7.0,7.3,7.6,7.4,6.9,6.2,5.7] },
+  '26': { name:'Canberra, ACT',  lat:-35.28, lon:149.13, irr:[6.8,6.2,5.5,4.1,3.0,2.5,2.8,3.8,5.2,6.1,6.7,7.0] },
+};
+const NASA_MONTHS_KEY = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+
+async function lookupPostcode() {
+  const pc = document.getElementById('postcode-inp').value.trim();
+  if(pc.length < 4) { showToast('Please enter a 4-digit Australian postcode.'); return; }
+  const btn = document.querySelector('.postcode-row button');
+  const res = document.getElementById('postcode-result');
+  if(btn){btn.textContent='Looking up...';btn.disabled=true;}
+  if(res){res.textContent='Fetching location...';res.style.color='#888';}
+  let lat, lon, locationName;
+  try {
+    const geoResp = await fetch('https://nominatim.openstreetmap.org/search?postalcode='+pc+'&countrycodes=au&format=json&limit=1',{headers:{'User-Agent':'Jouli/1.0 jouli.com.au'}});
+    const geoData = await geoResp.json();
+    if(geoData&&geoData.length>0){
+      lat=parseFloat(parseFloat(geoData[0].lat).toFixed(4));
+      lon=parseFloat(parseFloat(geoData[0].lon).toFixed(4));
+      locationName=geoData[0].display_name.split(',').slice(0,2).join(',').trim();
+    } else throw new Error('not found');
+  } catch(e) {
+    const fb=FALLBACK_IRR[pc.slice(0,2)]||FALLBACK_IRR[pc.slice(0,1)];
+    if(fb){lat=fb.lat;lon=fb.lon;locationName=fb.name;}
+    else{if(res){res.textContent='Postcode not found. Try again.';res.style.color='#E24B4A';}if(btn){btn.disabled=false;btn.textContent='Look up';}return;}
+  }
+  let irr;
+  try {
+    const nasaResp = await fetch('https://power.larc.nasa.gov/api/temporal/climatology/point?parameters=ALLSKY_SFC_SW_DWN&community=RE&longitude='+lon+'&latitude='+lat+'&format=JSON');
+    const nasaData = await nasaResp.json();
+    const raw = nasaData.properties.parameter.ALLSKY_SFC_SW_DWN;
+    irr = NASA_MONTHS_KEY.map(m=>parseFloat(raw[m].toFixed(2)));
+  } catch(e) {
+    const fb=FALLBACK_IRR[pc.slice(0,2)]||FALLBACK_IRR[pc.slice(0,1)]||FALLBACK_IRR['3'];
+    irr=fb.irr;
+  }
+  STATE.city=null; STATE.liveIrr=irr; STATE.liveName=locationName; STATE.lat=lat; STATE.lon=lon;
+  const annAvg=(irr.reduce((a,b)=>a+b,0)/12).toFixed(2);
+  if(res){res.textContent='\u2713 '+locationName+' · '+annAvg+' kWh/m\u00b2/day · Live NASA data';res.style.color='#1D9E75';}
+  document.getElementById('app-loc-label').textContent=locationName;
+  document.getElementById('sb-loc-val').textContent=locationName.split(',')[0];
+  showToast('\u2713 Live NASA data loaded for '+locationName);
+  if(btn){btn.disabled=false;btn.textContent='Look up';}
+}
+
+// ── BATTERY SIZING ────────────────────────────────────────────────────────────
+var BAT_CHEM = 'lfp';
+
+function renderBat(c){
+  const sysKw=STATE.sysKw||10;
+  const irr=(STATE.liveIrr)||CITIES[STATE.city||'melbourne'].irr;
+  const annGen=Math.round(sysKw*(irr.reduce((a,b)=>a+b,0)/12)*0.80*365);
+  const dailyGen=annGen/365;
+  const dailyLoad=22.4;
+  c.innerHTML=`
+  <div class="sec-head"><div class="sec-title2">Battery sizing engine</div><div class="sec-sub2">${CITIES[STATE.city||'melbourne'].name} · ${sysKw} kW solar</div></div>
+  <div style="background:#E1F5EE;border-radius:12px;padding:16px 20px;margin-bottom:14px;border:0.5px solid #5DCAA5;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+    <div><div style="font-size:11px;color:#085041;font-weight:500;margin-bottom:3px">Recommended battery size</div>
+    <div style="font-size:36px;font-weight:700;color:#085041;letter-spacing:-1px;line-height:1" id="bat-hero-val">13.5 kWh</div>
+    <div style="font-size:12px;color:#1D9E75;margin-top:3px" id="bat-hero-sub">91% self-sufficient</div></div>
+    <div style="display:flex;gap:14px;flex-wrap:wrap">
+      <div style="text-align:center"><div style="font-size:18px;font-weight:700;color:#085041" id="bh-ss">91%</div><div style="font-size:11px;color:#1D9E75">Self-sufficient</div></div>
+      <div style="text-align:center"><div style="font-size:18px;font-weight:700;color:#085041" id="bh-save">$940</div><div style="font-size:11px;color:#1D9E75">Extra saving/yr</div></div>
+    </div></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
+    <div style="border:1.5px solid #1D9E75;border-radius:10px;padding:12px;background:#E1F5EE;cursor:pointer" id="chem-lfp" onclick="batChem('lfp')">
+      <div style="font-size:13px;font-weight:600;color:#085041">LFP <span style="font-size:10px;font-weight:400;background:#085041;color:#E1F5EE;padding:2px 7px;border-radius:20px;margin-left:4px">Recommended</span></div>
+      <div style="font-size:11px;color:#0F6E56;margin-top:3px">Lithium iron phosphate · 100% DoD · 6,000 cycles · 10yr warranty</div></div>
+    <div style="border:0.5px solid #e0e0e0;border-radius:10px;padding:12px;cursor:pointer" id="chem-nmc" onclick="batChem('nmc')">
+      <div style="font-size:13px;font-weight:600;color:#0D1B14">NMC</div>
+      <div style="font-size:11px;color:#666;margin-top:3px">Nickel manganese cobalt · 90% DoD · 3,000 cycles · 10yr warranty</div></div></div>
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px"><label style="font-size:11px;color:#666;min-width:130px">Days of autonomy</label><input type="range" id="bat-auto" min="0.5" max="5" value="2" step="0.5" style="flex:1" oninput="calcBat()"><span style="font-size:12px;font-weight:500;min-width:50px;text-align:right" id="bat-auto-out">2 days</span></div>
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px"><label style="font-size:11px;color:#666;min-width:130px">Depth of discharge</label><input type="range" id="bat-dod" min="50" max="100" value="90" step="5" style="flex:1" oninput="calcBat()"><span style="font-size:12px;font-weight:500;min-width:50px;text-align:right" id="bat-dod-out">90%</span></div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px" id="bat-stats-grid"></div>
+  <div class="ai-box"><div class="ai-ico">AI</div><div class="ai-text" id="bat-ai-text">Calculating...</div></div>
+  <div class="btn-row"><button class="btn" onclick="goStep('solar')">← Back to solar</button><button class="btn-primary btn" onclick="goStep('ev')">Continue to EV →</button></div>
+  <div class="disclaimer">Battery sizing estimates ±10–15%. Get 3 quotes from CEC-accredited installers. Check state rebate eligibility.</div>`;
+  calcBat();
+}
+
+function batChem(c){
+  BAT_CHEM=c;
+  const lfp=document.getElementById('chem-lfp'),nmc=document.getElementById('chem-nmc');
+  if(lfp){lfp.style.border=c==='lfp'?'1.5px solid #1D9E75':'0.5px solid #e0e0e0';lfp.style.background=c==='lfp'?'#E1F5EE':'white';}
+  if(nmc){nmc.style.border=c==='nmc'?'1.5px solid #1D9E75':'0.5px solid #e0e0e0';nmc.style.background=c==='nmc'?'#E1F5EE':'white';}
+  document.getElementById('bat-dod').value=c==='lfp'?90:80;
+  calcBat();
+}
+
+function calcBat(){
+  const sysKw=STATE.sysKw||10;
+  const irr=(STATE.liveIrr)||CITIES[STATE.city||'melbourne'].irr;
+  const annGen=Math.round(sysKw*(irr.reduce((a,b)=>a+b,0)/12)*0.80*365);
+  const dailyGen=annGen/365;
+  const dailyLoad=22.4;
+  const auto=parseFloat(document.getElementById('bat-auto')?.value)||2;
+  const dod=parseInt(document.getElementById('bat-dod')?.value)/100||0.9;
+  const chemDod=BAT_CHEM==='lfp'?1.0:0.9;
+  const effDod=Math.min(dod,chemDod);
+  const nightLoad=dailyLoad*0.55;
+  const batSize=Math.round((nightLoad*auto)/(effDod*0.95)*10)/10;
+  const usable=Math.round(batSize*effDod*10)/10;
+  const directUse=Math.min(dailyGen*0.42,dailyLoad);
+  const batDischarge=Math.min(usable,nightLoad);
+  const gridImport=Math.max(dailyLoad-directUse-batDischarge,0);
+  const selfSuff=Math.min(Math.round(((directUse+batDischarge)/dailyLoad)*100),100);
+  const extraSave=Math.round((nightLoad-gridImport)*365*0.32);
+  document.getElementById('bat-auto-out').textContent=auto+' days';
+  document.getElementById('bat-dod-out').textContent=Math.round(dod*100)+'%';
+  const bh=document.getElementById('bat-hero-val');if(bh)bh.textContent=batSize+' kWh';
+  const bs=document.getElementById('bat-hero-sub');if(bs)bs.textContent=selfSuff+'% self-sufficient · '+auto+' days autonomy';
+  const bhss=document.getElementById('bh-ss');if(bhss)bhss.textContent=selfSuff+'%';
+  const bhsv=document.getElementById('bh-save');if(bhsv)bhsv.textContent='$'+extraSave.toLocaleString();
+  const sbv=document.getElementById('sb-bat-val');if(sbv)sbv.textContent=batSize+' kWh';
+  const sg=document.getElementById('bat-stats-grid');
+  if(sg)sg.innerHTML=[
+    {l:'Battery size',v:batSize,u:'kWh',b:'Usable: '+usable+' kWh',bc:'#E6F1FB',tc:'#0C447C'},
+    {l:'Self-sufficiency',v:selfSuff,u:'%',b:selfSuff>=90?'Excellent':'Good',bc:selfSuff>=90?'#EAF3DE':'#FAEEDA',tc:selfSuff>=90?'#27500A':'#633806'},
+    {l:'Grid import',v:Math.round(gridImport*10)/10,u:'kWh/day',b:gridImport<3?'Near zero':'Reducible',bc:gridImport<3?'#EAF3DE':'#FAEEDA',tc:gridImport<3?'#27500A':'#633806'},
+    {l:'Extra saving',v:'$'+extraSave.toLocaleString(),u:'/year',b:'vs solar only',bc:'#EAF3DE',tc:'#27500A'},
+  ].map(s=>`<div style="background:#f9f9f9;border-radius:8px;padding:10px 12px"><div style="font-size:10px;color:#888;margin-bottom:3px">${s.l}</div><div style="font-size:17px;font-weight:700;color:#0D1B14">${s.v} <span style="font-size:11px;font-weight:400;color:#666">${s.u}</span></div><div style="font-size:10px;padding:2px 6px;border-radius:20px;margin-top:3px;display:inline-block;background:${s.bc};color:${s.tc}">${s.b}</div></div>`).join('');
+  const ai=document.getElementById('bat-ai-text');
+  if(ai)ai.innerHTML=selfSuff>=90?`<strong>Jouli insight —</strong> A ${batSize} kWh battery gets you to ${selfSuff}% self-sufficient — excellent. Grid import drops to just ${Math.round(gridImport*10)/10} kWh/day, saving $${extraSave.toLocaleString()}/year extra.`:`<strong>Jouli insight —</strong> A ${batSize} kWh battery lifts you to ${selfSuff}% self-sufficient. Consider ${Math.round(batSize*1.2*10)/10} kWh to reach 90%+.`;
+}
+
+// ── EV SCHEDULER ──────────────────────────────────────────────────────────────
+const EV_CARS=[
+  {name:'Tesla Model 3',kwh:75,eff:6.5,charger:11,col:'#1D9E75'},
+  {name:'BYD Atto 3',kwh:60,eff:6.8,charger:7,col:'#EF9F27'},
+  {name:'MG ZS EV',kwh:51,eff:7.2,charger:7,col:'#378ADD'},
+  {name:'Hyundai Ioniq 6',kwh:77,eff:6.2,charger:11,col:'#D4537E'},
+];
+const EV_SOLAR_CURVE=[0,0,0,0,0,0,0.2,1.0,2.8,5.5,7.8,9.2,9.6,8.9,7.2,5.0,2.6,0.8,0.1,0,0,0,0,0];
+let selEVCar=0;
+
+function renderEV(c){
+  c.innerHTML=`
+  <div class="sec-head"><div class="sec-title2">EV charging scheduler</div><div class="sec-sub2">Find the cheapest time to charge — solar, off-peak, or spot price</div></div>
+  <div style="background:#E6F1FB;border-radius:12px;padding:16px 20px;margin-bottom:14px;border:0.5px solid #85B7EB;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+    <div><div style="font-size:11px;color:#0C447C;font-weight:500;margin-bottom:3px">Optimal daily charging cost</div>
+    <div style="font-size:36px;font-weight:700;color:#0C447C;letter-spacing:-1px;line-height:1" id="ev-cost-hero">$0.00</div>
+    <div style="font-size:12px;color:#378ADD;margin-top:3px" id="ev-sub-hero">Calculating...</div></div>
+    <div style="display:flex;gap:14px;flex-wrap:wrap">
+      <div style="text-align:center"><div style="font-size:18px;font-weight:700;color:#0C447C" id="ev-h-saving">—</div><div style="font-size:11px;color:#378ADD">Annual saving</div></div>
+      <div style="text-align:center"><div style="font-size:18px;font-weight:700;color:#0C447C" id="ev-h-solar">—</div><div style="font-size:11px;color:#378ADD">Solar charged</div></div>
+      <div style="text-align:center"><div style="font-size:18px;font-weight:700;color:#0C447C" id="ev-h-petrol">—</div><div style="font-size:11px;color:#378ADD">Saved vs petrol/yr</div></div>
+    </div></div>
+  <div style="font-size:12px;font-weight:500;color:#0D1B14;margin-bottom:8px">Your EV</div>
+  <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-bottom:12px" id="ev-car-grid"></div>
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:7px"><label style="font-size:11px;color:#666;min-width:130px">Daily km driven</label><input type="range" id="ev-km" min="10" max="200" value="50" step="5" style="flex:1" oninput="calcEV()"><span style="font-size:12px;font-weight:500;min-width:55px;text-align:right" id="ev-km-out">50 km</span></div>
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><label style="font-size:11px;color:#666;min-width:130px">Target charge</label><input type="range" id="ev-target" min="50" max="100" value="80" step="5" style="flex:1" oninput="calcEV()"><span style="font-size:12px;font-weight:500;min-width:55px;text-align:right" id="ev-target-out">80%</span></div>
+  <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:12px" id="ev-strategies"></div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px" id="ev-stats-grid"></div>
+  <div class="ai-box"><div class="ai-ico">AI</div><div class="ai-text" id="ev-ai-text">Calculating...</div></div>
+  <div class="btn-row"><button class="btn" onclick="goStep('bat')">← Back to battery</button><button class="btn-primary btn" onclick="goStep('v2g')">Continue to V2G →</button></div>
+  <div class="disclaimer">EV charging costs are estimates. Actual savings depend on charger efficiency and driving variation.</div>`;
+  renderEVCars();calcEV();
+}
+
+function renderEVCars(){
+  const cg=document.getElementById('ev-car-grid');
+  if(!cg)return;
+  cg.innerHTML=EV_CARS.map((c,i)=>`<div style="border:${i===selEVCar?'1.5px solid #378ADD;background:#E6F1FB':'0.5px solid #e0e0e0;background:white'};border-radius:10px;padding:10px;cursor:pointer" onclick="selEVCar=${i};renderEVCars();calcEV()"><div style="font-size:12px;font-weight:600;color:#0D1B14">${c.name}</div><div style="font-size:10px;color:#888">${c.kwh} kWh · ${c.eff} km/kWh</div></div>`).join('');
+}
+
+function calcEV(){
+  const car=EV_CARS[selEVCar];
+  const km=parseInt(document.getElementById('ev-km')?.value)||50;
+  const target=parseInt(document.getElementById('ev-target')?.value)||80;
+  const eko=document.getElementById('ev-km-out');if(eko)eko.textContent=km+' km';
+  const eto=document.getElementById('ev-target-out');if(eto)eto.textContent=target+'%';
+  const needed=Math.max((target-30)/100*car.kwh+km/car.eff*0.3,0);
+  const chargeHrs=needed/(car.charger*0.9);
+  const tariff=Array(24).fill(32);
+  const strategies=[
+    {name:'Solar optimised',start:10,label:'10am–2pm',col:'#1D9E75'},
+    {name:'Off-peak grid',start:2,label:'2am–5am',col:'#378ADD'},
+    {name:'Plug in now',start:new Date().getHours(),label:'Now',col:'#888780'},
+  ];
+  const strats=strategies.map(s=>{
+    let cost=0,solarUsed=0,remaining=needed;
+    for(let i=0;i<Math.ceil(chargeHrs*2);i++){
+      const h=(s.start+Math.floor(i/2))%24;
+      const chunk=Math.min(car.charger*0.5,remaining);
+      const sol=Math.min(EV_SOLAR_CURVE[h]*0.5,chunk);
+      cost+=(chunk-sol)*(tariff[h]/100);solarUsed+=sol;remaining-=chunk;
+      if(remaining<=0)break;
+    }
+    return {...s,cost,solarPct:Math.round(solarUsed/needed*100)};
+  });
+  const best=strats[0],worst=strats[strats.length-1];
+  const annSav=Math.round((worst.cost-best.cost)*365);
+  const petrolSav=Math.round(km/car.eff*0.9*8/100*1.80*365);
+  const fmtc=n=>'$'+(n<10?n.toFixed(2):Math.round(n).toLocaleString());
+  const ech=document.getElementById('ev-cost-hero');if(ech)ech.textContent=fmtc(best.cost);
+  const esh=document.getElementById('ev-sub-hero');if(esh)esh.textContent=best.solarPct+'% from solar · optimal: '+best.label;
+  const ehs=document.getElementById('ev-h-saving');if(ehs)ehs.textContent='$'+annSav.toLocaleString();
+  const ehso=document.getElementById('ev-h-solar');if(ehso)ehso.textContent=best.solarPct+'%';
+  const ehp=document.getElementById('ev-h-petrol');if(ehp)ehp.textContent='$'+petrolSav.toLocaleString();
+  const sg=document.getElementById('ev-strategies');
+  if(sg)sg.innerHTML=strats.map((s,i)=>{const isBest=i===0;return `<div style="border:${isBest?'1.5px solid #1D9E75;background:#E1F5EE':'0.5px solid #e0e0e0'};border-radius:12px;padding:12px"><div style="font-size:13px;font-weight:600;color:#0D1B14;margin-bottom:2px">${s.name}</div><div style="font-size:11px;color:#666;margin-bottom:8px">${s.label} · ${s.solarPct}% solar</div><div style="font-size:20px;font-weight:700;color:${s.col}">${fmtc(s.cost)}</div><div style="font-size:10px;padding:2px 8px;border-radius:20px;margin-top:6px;display:inline-block;background:${isBest?'#085041':'#f5f5f5'};color:${isBest?'#E1F5EE':'#888'}">${isBest?'Best option':s.solarPct+'% solar'}</div></div>`;}).join('');
+  const esg=document.getElementById('ev-stats-grid');
+  if(esg)esg.innerHTML=[
+    {l:'Energy needed',v:needed.toFixed(1),u:'kWh',b:'to reach '+target+'%',bc:'#E6F1FB',tc:'#0C447C'},
+    {l:'Charge time',v:chargeHrs.toFixed(1),u:'hrs',b:car.charger+'kW charger',bc:'#f9f9f9',tc:'#888'},
+    {l:'Annual saving',v:'$'+annSav.toLocaleString(),u:'',b:'vs random charging',bc:'#EAF3DE',tc:'#27500A'},
+    {l:'Vs petrol/yr',v:'$'+petrolSav.toLocaleString(),u:'saved',b:'petrol at $1.80/L',bc:'#EAF3DE',tc:'#27500A'},
+  ].map(s=>`<div style="background:#f9f9f9;border-radius:8px;padding:10px 12px"><div style="font-size:10px;color:#888;margin-bottom:3px">${s.l}</div><div style="font-size:17px;font-weight:700;color:#0D1B14">${s.v} <span style="font-size:11px;font-weight:400;color:#666">${s.u}</span></div><div style="font-size:10px;padding:2px 6px;border-radius:20px;margin-top:3px;display:inline-block;background:${s.bc};color:${s.tc}">${s.b}</div></div>`).join('');
+  const ai=document.getElementById('ev-ai-text');
+  if(ai)ai.innerHTML=`<strong>Jouli insight —</strong> Charging your ${car.name} at solar noon (${best.label}) captures ${best.solarPct}% from free solar, costing just ${fmtc(best.cost)}/day. That saves $${annSav.toLocaleString()}/year vs random charging, and $${petrolSav.toLocaleString()}/year vs keeping a petrol car.`;
+}
+
+// ── V2G / V2H MODELLER ────────────────────────────────────────────────────────
+let V2G_MODE='v2h';
+
+function renderV2G(c){
+  c.innerHTML=`
+  <div class="sec-head"><div class="sec-title2">V2G / V2H modeller</div><div class="sec-sub2">Use your EV as a home battery — bidirectional charging economics</div></div>
+  <div style="display:flex;gap:8px;margin-bottom:14px">
+    <div style="flex:1;padding:10px 12px;border-radius:10px;cursor:pointer;border:1.5px solid #534AB7;background:#EEEDFE" id="v2g-mode-v2h" onclick="setV2GMode('v2h')">
+      <div style="font-size:13px;font-weight:600;color:#0D1B14">V2H — Vehicle to Home</div>
+      <div style="font-size:11px;color:#888;margin-top:2px">Power your home from your EV battery</div>
+      <div style="font-size:10px;background:#E1F5EE;color:#085041;padding:2px 8px;border-radius:20px;display:inline-block;margin-top:6px;font-weight:500">Available now</div></div>
+    <div style="flex:1;padding:10px 12px;border-radius:10px;cursor:pointer;border:0.5px solid #e0e0e0;background:#f9f9f9" id="v2g-mode-v2g" onclick="setV2GMode('v2g')">
+      <div style="font-size:13px;font-weight:600;color:#0D1B14">V2G — Vehicle to Grid</div>
+      <div style="font-size:11px;color:#888;margin-top:2px">Sell EV energy back at peak pricing</div>
+      <div style="font-size:10px;background:#FAEEDA;color:#633806;padding:2px 8px;border-radius:20px;display:inline-block;margin-top:6px;font-weight:500">AU 2025–26</div></div>
+    <div style="flex:1;padding:10px 12px;border-radius:10px;cursor:pointer;border:0.5px solid #e0e0e0;background:#f9f9f9" id="v2g-mode-vpp" onclick="setV2GMode('vpp')">
+      <div style="font-size:13px;font-weight:600;color:#0D1B14">VPP — Virtual Power Plant</div>
+      <div style="font-size:11px;color:#888;margin-top:2px">Join a fleet, earn premium rates</div>
+      <div style="font-size:10px;background:#EEEDFE;color:#534AB7;padding:2px 8px;border-radius:20px;display:inline-block;margin-top:6px;font-weight:500">AU 2026+</div></div></div>
+  <div id="v2g-hero" style="border-radius:12px;padding:16px 20px;margin-bottom:14px;border:0.5px solid #e0e0e0;background:#f9f9f9"></div>
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:7px"><label style="font-size:11px;color:#666;min-width:160px">EV battery capacity (kWh)</label><input type="range" id="v2g-ev-kwh" min="30" max="100" value="75" step="1" style="flex:1" oninput="calcV2G()"><span style="font-size:12px;font-weight:500;min-width:55px;text-align:right" id="v2g-kwh-out">75 kWh</span></div>
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:7px"><label style="font-size:11px;color:#666;min-width:160px">Daily driving (% used)</label><input type="range" id="v2g-drive" min="5" max="60" value="20" step="5" style="flex:1" oninput="calcV2G()"><span style="font-size:12px;font-weight:500;min-width:55px;text-align:right" id="v2g-drive-out">20%</span></div>
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><label style="font-size:11px;color:#666;min-width:160px">Minimum EV reserve</label><input type="range" id="v2g-reserve" min="10" max="40" value="20" step="5" style="flex:1" oninput="calcV2G()"><span style="font-size:12px;font-weight:500;min-width:55px;text-align:right" id="v2g-reserve-out">20%</span></div>
+  <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:12px" id="v2g-stats-grid"></div>
+  <div class="ai-box"><div class="ai-ico">AI</div><div class="ai-text" id="v2g-ai-text">Calculating...</div></div>
+  <div class="btn-row"><button class="btn" onclick="goStep('ev')">← Back to EV</button><button class="btn-primary btn" onclick="goStep('econ')">Continue to economics →</button></div>
+  <div class="disclaimer">V2G/V2H is emerging in Australia. Hardware availability and grid rules vary by state. Verify vehicle compatibility before purchasing.</div>`;
+  setV2GMode('v2h');
+}
+
+function setV2GMode(m){
+  V2G_MODE=m;
+  ['v2h','v2g','vpp'].forEach(id=>{
+    const el=document.getElementById('v2g-mode-'+id);
+    if(el){el.style.border=id===m?'1.5px solid #534AB7':'0.5px solid #e0e0e0';el.style.background=id===m?'#EEEDFE':'#f9f9f9';}
+  });
+  calcV2G();
+}
+
+function calcV2G(){
+  const evKwh=parseInt(document.getElementById('v2g-ev-kwh')?.value)||75;
+  const drivePct=parseInt(document.getElementById('v2g-drive')?.value)||20;
+  const reserve=parseInt(document.getElementById('v2g-reserve')?.value)||20;
+  const ko=document.getElementById('v2g-kwh-out');if(ko)ko.textContent=evKwh+' kWh';
+  const dro=document.getElementById('v2g-drive-out');if(dro)dro.textContent=drivePct+'%';
+  const ro=document.getElementById('v2g-reserve-out');if(ro)ro.textContent=reserve+'%';
+  const available=Math.max(evKwh*0.65-evKwh*reserve/100-evKwh*drivePct/100,0);
+  const cyclesPerDay=available/(evKwh*0.8);
+  const degradePerYear=cyclesPerDay*365*0.003;
+  const degradeCost=evKwh*degradePerYear/100*180;
+  const v2hSav=available*0.32*0.9*365;
+  const v2gRev=available*0.28*0.9*365;
+  const vppRev=available*0.45*0.9*365;
+  const grossRev=V2G_MODE==='v2h'?v2hSav:V2G_MODE==='v2g'?v2gRev:vppRev;
+  const netRev=grossRev-degradeCost;
+  const fmtc=n=>'$'+Math.round(Math.abs(n)).toLocaleString();
+  const cols={v2h:'#085041',v2g:'#633806',vpp:'#26215C'};
+  const bgs={v2h:'#E1F5EE',v2g:'#FAEEDA',vpp:'#EEEDFE'};
+  const labels={v2h:'Annual V2H saving',v2g:'Annual V2G revenue',vpp:'Annual VPP revenue'};
+  const hero=document.getElementById('v2g-hero');
+  if(hero)hero.innerHTML=`<div style="background:${bgs[V2G_MODE]};border-radius:10px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px"><div><div style="font-size:11px;color:${cols[V2G_MODE]};font-weight:500;margin-bottom:3px">${labels[V2G_MODE]}</div><div style="font-size:34px;font-weight:700;color:${cols[V2G_MODE]};letter-spacing:-1px;line-height:1">${fmtc(grossRev)}</div><div style="font-size:12px;color:${cols[V2G_MODE]};margin-top:4px">Net after battery wear: ${netRev>0?'+':''}${fmtc(netRev)}/yr</div></div><div style="display:flex;gap:14px"><div style="text-align:center"><div style="font-size:17px;font-weight:700;color:${cols[V2G_MODE]}">${available.toFixed(1)} kWh</div><div style="font-size:11px;color:${cols[V2G_MODE]}">Available daily</div></div><div style="text-align:center"><div style="font-size:17px;font-weight:700;color:${cols[V2G_MODE]}">${(available/13.5).toFixed(1)}x</div><div style="font-size:11px;color:${cols[V2G_MODE]}">Powerwalls</div></div><div style="text-align:center"><div style="font-size:17px;font-weight:700;color:${cols[V2G_MODE]}">${degradePerYear.toFixed(1)}%</div><div style="font-size:11px;color:${cols[V2G_MODE]}">Wear/yr</div></div></div></div>`;
+  const sg=document.getElementById('v2g-stats-grid');
+  if(sg)sg.innerHTML=[
+    {l:'EV capacity',v:evKwh,u:'kWh',b:(available/13.5).toFixed(1)+'x Powerwalls',bc:'#E6F1FB',tc:'#0C447C'},
+    {l:'Usable for V2X',v:available.toFixed(1),u:'kWh/day',b:'after reserve + driving',bc:'#f9f9f9',tc:'#888'},
+    {l:'Degradation cost',v:fmtc(degradeCost),u:'/yr',b:degradePerYear.toFixed(1)+'% wear',bc:degradePerYear>2?'#FAEEDA':'#EAF3DE',tc:degradePerYear>2?'#633806':'#27500A'},
+    {l:'Net annual return',v:fmtc(netRev),u:'',b:netRev>0?'positive':'marginal',bc:netRev>0?'#EAF3DE':'#FAEEDA',tc:netRev>0?'#27500A':'#633806'},
+  ].map(s=>`<div style="background:#f9f9f9;border-radius:8px;padding:10px 12px"><div style="font-size:10px;color:#888;margin-bottom:3px">${s.l}</div><div style="font-size:17px;font-weight:700;color:#0D1B14">${s.v} <span style="font-size:11px;font-weight:400;color:#666">${s.u}</span></div><div style="font-size:10px;padding:2px 6px;border-radius:20px;margin-top:3px;display:inline-block;background:${s.bc};color:${s.tc}">${s.b}</div></div>`).join('');
+  const msgs={
+    v2h:`<strong>Jouli insight —</strong> Your ${evKwh} kWh EV provides ${(available/13.5).toFixed(1)}x the capacity of a Powerwall. V2H earns ${fmtc(v2hSav)}/year gross by replacing grid electricity. Net of degradation: ${netRev>0?'+':''}${fmtc(netRev)}/year.`,
+    v2g:`<strong>Jouli insight —</strong> V2G at 28¢/kWh earns ${fmtc(v2gRev)}/year. Amber Electric and AGL's AU V2G trials are offering 20–80¢/kWh during grid peaks. Net of degradation: ${netRev>0?'+':''}${fmtc(netRev)}/year.`,
+    vpp:`<strong>Jouli insight —</strong> VPP participation earns premium rates because operators dispatch your EV alongside thousands of others. Tesla Energy, AGL and Origin are all building AU VPP fleets. Expected mainstream rollout: 2026–27.`,
+  };
+  const ai=document.getElementById('v2g-ai-text');if(ai)ai.innerHTML=msgs[V2G_MODE];
+}
+
 </script>
 </body>
 </html>
