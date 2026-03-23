@@ -1445,7 +1445,7 @@ function renderProGate(module, features){
     '<div class="pro-gate-list">' + features.map(function(f){return '<div class="pro-gate-item">'+f+'</div>';}).join('') + '</div>' +
     '<button class="pro-gate-btn" onclick="showUpgradeModal()">Unlock Pro — $14/month →</button>' +
     '</div>' +
-    '<div style="font-size:12px;color:#888;margin-top:8px;text-align:center">Already have Pro? <span style="color:#1D9E75;cursor:pointer" onclick="showToast('Sign in coming soon!')">Sign in →</span></div>';
+    '<div style="font-size:12px;color:#888;margin-top:8px;text-align:center">Already have Pro? <span style="color:#1D9E75;cursor:pointer" onclick="showToast(&quot;Sign in coming soon!&quot;)">Sign in →</span></div>';
 }
 
 function showUpgradeModal(){
