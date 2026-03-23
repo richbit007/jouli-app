@@ -139,6 +139,29 @@ footer{padding:28px 40px;background:var(--gdp);border-top:1px solid rgba(255,255
 .foot-links a{cursor:pointer}
 .foot-tag{font-size:11px;color:#4a6b5e}
 
+
+/* ── MODAL ───────────────────────────────────────────────────────────────── */
+.modal-overlay{position:fixed;inset:0;background:rgba(13,27,20,.5);z-index:999;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.open{display:flex}
+.modal-box{background:white;border-radius:16px;max-width:640px;width:100%;max-height:88vh;overflow-y:auto;box-shadow:0 24px 60px rgba(13,27,20,.18)}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:20px 24px 0}
+.modal-title{font-size:18px;font-weight:600;color:#0D1B14;letter-spacing:-.3px}
+.modal-close{width:32px;height:32px;border-radius:50%;border:none;background:#f5f5f5;cursor:pointer;font-size:16px;color:#666;display:flex;align-items:center;justify-content:center}
+.modal-close:hover{background:#e0e0e0}
+.modal-body{padding:20px 24px 28px;font-size:13px;color:#444;line-height:1.8}
+.modal-body h3{font-size:14px;font-weight:600;color:#0D1B14;margin:18px 0 6px}
+.modal-body h3:first-child{margin-top:0}
+.modal-body p{margin-bottom:10px}
+.modal-body ul{padding-left:18px;margin-bottom:10px}
+.modal-body li{margin-bottom:4px}
+.modal-badge{display:inline-block;font-size:10px;padding:3px 9px;border-radius:20px;font-weight:500;margin-bottom:14px}
+.accuracy-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:.5px solid #f0f0f0;font-size:12px}
+.accuracy-row:last-child{border-bottom:none}
+.accuracy-label{flex:1;color:#444}
+.accuracy-range{font-weight:600;color:#0D1B14;min-width:70px;text-align:right}
+.accuracy-bar-wrap{flex:2;height:6px;background:#f0f0f0;border-radius:3px;overflow:hidden}
+.accuracy-bar-fill{height:100%;border-radius:3px}
+
 /* ── APP SHELL ───────────────────────────────────────────────────────────── */
 .app-shell{display:none;flex-direction:column;min-height:100vh;background:var(--off)}
 .app-shell.active{display:flex}
@@ -418,9 +441,156 @@ footer{padding:28px 40px;background:var(--gdp);border-top:1px solid rgba(255,255
 
 <footer>
   <div class="foot-logo"><svg width="22" height="22"><use href="#jouli-icon"/></svg><span class="foot-name">jouli</span></div>
-  <div class="foot-links"><a>Privacy</a><a>Terms</a><a>Accuracy</a><a>Contact</a></div>
+  <div class="foot-links"><a onclick="openModal('privacy')">Privacy</a><a onclick="openModal('terms')">Terms</a><a onclick="openModal('accuracy')">Accuracy</a><a onclick="openModal('contact')">Contact</a></div>
   <div class="foot-tag">Jouli · Your energy, clearly. · Australia</div>
 </footer>
+
+
+<!-- ── MODALS ──────────────────────────────────────────────────────────────── -->
+<div class="modal-overlay" id="modal-privacy" onclick="if(event.target===this)closeModal('privacy')">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span class="modal-title">Privacy policy</span>
+      <button class="modal-close" onclick="closeModal('privacy')">✕</button>
+    </div>
+    <div class="modal-body">
+      <span class="modal-badge" style="background:#E1F5EE;color:#085041">Last updated March 2026</span>
+      <h3>What we collect</h3>
+      <p>Jouli collects only what's needed to provide the service: your email address when you sign up, your postcode or location when you use the tool, and anonymous usage data to improve the product. We do not collect your name, phone number, or any financial information.</p>
+      <h3>How we use your data</h3>
+      <ul>
+        <li>Your email is used to send product updates and your system report — nothing else.</li>
+        <li>Your location data is used to fetch NASA solar irradiance data for your area. It is not stored long-term or shared.</li>
+        <li>Anonymous usage analytics help us understand which features are most useful.</li>
+      </ul>
+      <h3>What we don't do</h3>
+      <p>Jouli does not sell your data, share it with installers or energy retailers, or use it for advertising. We are not an installer referral business. Our revenue comes entirely from subscriptions.</p>
+      <h3>Third-party services</h3>
+      <p>Jouli uses NASA POWER (NASA, USA) for solar irradiance data and Nominatim/OpenStreetMap for postcode geocoding. Both are free, public services. We use Stripe for payment processing — Stripe's privacy policy applies to payment data.</p>
+      <h3>Data retention</h3>
+      <p>If you delete your account, all personal data is removed within 30 days. Email us at hello@jouli.com.au to request deletion at any time.</p>
+      <h3>Contact</h3>
+      <p>Questions about privacy? Email hello@jouli.com.au — we respond within 2 business days.</p>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-terms" onclick="if(event.target===this)closeModal('terms')">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span class="modal-title">Terms of service</span>
+      <button class="modal-close" onclick="closeModal('terms')">✕</button>
+    </div>
+    <div class="modal-body">
+      <span class="modal-badge" style="background:#E1F5EE;color:#085041">Last updated March 2026</span>
+      <h3>About Jouli</h3>
+      <p>Jouli is a solar, battery, and EV design tool for Australian households and installers. By using Jouli, you agree to these terms.</p>
+      <h3>Not financial or engineering advice</h3>
+      <p>All estimates produced by Jouli are indicative only. They are based on publicly available data and statistical models — not a site inspection, a licensed electrical assessment, or financial advice. Always verify Jouli's estimates with a CEC-accredited installer before making any purchase decision.</p>
+      <h3>Accuracy and limitations</h3>
+      <p>Solar generation estimates carry a typical accuracy of ±8–12%. Economic projections carry ±15–20% uncertainty. See our Accuracy page for the full breakdown. Jouli is not liable for any decisions made based on these estimates.</p>
+      <h3>Subscriptions and billing</h3>
+      <p>Free tier is free forever. Pro ($14/month) and Business ($79/month) subscriptions are billed monthly via Stripe. You can cancel at any time — cancellation takes effect at the end of your current billing period. No refunds for partial months.</p>
+      <h3>Acceptable use</h3>
+      <p>You may use Jouli for personal and commercial energy design purposes. You may not reverse-engineer, scrape, or resell Jouli's outputs or data. Business subscribers may use Jouli outputs in client proposals.</p>
+      <h3>Changes to these terms</h3>
+      <p>We'll notify subscribers by email of any material changes with at least 14 days notice.</p>
+      <h3>Contact</h3>
+      <p>Questions? hello@jouli.com.au</p>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-accuracy" onclick="if(event.target===this)closeModal('accuracy')">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span class="modal-title">Accuracy &amp; methodology</span>
+      <button class="modal-close" onclick="closeModal('accuracy')">✕</button>
+    </div>
+    <div class="modal-body">
+      <span class="modal-badge" style="background:#E6F1FB;color:#0C447C">NASA POWER · 30-year climatology · 2026</span>
+      <p>Jouli uses NASA POWER satellite data and published engineering models. Here's exactly how accurate each number is — and why.</p>
+      <h3>Accuracy by module</h3>
+      <div class="accuracy-row">
+        <span class="accuracy-label">Solar irradiance (NASA POWER)</span>
+        <div class="accuracy-bar-wrap"><div class="accuracy-bar-fill" style="width:92%;background:#1D9E75"></div></div>
+        <span class="accuracy-range">±5–8%</span>
+      </div>
+      <div class="accuracy-row">
+        <span class="accuracy-label">Solar generation estimate</span>
+        <div class="accuracy-bar-wrap"><div class="accuracy-bar-fill" style="width:88%;background:#1D9E75"></div></div>
+        <span class="accuracy-range">±8–12%</span>
+      </div>
+      <div class="accuracy-row">
+        <span class="accuracy-label">Battery sizing recommendation</span>
+        <div class="accuracy-bar-wrap"><div class="accuracy-bar-fill" style="width:90%;background:#378ADD"></div></div>
+        <span class="accuracy-range">±5–10%</span>
+      </div>
+      <div class="accuracy-row">
+        <span class="accuracy-label">Grid tariff modelling</span>
+        <div class="accuracy-bar-wrap"><div class="accuracy-bar-fill" style="width:96%;background:#1D9E75"></div></div>
+        <span class="accuracy-range">±2–5%</span>
+      </div>
+      <div class="accuracy-row">
+        <span class="accuracy-label">Load profile (appliance-based)</span>
+        <div class="accuracy-bar-wrap"><div class="accuracy-bar-fill" style="width:80%;background:#EF9F27"></div></div>
+        <span class="accuracy-range">±10–20%</span>
+      </div>
+      <div class="accuracy-row">
+        <span class="accuracy-label">Economic / ROI projections</span>
+        <div class="accuracy-bar-wrap"><div class="accuracy-bar-fill" style="width:75%;background:#EF9F27"></div></div>
+        <span class="accuracy-range">±15–20%</span>
+      </div>
+      <div class="accuracy-row">
+        <span class="accuracy-label">EV charging cost estimates</span>
+        <div class="accuracy-bar-wrap"><div class="accuracy-bar-fill" style="width:85%;background:#378ADD"></div></div>
+        <span class="accuracy-range">±8–12%</span>
+      </div>
+      <div class="accuracy-row">
+        <span class="accuracy-label">V2G / V2H revenue estimates</span>
+        <div class="accuracy-bar-wrap"><div class="accuracy-bar-fill" style="width:65%;background:#EF9F27"></div></div>
+        <span class="accuracy-range">±20–30%</span>
+      </div>
+      <h3>Why load profiling is the weakest link</h3>
+      <p>Your actual electricity consumption depends on habits, occupancy, and appliance age — none of which Jouli can measure remotely. The ±10–20% load uncertainty flows through into all downstream calculations. Uploading your NEM12 electricity bill (coming soon) reduces this to ±3–5%.</p>
+      <h3>What a site inspection adds</h3>
+      <p>A CEC-accredited installer can measure your actual roof orientation, shading from trees and neighbouring buildings, and grid connection capacity. This typically reduces overall system sizing uncertainty from ±10–15% to ±3–5%. Jouli is designed to get you 90% of the way there before you talk to anyone.</p>
+      <h3>Data sources</h3>
+      <ul>
+        <li>Solar irradiance: NASA POWER API (30-year climatology, 1°×1° resolution)</li>
+        <li>Grid tariffs: AEMO NEM data, updated quarterly</li>
+        <li>STC rebate: Clean Energy Regulator current deeming period</li>
+        <li>EV efficiency: manufacturer published WLTP figures</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-contact" onclick="if(event.target===this)closeModal('contact')">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span class="modal-title">Contact Jouli</span>
+      <button class="modal-close" onclick="closeModal('contact')">✕</button>
+    </div>
+    <div class="modal-body">
+      <span class="modal-badge" style="background:#E1F5EE;color:#085041">We respond within 2 business days</span>
+      <h3>General enquiries</h3>
+      <p>For questions about the product, your account, or anything else — email us at <strong>hello@jouli.com.au</strong></p>
+      <h3>Report a bug</h3>
+      <p>Found something broken? Tell us at <strong>bugs@jouli.com.au</strong> with a description of what happened and which browser you're using. Screenshots are very helpful.</p>
+      <h3>Business and installer enquiries</h3>
+      <p>Interested in the Business tier or want to discuss white-labelling Jouli for your energy retail business? Email <strong>business@jouli.com.au</strong></p>
+      <h3>Media</h3>
+      <p>Press enquiries to <strong>hello@jouli.com.au</strong> — we're happy to talk about the Australian home energy market and what we're building.</p>
+      <h3>Based in</h3>
+      <p>Jouli is built in Melbourne, Victoria, Australia. 🇦🇺</p>
+      <div style="background:#E1F5EE;border-radius:10px;padding:14px 16px;margin-top:14px">
+        <div style="font-size:13px;font-weight:600;color:#085041;margin-bottom:4px">Drop us a line</div>
+        <div style="font-size:13px;color:#0F6E56">hello@jouli.com.au</div>
+      </div>
+    </div>
+  </div>
+</div>
 
 </div><!-- /landing -->
 
@@ -1061,6 +1231,21 @@ function calcV2G(){
   };
   const ai=document.getElementById('v2g-ai-text');if(ai)ai.innerHTML=msgs[V2G_MODE];
 }
+
+
+function openModal(name){
+  document.getElementById('modal-'+name).classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeModal(name){
+  document.getElementById('modal-'+name).classList.remove('open');
+  document.body.style.overflow='';
+}
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'){
+    ['privacy','terms','accuracy','contact'].forEach(function(n){closeModal(n);});
+  }
+});
 
 </script>
 </body>
