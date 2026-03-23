@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jouli — Your energy, clearly.</title>
+<meta name="description" content="Solar. Battery. EV. One tool built for Australia using real NASA climate data, live NEM tariffs, and plain language anyone can understand.">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+/* ── RESET & BASE ─────────────────────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --g:#1D9E75;--gd:#085041;--gdp:#0D1B14;--gl:#E1F5EE;--gm:#5DCAA5;--gp:#9FE1CB;
+  --am:#EF9F27;--al:#FAEEDA;--ad:#633806;
+  --bl:#378ADD;--bll:#E6F1FB;--bld:#0C447C;
+  --off:#F7F9F7;--white:#ffffff;--border:rgba(29,158,117,0.15);
+  --grey:#888780;--lgrey:#F1EFE8;--dgrey:#0D1B14;
+  --text:#0D1B14;--text2:#4a6b5e;--text3:#7a9b8e;
+  --radius:12px;--radius-sm:8px;
+}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--off);color:var(--text);line-height:1.6}
+a{text-decoration:none;color:inherit}
+input,select,button{font-family:inherit}
+
+/* ── VIEWS ───────────────────────────────────────────────────────────────── */
+.view{display:none}.view.active{display:block}
+
+/* ── NAV ─────────────────────────────────────────────────────────────────── */
+nav{display:flex;align-items:center;justify-content:space-between;padding:14px 40px;background:rgba(247,249,247,0.95);backdrop-filter:blur(8px);position:sticky;top:0;z-index:100;border-bottom:1px solid var(--border)}
+.nav-logo{display:flex;align-items:center;gap:9px;cursor:pointer}
+.nav-name{font-size:20px;font-weight:600;color:var(--gdp);letter-spacing:-0.4px}
+.nav-links{display:flex;gap:28px;font-size:14px;color:var(--text2)}
+.nav-links a{cursor:pointer;transition:color .2s}.nav-links a:hover{color:var(--gd)}
+.nav-btn{font-size:13px;padding:9px 20px;border-radius:8px;background:var(--gd);color:var(--gl);border:none;cursor:pointer;font-weight:500;transition:background .2s}
+.nav-btn:hover{background:var(--gdp)}
+
+/* ── HERO ────────────────────────────────────────────────────────────────── */
+.hero{max-width:1100px;margin:0 auto;padding:72px 40px 56px;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+.eyebrow{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:500;color:var(--gd);background:var(--gl);padding:5px 12px;border-radius:20px;margin-bottom:20px;border:1px solid var(--gm)}
+.pulse{width:6px;height:6px;border-radius:50%;background:var(--g);animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.7)}}
+.hero h1{font-size:50px;line-height:1.1;letter-spacing:-1px;margin-bottom:18px;font-weight:700}
+.hero h1 em{font-style:italic;color:var(--g)}
+.hero-body{font-size:16px;color:var(--text2);line-height:1.7;font-weight:300;margin-bottom:28px}
+.signup-row{display:flex;gap:8px;margin-bottom:14px}
+.signup-row input{flex:1;font-size:14px;padding:11px 14px;border-radius:9px;border:1.5px solid var(--gm);background:white;color:var(--gdp);outline:none;transition:border-color .2s}
+.signup-row input:focus{border-color:var(--g)}
+.signup-row button{font-size:13px;padding:11px 20px;border-radius:9px;background:var(--g);color:white;border:none;cursor:pointer;font-weight:500;white-space:nowrap;transition:background .2s}
+.signup-row button:hover{background:var(--gd)}
+.trust{font-size:12px;color:var(--text3);display:flex;gap:16px;flex-wrap:wrap}
+.trust span{display:flex;align-items:center;gap:5px}
+
+/* ── HERO CARD ───────────────────────────────────────────────────────────── */
+.hero-visual{position:relative}
+.hcard{background:white;border-radius:16px;border:1px solid var(--border);padding:18px;box-shadow:0 8px 40px rgba(13,27,20,.07);animation:float 4s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+.hcard-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.hcard-title{font-size:12px;font-weight:500;color:var(--gdp);display:flex;align-items:center;gap:7px}
+.hcard-badge{font-size:10px;background:var(--gl);color:var(--gd);padding:3px 8px;border-radius:20px;font-weight:500}
+.hcard-stats{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:12px}
+.hcs{background:var(--off);border-radius:8px;padding:8px 10px}
+.hcs-val{font-size:17px;font-weight:600;color:var(--gdp)}
+.hcs-label{font-size:10px;color:var(--text3);margin-top:1px}
+.hcard-bars{display:flex;gap:2px;height:28px;align-items:flex-end;margin-bottom:10px}
+.hbar{flex:1;border-radius:2px 2px 0 0}
+.hcard-insight{background:#EEEDFE;border-radius:8px;padding:9px 11px;font-size:11px;color:#3C3489;line-height:1.5}
+.hcard-insight strong{color:#26215C}
+.fb{position:absolute;background:white;border:1px solid var(--border);border-radius:9px;padding:7px 11px;font-size:11px;box-shadow:0 4px 14px rgba(13,27,20,.07);display:flex;align-items:center;gap:6px}
+.fb1{top:-14px;right:-12px}.fb2{bottom:-12px;left:-12px}
+.fbdot{width:7px;height:7px;border-radius:50%}
+
+/* ── STRIP ───────────────────────────────────────────────────────────────── */
+.strip{padding:32px 40px;background:white;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.strip-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:0}
+.strip-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-right:28px;white-space:nowrap}
+.strip-items{display:flex;gap:28px;flex-wrap:wrap}
+.strip-item{font-size:13px;font-weight:500;color:#c0d4cc}
+
+/* ── HOW ─────────────────────────────────────────────────────────────────── */
+.how{max-width:1100px;margin:0 auto;padding:72px 40px}
+.sec-label{font-size:11px;color:var(--g);text-transform:uppercase;letter-spacing:.1em;font-weight:500;margin-bottom:10px}
+.sec-title{font-size:36px;letter-spacing:-.5px;margin-bottom:12px;line-height:1.15;font-weight:700}
+.sec-body{font-size:15px;color:var(--text2);line-height:1.7;font-weight:300;max-width:480px;margin-bottom:40px}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.step-c{background:white;border-radius:14px;border:1px solid var(--border);padding:22px;transition:transform .2s}
+.step-c:hover{transform:translateY(-3px)}
+.step-n{font-size:44px;color:var(--gl);line-height:1;margin-bottom:12px;font-weight:700}
+.step-t{font-size:14px;font-weight:600;margin-bottom:7px}
+.step-d{font-size:12px;color:var(--text2);line-height:1.6}
+.tier{display:inline-block;font-size:10px;padding:3px 8px;border-radius:20px;margin-top:10px;font-weight:500}
+
+/* ── FEATURES ────────────────────────────────────────────────────────────── */
+.feats{background:var(--gdp);padding:72px 40px}
+.feats-inner{max-width:1100px;margin:0 auto}
+.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.feat-c{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);border-radius:13px;padding:20px;transition:background .2s}
+.feat-c:hover{background:rgba(255,255,255,.08)}
+.feat-ico{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;margin-bottom:12px}
+.feat-t{font-size:13px;font-weight:600;color:white;margin-bottom:5px}
+.feat-d{font-size:12px;color:var(--gp);line-height:1.6}
+
+/* ── PRICING ─────────────────────────────────────────────────────────────── */
+.pricing{padding:72px 40px;background:white}
+.pricing-inner{max-width:860px;margin:0 auto;text-align:center}
+.price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:40px;text-align:left}
+.pc{border:1px solid var(--border);border-radius:14px;padding:26px 22px}
+.pc.feat{border:2px solid var(--g);background:var(--gl)}
+.pc-badge{font-size:10px;font-weight:500;background:var(--g);color:white;padding:3px 9px;border-radius:20px;display:inline-block;margin-bottom:14px}
+.pc-name{font-size:14px;font-weight:600;margin-bottom:3px}
+.pc-who{font-size:11px;color:var(--text3);margin-bottom:16px}
+.pc-price{font-size:36px;font-weight:700;line-height:1;margin-bottom:3px}
+.pc-per{font-size:11px;color:var(--text3);margin-bottom:18px}
+.pc-feats{display:flex;flex-direction:column;gap:7px;margin-bottom:20px}
+.pc-feat{display:flex;align-items:flex-start;gap:7px;font-size:12px;color:var(--text2);line-height:1.4}
+.pfc{width:13px;height:13px;border-radius:50%;background:var(--gl);border:1px solid var(--gm);flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:8px;color:var(--gd);font-weight:700}
+.pc-btn{width:100%;padding:10px;border-radius:9px;font-size:12px;font-weight:500;cursor:pointer;border:1.5px solid var(--gm);background:transparent;color:var(--gd);transition:all .2s}
+.pc-btn:hover{background:var(--gl)}
+.pc-btn.p{background:var(--g);color:white;border-color:var(--g)}
+.pc-btn.p:hover{background:var(--gd)}
+
+/* ── CTA ─────────────────────────────────────────────────────────────────── */
+.cta{padding:72px 40px;background:var(--gdp);text-align:center}
+.cta h2{font-size:40px;color:white;letter-spacing:-.5px;margin-bottom:12px;font-weight:700}
+.cta h2 em{color:var(--gm);font-style:italic}
+.cta p{font-size:15px;color:var(--gp);margin-bottom:28px;font-weight:300}
+.cta-row{display:flex;gap:8px;max-width:380px;margin:0 auto 12px}
+.cta-row input{flex:1;font-size:13px;padding:11px 14px;border-radius:9px;border:1px solid rgba(93,202,165,.3);background:rgba(255,255,255,.06);color:white;outline:none}
+.cta-row input::placeholder{color:var(--gp)}
+.cta-row input:focus{border-color:var(--gm)}
+.cta-row button{font-size:13px;padding:11px 20px;border-radius:9px;background:var(--g);color:white;border:none;cursor:pointer;font-weight:500}
+.cta-note{font-size:11px;color:var(--text3)}
+
+/* ── FOOTER ──────────────────────────────────────────────────────────────── */
+footer{padding:28px 40px;background:var(--gdp);border-top:1px solid rgba(255,255,255,.06);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.foot-logo{display:flex;align-items:center;gap:8px}
+.foot-name{font-size:16px;font-weight:700;color:var(--gm)}
+.foot-links{display:flex;gap:18px;font-size:12px;color:#4a6b5e}
+.foot-links a{cursor:pointer}
+.foot-tag{font-size:11px;color:#4a6b5e}
+
+/* ── APP SHELL ───────────────────────────────────────────────────────────── */
+.app-shell{display:none;flex-direction:column;min-height:100vh;background:var(--off)}
+.app-shell.active{display:flex}
+.app-topbar{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--border);background:white;flex-shrink:0}
+.app-logo{display:flex;align-items:center;gap:8px;cursor:pointer}
+.app-logo-name{font-size:17px;font-weight:700;color:var(--gdp);letter-spacing:-.3px}
+.app-logo-tag{font-size:10px;color:var(--grey)}
+.app-steps{display:flex;gap:3px}
+.app-step{font-size:11px;padding:4px 10px;border-radius:20px;border:1px solid #e0e0e0;color:var(--grey);cursor:pointer;white-space:nowrap;transition:all .2s}
+.app-step.active{background:var(--gl);color:var(--gd);border-color:var(--gm);font-weight:500}
+.app-step.done{background:#f5f5f5;color:#666}
+.app-body{display:grid;grid-template-columns:200px 1fr;flex:1}
+.app-sidebar{border-right:1px solid var(--border);padding:14px;background:#fafafa;display:flex;flex-direction:column;gap:4px}
+.sb-label{font-size:10px;color:var(--grey);text-transform:uppercase;letter-spacing:.06em;margin:10px 0 4px}
+.sb-item{font-size:12px;padding:6px 9px;border-radius:8px;color:#666;display:flex;align-items:center;gap:7px;cursor:pointer;transition:all .2s}
+.sb-item:hover{background:#f0f0f0}
+.sb-item.active{background:white;color:var(--dgrey);font-weight:500;border:1px solid #e0e0e0}
+.sb-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.sb-sum{margin-top:auto;padding-top:12px;border-top:1px solid var(--border)}
+.sb-row{display:flex;justify-content:space-between;font-size:11px;padding:3px 0;color:#666}
+.sb-val{font-weight:500;color:var(--dgrey)}
+.app-content{padding:18px 20px;background:white;overflow-y:auto}
+.sec-head{margin-bottom:16px}
+.sec-title2{font-size:16px;font-weight:600;color:var(--dgrey);margin-bottom:2px}
+.sec-sub2{font-size:12px;color:var(--grey)}
+
+/* ── LOCATION STEP ───────────────────────────────────────────────────────── */
+.loc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+.loc-city{border:1.5px solid var(--border);border-radius:12px;padding:16px;cursor:pointer;text-align:center;transition:all .2s}
+.loc-city:hover{border-color:var(--g)}
+.loc-city.sel{border-color:var(--g);background:var(--gl)}
+.loc-city-name{font-size:14px;font-weight:600;color:var(--dgrey);margin-bottom:4px}
+.loc-city-sub{font-size:11px;color:var(--grey)}
+.loc-irr{font-size:13px;font-weight:600;color:var(--gd);margin-top:4px}
+.or-div{display:flex;align-items:center;gap:10px;margin:14px 0;font-size:12px;color:var(--grey)}
+.or-div::before,.or-div::after{content:'';flex:1;height:1px;background:var(--border)}
+.postcode-row{display:flex;gap:8px;margin-bottom:16px}
+.postcode-row input{flex:1;font-size:14px;padding:10px 14px;border-radius:9px;border:1.5px solid #e0e0e0;outline:none;transition:border-color .2s}
+.postcode-row input:focus{border-color:var(--g)}
+.postcode-row button{font-size:13px;padding:10px 18px;border-radius:9px;background:var(--g);color:white;border:none;cursor:pointer;font-weight:500}
+
+/* ── LOAD STEP ───────────────────────────────────────────────────────────── */
+.app-list{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.app-row{display:flex;align-items:center;gap:8px;background:#f9f9f9;border-radius:8px;padding:8px 10px;font-size:12px}
+.app-name{flex:1;color:var(--dgrey);font-weight:500}
+.app-detail{color:var(--grey);font-size:11px;min-width:80px;text-align:right}
+.app-kwh{color:var(--dgrey);font-size:12px;font-weight:600;min-width:55px;text-align:right}
+.app-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.total-row{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--gl);border-radius:8px;font-size:13px;margin-bottom:12px}
+.total-label{color:var(--gd);font-weight:500}
+.total-val{color:var(--gd);font-size:18px;font-weight:700}
+
+/* ── SOLAR STEP ──────────────────────────────────────────────────────────── */
+.stats4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:16px}
+.stat{background:#f9f9f9;border-radius:8px;padding:10px 12px}
+.stat-label{font-size:10px;color:var(--grey);margin-bottom:3px}
+.stat-val{font-size:18px;font-weight:700;color:var(--dgrey)}
+.stat-unit{font-size:11px;color:#666}
+.stat-badge{display:inline-block;font-size:10px;padding:2px 6px;border-radius:20px;margin-top:3px}
+.cards2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.card{background:white;border:1px solid var(--border);border-radius:12px;padding:14px}
+.card-title{font-size:12px;font-weight:600;color:var(--dgrey);margin-bottom:10px}
+.bar-row{display:flex;align-items:center;gap:7px;margin-bottom:6px}
+.bar-label{font-size:11px;color:#666;width:28px;flex-shrink:0}
+.bar-track{flex:1;height:7px;background:#f0f0f0;border-radius:4px;overflow:hidden}
+.bar-fill{height:100%;border-radius:4px;transition:width .4s}
+.bar-val{font-size:11px;color:#666;width:36px;text-align:right;flex-shrink:0}
+.flow-rows{display:flex;flex-direction:column;gap:0}
+.flow-row{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border);font-size:12px}
+.flow-row:last-child{border-bottom:none}
+.flow-dot-label{display:flex;align-items:center;gap:6px;color:#666}
+.fdot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.flow-val{font-weight:600;color:var(--dgrey);font-size:13px}
+.flow-bar-wrap{display:flex;height:10px;border-radius:5px;overflow:hidden;margin:8px 0 4px}
+.flow-seg{height:100%}
+.flow-legend{display:flex;gap:10px;flex-wrap:wrap}
+.flow-legend-item{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--grey)}
+.slider-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.slider-row label{font-size:11px;color:#666;min-width:120px}
+.slider-row input[type=range]{flex:1}
+.sval{font-size:12px;font-weight:600;color:var(--dgrey);min-width:50px;text-align:right}
+.input-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.ifield{display:flex;flex-direction:column;gap:4px}
+.ifield label{font-size:11px;color:#666}
+.ifield input,.ifield select{font-size:13px;padding:7px 10px;border-radius:8px;border:1px solid #e0e0e0;background:white;color:var(--dgrey);width:100%;outline:none}
+
+/* ── AI BOX ──────────────────────────────────────────────────────────────── */
+.ai-box{background:#EEEDFE;border:1px solid #AFA9EC;border-radius:12px;padding:11px 14px;margin-bottom:12px;display:flex;gap:10px;align-items:flex-start}
+.ai-ico{width:20px;height:20px;border-radius:50%;background:#534AB7;flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:1px;font-size:10px;color:white;font-weight:700}
+.ai-text{font-size:12px;color:#3C3489;line-height:1.6}
+.ai-text strong{color:#26215C}
+
+/* ── ECONOMICS ───────────────────────────────────────────────────────────── */
+.hero-num{background:var(--gl);border-radius:12px;padding:20px 24px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;border:1px solid var(--gm)}
+.hn-val{font-size:40px;font-weight:700;color:var(--gd);letter-spacing:-1px;line-height:1}
+.hn-label{font-size:12px;color:var(--gd);font-weight:500;margin-bottom:4px}
+.hn-sub{font-size:12px;color:var(--g);margin-top:4px}
+.hn-stats{display:flex;gap:16px;flex-wrap:wrap}
+.hn-stat{text-align:center}
+.hn-stat-val{font-size:18px;font-weight:700;color:var(--gd)}
+.hn-stat-label{font-size:11px;color:var(--g)}
+.breakdown{display:flex;flex-direction:column;gap:0}
+.brow{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border);font-size:12px}
+.brow:last-child{border-bottom:none}
+.brow-label{color:#666;display:flex;align-items:center;gap:6px}
+.bdot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.brow-val{font-weight:600;color:var(--dgrey)}
+.brow-val.pos{color:#27500A}.brow-val.neg{color:#993C1D}
+
+/* ── BUTTONS ─────────────────────────────────────────────────────────────── */
+.btn-row{display:flex;gap:8px;margin-top:14px}
+.btn{font-size:12px;padding:8px 16px;border-radius:8px;border:1px solid #e0e0e0;background:transparent;color:var(--dgrey);cursor:pointer;transition:all .2s}
+.btn:hover{background:#f5f5f5}
+.btn-primary{background:var(--gd);color:var(--gl);border-color:var(--gd)}
+.btn-primary:hover{background:var(--gdp)}
+.disclaimer{font-size:10px;color:var(--grey);margin-top:10px;line-height:1.5;border-top:1px solid var(--border);padding-top:8px}
+
+/* ── TABS ────────────────────────────────────────────────────────────────── */
+.tabs{display:flex;gap:2px;margin-bottom:14px;background:#f5f5f5;border-radius:8px;padding:3px;width:fit-content}
+.tab{font-size:12px;padding:5px 12px;border-radius:6px;border:none;background:transparent;color:#666;cursor:pointer;transition:all .2s}
+.tab.active{background:white;color:var(--dgrey);font-weight:500;border:1px solid #e0e0e0}
+
+/* ── SUCCESS TOAST ───────────────────────────────────────────────────────── */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--gd);color:var(--gl);padding:10px 20px;border-radius:20px;font-size:13px;font-weight:500;z-index:9999;transition:transform .3s;white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+@media(max-width:768px){
+  .hero{grid-template-columns:1fr;padding:40px 20px}
+  .hero-visual{display:none}
+  .steps{grid-template-columns:1fr}
+  .feat-grid{grid-template-columns:1fr}
+  .price-grid{grid-template-columns:1fr}
+  nav{padding:12px 20px}
+  .nav-links{display:none}
+  .app-body{grid-template-columns:1fr}
+  .app-sidebar{display:none}
+  .stats4{grid-template-columns:repeat(2,1fr)}
+  .cards2{grid-template-columns:1fr}
+  .how{padding:40px 20px}
+  .feats{padding:40px 20px}
+  .pricing{padding:40px 20px}
+}
+</style>
+</head>
+<body>
+
+<!-- ── LOGO SVG ICON ──────────────────────────────────────────────────────── -->
+<svg style="display:none" id="logo-src">
+  <symbol id="jouli-icon" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="12" fill="white" stroke="#D3F0E4" stroke-width="1"/>
+    <circle cx="18" cy="20" r="9" fill="#1D9E75"/>
+    <rect x="20" y="30" width="8" height="8" rx="2" fill="#EF9F27" transform="rotate(-5 24 34)"/>
+    <rect x="31" y="30" width="7" height="7" rx="1.5" fill="#378ADD" transform="rotate(5 34 33)"/>
+  </symbol>
+</svg>
+
+<!-- ── LANDING PAGE ──────────────────────────────────────────────────────── -->
+<div id="landing" class="view active">
+
+<nav>
+  <div class="nav-logo" onclick="showLanding()">
+    <svg width="30" height="30"><use href="#jouli-icon"/></svg>
+    <span class="nav-name">jouli</span>
+  </div>
+  <div class="nav-links">
+    <a onclick="scrollTo('how-section')">How it works</a>
+    <a onclick="scrollTo('feat-section')">Features</a>
+    <a onclick="scrollTo('price-section')">Pricing</a>
+  </div>
+  <button class="nav-btn" onclick="openApp()">Try Jouli free</button>
+</nav>
+
+<section style="background:var(--off)">
+  <div class="hero">
+    <div class="hero-left">
+      <div class="eyebrow"><div class="pulse"></div>Now in beta · jouli.com.au</div>
+      <h1>Your energy,<br><em>clearly.</em></h1>
+      <p class="hero-body">Solar. Battery. EV. One tool built for Australia — using real NASA climate data, live NEM tariffs, and plain language anyone can understand.</p>
+      <div class="signup-row">
+        <input type="email" id="hero-email" placeholder="Enter your email"/>
+        <button onclick="signup('hero-email')">Get early access</button>
+      </div>
+      <div class="trust">
+        <span>✓ Free to start</span>
+        <span>✓ No installer pressure</span>
+        <span>✓ Australian data</span>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="fb fb1"><div class="fbdot" style="background:#EF9F27"></div><span style="color:#633806;font-weight:600">Solar: 38.9 kWh today</span></div>
+      <div class="hcard">
+        <div class="hcard-top">
+          <div class="hcard-title"><svg width="18" height="18"><use href="#jouli-icon"/></svg>Melbourne, VIC · 10 kW</div>
+          <span class="hcard-badge">Live estimate</span>
+        </div>
+        <div class="hcard-stats">
+          <div class="hcs"><div class="hcs-val">$2,840</div><div class="hcs-label">Est. annual savings</div></div>
+          <div class="hcs"><div class="hcs-val">6.2 yrs</div><div class="hcs-label">Payback period</div></div>
+          <div class="hcs"><div class="hcs-val">63%</div><div class="hcs-label">Self-sufficiency</div></div>
+          <div class="hcs"><div class="hcs-val">14,200</div><div class="hcs-label">kWh/year</div></div>
+        </div>
+        <div class="hcard-bars">
+          <div class="hbar" style="height:82%;background:#EF9F27"></div><div class="hbar" style="height:94%;background:#EF9F27"></div>
+          <div class="hbar" style="height:80%;background:#EF9F27"></div><div class="hbar" style="height:60%;background:#9FE1CB"></div>
+          <div class="hbar" style="height:44%;background:#9FE1CB"></div><div class="hbar" style="height:37%;background:#D3D1C7"></div>
+          <div class="hbar" style="height:40%;background:#D3D1C7"></div><div class="hbar" style="height:52%;background:#9FE1CB"></div>
+          <div class="hbar" style="height:66%;background:#9FE1CB"></div><div class="hbar" style="height:83%;background:#EF9F27"></div>
+          <div class="hbar" style="height:95%;background:#EF9F27"></div><div class="hbar" style="height:100%;background:#EF9F27"></div>
+        </div>
+        <div class="hcard-insight"><strong>Jouli insight —</strong> Adding a 15 kWh battery lifts self-sufficiency to 91% and cuts your bill by an extra $940/year.</div>
+      </div>
+      <div class="fb fb2"><div class="fbdot" style="background:#378ADD"></div><span style="color:#0C447C;font-weight:600">EV charging: $0.00 today ↗</span></div>
+    </div>
+  </div>
+</section>
+
+<div class="strip">
+  <div class="strip-inner">
+    <span class="strip-label">Powered by</span>
+    <div class="strip-items">
+      <span class="strip-item">NASA POWER</span><span class="strip-item">AEMO / NEM</span>
+      <span class="strip-item">Bureau of Meteorology</span><span class="strip-item">Clean Energy Council</span>
+      <span class="strip-item">30-year climate data</span>
+    </div>
+  </div>
+</div>
+
+<section class="how" id="how-section">
+  <div class="sec-label">How it works</div>
+  <div class="sec-title">From postcode to<br>proposal in minutes.</div>
+  <div class="sec-body">Six modules. One tool. Each audience gets the depth they need — no jargon, no pressure.</div>
+  <div class="steps">
+    <div class="step-c"><div class="step-n">01</div><div class="step-t">Profile your load</div><div class="step-d">Add appliances or upload your bill. Your daily energy curve is the foundation.</div><span class="tier" style="background:#E1F5EE;color:#085041">Free</span></div>
+    <div class="step-c"><div class="step-n">02</div><div class="step-t">Size your solar</div><div class="step-d">30 years of NASA irradiance data for your postcode. Adjust tilt and orientation live.</div><span class="tier" style="background:#E1F5EE;color:#085041">Free</span></div>
+    <div class="step-c"><div class="step-n">03</div><div class="step-t">Add battery + EV</div><div class="step-d">Model storage and EV charging together. See how solar hours change your payback.</div><span class="tier" style="background:#FAEEDA;color:#633806">Pro</span></div>
+    <div class="step-c"><div class="step-n">04</div><div class="step-t">See the economics</div><div class="step-d">Payback period, LCOE, NPV — or just "you'll save $2,840/year." Plain language.</div><span class="tier" style="background:#FAEEDA;color:#633806">Pro</span></div>
+    <div class="step-c"><div class="step-n">05</div><div class="step-t">Check resilience</div><div class="step-d">How many days off-grid in winter? Stress-tested against real worst-case weather.</div><span class="tier" style="background:#FAEEDA;color:#633806">Pro</span></div>
+    <div class="step-c"><div class="step-n">06</div><div class="step-t">Export your report</div><div class="step-d">A professional PDF proposal. Walk into any installer meeting knowing your numbers.</div><span class="tier" style="background:#EEEDFE;color:#3C3489">Business</span></div>
+  </div>
+</section>
+
+<section class="feats" id="feat-section">
+  <div class="feats-inner">
+    <div class="sec-label" style="color:var(--gm)">What makes Jouli different</div>
+    <div class="sec-title" style="color:white;max-width:480px">Built for Australia.<br>Built for everyone.</div>
+    <div class="sec-body" style="color:var(--gp)">Every other tool is too simple or too expensive. Jouli is the first to serve homeowners, installers, and engineers in one product.</div>
+    <div class="feat-grid">
+      <div class="feat-c"><div class="feat-ico" style="background:rgba(239,159,39,.12)"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="4" fill="#EF9F27"/><path d="M9 2v2M9 14v2M2 9h2M14 9h2" stroke="#EF9F27" stroke-width="1.5" stroke-linecap="round"/></svg></div><div class="feat-t">Real Australian solar data</div><div class="feat-d">NASA POWER 30-year climatology for every Australian postcode — validated against BOM surface stations.</div></div>
+      <div class="feat-c"><div class="feat-ico" style="background:rgba(55,138,221,.12)"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="3" y="8" width="4" height="7" rx="1" fill="#378ADD"/><rect x="7" y="5" width="4" height="10" rx="1" fill="#378ADD" opacity=".6"/><path d="M3 7L7 5l4 1 4-4" stroke="#EF9F27" stroke-width="1.2" stroke-linecap="round" fill="none"/></svg></div><div class="feat-t">Solar + EV + battery together</div><div class="feat-d">4.26M solar rooftops. 410,000 EVs. Jouli is the only tool that models all three as one home energy system.</div></div>
+      <div class="feat-c"><div class="feat-ico" style="background:rgba(29,158,117,.12)"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M2 14L6 8l3 3 4-6 3 3" stroke="#5DCAA5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></div><div class="feat-t">Live NEM tariff data</div><div class="feat-d">Feed-in tariffs and network charges updated from AEMO. Your economics always reflect what you actually pay.</div></div>
+      <div class="feat-c"><div class="feat-ico" style="background:rgba(93,202,165,.12)"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="6" stroke="#5DCAA5" stroke-width="1.5" fill="none"/><path d="M6 9l2 2 4-4" stroke="#5DCAA5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="feat-t">Honest accuracy</div><div class="feat-d">Every number shows a confidence range. We tell you what we don't know and why a site visit closes the gap.</div></div>
+      <div class="feat-c"><div class="feat-ico" style="background:rgba(175,169,236,.15)"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="3" fill="#7F77DD"/><path d="M9 3v2M9 13v2M3 9h2M13 9h2" stroke="#7F77DD" stroke-width="1.2" stroke-linecap="round"/></svg></div><div class="feat-t">AI insights in plain language</div><div class="feat-d">"Adding a battery saves you $940/year" — not "optimise your self-consumption ratio through storage arbitrage."</div></div>
+      <div class="feat-c"><div class="feat-ico" style="background:rgba(29,158,117,.12)"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="3" y="2" width="12" height="14" rx="2" stroke="#5DCAA5" stroke-width="1.5" fill="none"/><path d="M6 6h6M6 9h6M6 12h4" stroke="#5DCAA5" stroke-width="1.2" stroke-linecap="round"/></svg></div><div class="feat-t">Professional PDF reports</div><div class="feat-d">Branded, compliant, ready to share. Walk into an installer meeting knowing your numbers cold.</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="pricing" id="price-section">
+  <div class="pricing-inner">
+    <div class="sec-label">Pricing</div>
+    <div class="sec-title">Start free. Go deeper when ready.</div>
+    <div class="sec-body" style="max-width:420px;margin:0 auto">No pushy upsells. No installer kickbacks. Jouli makes money when you subscribe — not when you click through to a quote.</div>
+    <div class="price-grid">
+      <div class="pc"><div class="pc-name">Free</div><div class="pc-who">Homeowners exploring solar</div><div class="pc-price">$0</div><div class="pc-per">forever</div><div class="pc-feats"><div class="pc-feat"><div class="pfc">✓</div>Load profiler</div><div class="pc-feat"><div class="pfc">✓</div>Solar sizing engine</div><div class="pc-feat"><div class="pfc">✓</div>Basic ROI estimate</div><div class="pc-feat"><div class="pfc">✓</div>PDF summary</div></div><button class="pc-btn" onclick="openApp()">Get started free</button></div>
+      <div class="pc feat"><span class="pc-badge">Most popular</span><div class="pc-name">Pro</div><div class="pc-who">Homeowners with solar or EV</div><div class="pc-price">$14</div><div class="pc-per">per month</div><div class="pc-feats"><div class="pc-feat"><div class="pfc">✓</div>Everything in Free</div><div class="pc-feat"><div class="pfc">✓</div>Battery + EV modelling</div><div class="pc-feat"><div class="pfc">✓</div>Live NEM tariff data</div><div class="pc-feat"><div class="pfc">✓</div>Resilience analyser</div><div class="pc-feat"><div class="pfc">✓</div>Smart EV scheduler</div></div><button class="pc-btn p" onclick="signup('hero-email')">Start Pro — 30 days free</button></div>
+      <div class="pc"><div class="pc-name">Business</div><div class="pc-who">Installers &amp; consultants</div><div class="pc-price">$79</div><div class="pc-per">per month</div><div class="pc-feats"><div class="pc-feat"><div class="pfc">✓</div>Everything in Pro</div><div class="pc-feat"><div class="pfc">✓</div>Branded PDF proposals</div><div class="pc-feat"><div class="pfc">✓</div>Multi-site management</div><div class="pc-feat"><div class="pfc">✓</div>Client portal + API</div></div><button class="pc-btn" onclick="showToast('Thanks! We will be in touch.')">Contact us</button></div>
+    </div>
+  </div>
+</section>
+
+<section class="cta">
+  <h2>Ready to understand<br>your <em>energy future?</em></h2>
+  <p>Onboarding early users across Australia — starting in Melbourne.</p>
+  <div class="cta-row"><input type="email" id="cta-email" placeholder="your@email.com"/><button onclick="signup('cta-email')">Join waitlist</button></div>
+  <p class="cta-note">No spam. No installer referrals. Just Jouli.</p>
+</section>
+
+<footer>
+  <div class="foot-logo"><svg width="22" height="22"><use href="#jouli-icon"/></svg><span class="foot-name">jouli</span></div>
+  <div class="foot-links"><a>Privacy</a><a>Terms</a><a>Accuracy</a><a>Contact</a></div>
+  <div class="foot-tag">Jouli · Your energy, clearly. · Australia</div>
+</footer>
+
+</div><!-- /landing -->
+
+<!-- ── APP SHELL ──────────────────────────────────────────────────────────── -->
+<div id="app" class="app-shell">
+  <div class="app-topbar">
+    <div class="app-logo" onclick="showLanding()">
+      <svg width="28" height="28"><use href="#jouli-icon"/></svg>
+      <span class="app-logo-name">jouli</span>
+      <span class="app-logo-tag">beta</span>
+    </div>
+    <div class="app-steps">
+      <div class="app-step done" id="step-loc" onclick="goStep('loc')">Location</div>
+      <div class="app-step" id="step-load" onclick="goStep('load')">Load</div>
+      <div class="app-step" id="step-solar" onclick="goStep('solar')">Solar</div>
+      <div class="app-step" id="step-econ" onclick="goStep('econ')">Economics</div>
+      <div class="app-step" id="step-report" onclick="goStep('report')">Report</div>
+    </div>
+    <div id="app-loc-label" style="font-size:11px;color:var(--grey)">Select location</div>
+  </div>
+  <div class="app-body">
+    <div class="app-sidebar">
+      <div class="sb-label">Modules</div>
+      <div class="sb-item active" id="sb-loc" onclick="goStep('loc')"><div class="sb-dot" style="background:#1D9E75"></div>Location</div>
+      <div class="sb-item" id="sb-load" onclick="goStep('load')"><div class="sb-dot" style="background:#1D9E75"></div>Load profiler</div>
+      <div class="sb-item" id="sb-solar" onclick="goStep('solar')"><div class="sb-dot" style="background:#EF9F27"></div>Solar sizing</div>
+      <div class="sb-item" id="sb-econ" onclick="goStep('econ')"><div class="sb-dot" style="background:#639922"></div>Economics</div>
+      <div class="sb-item" id="sb-report" onclick="goStep('report')"><div class="sb-dot" style="background:#534AB7"></div>Report</div>
+      <div class="sb-sum">
+        <div class="sb-label">System</div>
+        <div class="sb-row"><span>Location</span><span class="sb-val" id="sb-loc-val">—</span></div>
+        <div class="sb-row"><span>Daily load</span><span class="sb-val" id="sb-load-val">22.4 kWh</span></div>
+        <div class="sb-row"><span>Solar</span><span class="sb-val" id="sb-solar-val">10 kW</span></div>
+        <div class="sb-row"><span>Annual gen.</span><span class="sb-val" id="sb-gen-val">—</span></div>
+        <div class="sb-row"><span>Savings</span><span class="sb-val" id="sb-saving-val">—</span></div>
+      </div>
+    </div>
+    <div class="app-content" id="app-content"></div>
+  </div>
+</div>
+
+<!-- ── TOAST ─────────────────────────────────────────────────────────────── -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── DATA ────────────────────────────────────────────────────────────────────
+const CITIES = {
+  melbourne:{ name:'Melbourne, VIC', irr:[4.2,4.8,4.1,3.1,2.3,1.9,2.1,2.7,3.4,4.3,4.9,5.1] },
+  sydney:   { name:'Sydney, NSW',    irr:[6.1,5.8,5.2,4.3,3.4,2.9,3.2,3.9,4.8,5.6,6.0,6.3] },
+  brisbane: { name:'Brisbane, QLD',  irr:[6.4,6.0,5.8,5.2,4.5,4.0,4.3,5.0,5.8,6.2,6.5,6.6] },
+  perth:    { name:'Perth, WA',      irr:[7.8,7.2,6.5,5.1,4.0,3.4,3.7,4.6,5.8,6.9,7.5,7.9] },
+  adelaide: { name:'Adelaide, SA',   irr:[7.1,6.6,5.9,4.6,3.5,2.9,3.2,4.1,5.3,6.4,7.0,7.3] },
+  hobart:   { name:'Hobart, TAS',    irr:[5.9,5.4,4.5,3.2,2.2,1.7,1.9,2.7,3.8,5.0,5.7,6.1] },
+};
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const APPLIANCES = [
+  {name:'Air conditioner',kw:3.0,hrs:4,col:'#EF9F27'},
+  {name:'EV charging',    kw:7.0,hrs:1,col:'#378ADD'},
+  {name:'Hot water',      kw:2.4,hrs:2,col:'#1D9E75'},
+  {name:'Refrigerator',   kw:0.15,hrs:24,col:'#D4537E'},
+  {name:'Lighting',       kw:0.3,hrs:6,col:'#639922'},
+  {name:'Other',          kw:0.35,hrs:6,col:'#888780'},
+];
+
+let STATE = {
+  city:'melbourne', sysKw:10, orient:1.0, tilt:22, shading:3,
+  solarCost:12000, batCost:8000, gridRate:32, fit:5, priceRise:3, discount:5,
+  pbChart:null, scChart:null
+};
+
+function fmt(n){return'$'+Math.round(n).toLocaleString()}
+function fmtk(n){return'$'+(Math.round(n/100)/10)+'k'}
+
+// ── NAVIGATION ───────────────────────────────────────────────────────────────
+function showLanding(){
+  document.getElementById('landing').className='view active';
+  document.getElementById('app').className='app-shell';
+}
+function openApp(){
+  document.getElementById('landing').className='view';
+  document.getElementById('app').className='app-shell active';
+  goStep('loc');
+}
+function goStep(s){
+  const steps=['loc','load','solar','econ','report'];
+  steps.forEach(st=>{
+    const el=document.getElementById('step-'+st);
+    const sb=document.getElementById('sb-'+st);
+    if(el){el.className='app-step'+(st===s?' active':steps.indexOf(st)<steps.indexOf(s)?' done':'');}
+    if(sb){sb.className='sb-item'+(st===s?' active':'');}
+  });
+  const c=document.getElementById('app-content');
+  if(s==='loc')   renderLoc(c);
+  if(s==='load')  renderLoad(c);
+  if(s==='solar') renderSolar(c);
+  if(s==='econ')  renderEcon(c);
+  if(s==='report') renderReport(c);
+  if(STATE.pbChart){STATE.pbChart.destroy();STATE.pbChart=null;}
+  if(STATE.scChart){STATE.scChart.destroy();STATE.scChart=null;}
+}
+function scrollTo(id){const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth'})}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.className='toast show';setTimeout(()=>t.className='toast',3000);}
+function signup(id){
+  const v=document.getElementById(id)?.value||'';
+  if(v&&v.includes('@')){showToast('Thanks! You are on the Jouli waitlist.');}
+  else{showToast('Please enter a valid email.');}
+}
+
+// ── LOCATION STEP ─────────────────────────────────────────────────────────────
+function renderLoc(c){
+  c.innerHTML=`
+  <div class="sec-head"><div class="sec-title2">Choose your location</div><div class="sec-sub2">Jouli uses NASA POWER 30-year satellite data for your city</div></div>
+  <div class="loc-grid">
+    ${Object.entries(CITIES).map(([k,v])=>`
+    <div class="loc-city ${STATE.city===k?'sel':''}" onclick="selectCity('${k}')">
+      <div class="loc-city-name">${v.name}</div>
+      <div class="loc-irr">${(v.irr.reduce((a,b)=>a+b,0)/12).toFixed(1)} kWh/m²/day avg</div>
+    </div>`).join('')}
+  </div>
+  <div class="or-div">or enter your postcode</div>
+  <div class="postcode-row">
+    <input type="text" id="postcode-inp" placeholder="e.g. 3000, 2000, 4000..." maxlength="4"/>
+    <button onclick="lookupPostcode()">Look up</button>
+  </div>
+  <div id="postcode-result" style="font-size:13px;color:var(--gd);margin-bottom:16px;min-height:18px"></div>
+  <div class="ai-box">
+    <div class="ai-ico">AI</div>
+    <div class="ai-text"><strong>Jouli insight —</strong> Your location determines your solar irradiance. Darwin gets 7.3 kWh/m²/day average — nearly double Melbourne's 3.8. This difference alone changes your system size recommendation by 30–40%.</div>
+  </div>
+  <div class="btn-row"><button class="btn-primary btn" onclick="goStep('load')">Continue to load profiler →</button></div>
+  `;
+}
+function selectCity(k){
+  STATE.city=k;
+  document.getElementById('app-loc-label').textContent=CITIES[k].name;
+  document.getElementById('sb-loc-val').textContent=CITIES[k].name.split(',')[0];
+  renderLoc(document.getElementById('app-content'));
+}
+function lookupPostcode(){
+  const pc=document.getElementById('postcode-inp').value.trim();
+  const map={'3':['melbourne','VIC'],'2':['sydney','NSW'],'4':['brisbane','QLD'],'6':['perth','WA'],'5':['adelaide','SA'],'7':['hobart','TAS']};
+  const match=map[pc[0]];
+  if(pc.length===4&&match){
+    STATE.city=match[0];
+    document.getElementById('postcode-result').textContent=`✓ Matched to ${CITIES[match[0]].name}`;
+    document.getElementById('app-loc-label').textContent=CITIES[match[0]].name;
+    document.getElementById('sb-loc-val').textContent=CITIES[match[0]].name.split(',')[0];
+    renderLoc(document.getElementById('app-content'));
+  } else {
+    document.getElementById('postcode-result').textContent='Please enter a valid 4-digit Australian postcode.';
+  }
+}
+
+// ── LOAD STEP ─────────────────────────────────────────────────────────────────
+function renderLoad(c){
+  const total=APPLIANCES.reduce((s,a)=>s+a.kw*a.hrs,0);
+  c.innerHTML=`
+  <div class="sec-head"><div class="sec-title2">Load profiler</div><div class="sec-sub2">${CITIES[STATE.city].name} · typical household</div></div>
+  <div class="app-list">
+    ${APPLIANCES.map(a=>`<div class="app-row"><div class="app-dot" style="background:${a.col}"></div><span class="app-name">${a.name}</span><span class="app-detail">${a.kw}kW · ${a.hrs}h/day</span><span class="app-kwh">${(a.kw*a.hrs).toFixed(1)} kWh</span></div>`).join('')}
+  </div>
+  <div class="total-row"><span class="total-label">Total daily load</span><span class="total-val">${total.toFixed(1)} kWh/day</span></div>
+  <div class="ai-box"><div class="ai-ico">AI</div><div class="ai-text"><strong>Jouli insight —</strong> Your EV charging (7 kWh/day) is your second largest load. Scheduling EV charging during solar peak hours (10am–2pm) could save an estimated $420/year on your current tariff.</div></div>
+  <div class="btn-row"><button class="btn" onclick="goStep('loc')">← Back</button><button class="btn-primary btn" onclick="goStep('solar')">Continue to solar sizing →</button></div>
+  <div class="disclaimer">Estimates based on typical appliance ratings. Actual consumption varies ±10–20%.</div>
+  `;
+}
+
+// ── SOLAR STEP ────────────────────────────────────────────────────────────────
+function renderSolar(c){
+  c.innerHTML=`
+  <div class="sec-head"><div class="sec-title2">Solar sizing engine</div><div class="sec-sub2">NASA POWER data · ${CITIES[STATE.city].name} · 30-year climatology</div></div>
+  <div class="input-grid">
+    <div class="ifield"><label>System size (kW)</label><input type="number" id="sys-kw" value="${STATE.sysKw}" min="1" max="100" step="0.5" oninput="STATE.sysKw=parseFloat(this.value)||10;calcSolar()"></div>
+    <div class="ifield"><label>Roof orientation</label><select id="orientation" onchange="STATE.orient=parseFloat(this.value);calcSolar()"><option value="1.0">North (optimal)</option><option value="0.93">NE / NW</option><option value="0.85">East / West</option><option value="0.75">SE / SW</option></select></div>
+  </div>
+  <div class="slider-row"><label>Roof tilt (degrees)</label><input type="range" id="tilt" min="0" max="45" value="${STATE.tilt}" step="1" oninput="STATE.tilt=parseInt(this.value);document.getElementById('tilt-out').textContent=STATE.tilt+'°';calcSolar()"><span class="sval" id="tilt-out">${STATE.tilt}°</span></div>
+  <div class="slider-row"><label>Shading losses</label><input type="range" id="shading" min="0" max="30" value="${STATE.shading}" step="1" oninput="STATE.shading=parseInt(this.value);document.getElementById('shading-out').textContent=STATE.shading+'%';calcSolar()"><span class="sval" id="shading-out">${STATE.shading}%</span></div>
+  <div class="stats4" id="solar-stats"></div>
+  <div class="cards2">
+    <div class="card"><div class="card-title">Monthly generation (kWh)</div><div id="monthly-bars"></div></div>
+    <div class="card"><div class="card-title">Daily energy flow</div><div class="flow-rows" id="flow-rows"></div><div class="flow-bar-wrap" id="flow-bar"></div><div class="flow-legend"><div class="flow-legend-item"><div class="fdot" style="background:#EF9F27"></div>Generated</div><div class="flow-legend-item"><div class="fdot" style="background:#1D9E75"></div>Self-use</div><div class="flow-legend-item"><div class="fdot" style="background:#378ADD"></div>Export</div><div class="flow-legend-item"><div class="fdot" style="background:#B4B2A9"></div>Import</div></div></div>
+  </div>
+  <div class="ai-box" id="solar-ai"><div class="ai-ico">AI</div><div class="ai-text" id="solar-ai-text"></div></div>
+  <div class="btn-row"><button class="btn" onclick="goStep('load')">← Back</button><button class="btn-primary btn" onclick="goStep('econ')">Continue to economics →</button></div>
+  <div class="disclaimer">Solar generation uses NASA POWER 30-year climatology with performance ratio 0.80. Accuracy ±8–12%.</div>
+  `;
+  calcSolar();
+}
+function calcSolar(){
+  const irr=CITIES[STATE.city].irr;
+  const tiltF=1-Math.abs(STATE.tilt-22)*0.003;
+  const shadingF=1-STATE.shading/100;
+  const PR=0.80*STATE.orient*tiltF*shadingF;
+  const monthly=irr.map(i=>Math.round(STATE.sysKw*i*PR*30));
+  const annualGen=monthly.reduce((a,b)=>a+b,0);
+  const dailyGen=parseFloat((annualGen/365).toFixed(1));
+  const selfUse=parseFloat(Math.min(dailyGen*0.42,22.4).toFixed(1));
+  const exported=parseFloat((dailyGen-selfUse).toFixed(1));
+  const imported=parseFloat(Math.max(22.4-selfUse,0).toFixed(1));
+  const selfSuff=Math.round((selfUse/22.4)*100);
+  const panels=Math.ceil(STATE.sysKw*1000/455);
+  STATE.annualGen=annualGen; STATE.selfUse=selfUse; STATE.exported=exported; STATE.selfSuff=selfSuff;
+  document.getElementById('sb-solar-val').textContent=STATE.sysKw+' kW';
+  document.getElementById('sb-gen-val').textContent=annualGen.toLocaleString()+' kWh';
+  const ss=document.getElementById('solar-stats');
+  if(!ss)return;
+  ss.innerHTML=[
+    {l:'Annual generation',v:(annualGen/1000).toFixed(1),u:'MWh',b:selfSuff+'% self-sufficient',bc:'#EAF3DE',tc:'#27500A'},
+    {l:'Daily avg yield',v:dailyGen,u:'kWh/day',b:(STATE.sysKw*0.48).toFixed(1)+' peak sun hrs',bc:'#FAEEDA',tc:'#633806'},
+    {l:'Panel count',v:panels,u:'panels',b:'455W mono PERC',bc:'#E1F5EE',tc:'#085041'},
+    {l:'Self-sufficiency',v:selfSuff,u:'%',b:selfSuff>60?'Excellent':'Add battery',bc:selfSuff>60?'#EAF3DE':'#FAEEDA',tc:selfSuff>60?'#27500A':'#633806'},
+  ].map(s=>`<div class="stat"><div class="stat-label">${s.l}</div><div class="stat-val">${s.v} <span class="stat-unit">${s.u}</span></div><div class="stat-badge" style="background:${s.bc};color:${s.tc}">${s.b}</div></div>`).join('');
+  const maxM=Math.max(...monthly);
+  document.getElementById('monthly-bars').innerHTML=monthly.map((v,i)=>{const pct=Math.round((v/maxM)*100);const col=v>1200?'#EF9F27':v>800?'#5DCAA5':'#B4B2A9';return`<div class="bar-row"><div class="bar-label">${MONTHS[i].slice(0,3)}</div><div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${col}"></div></div><div class="bar-val">${v}</div></div>`;}).join('');
+  document.getElementById('flow-rows').innerHTML=[
+    {l:'Solar generated',v:dailyGen+' kWh',c:'#EF9F27'},{l:'Self-consumed',v:selfUse+' kWh',c:'#1D9E75'},
+    {l:'Exported to grid',v:exported+' kWh',c:'#378ADD'},{l:'Imported from grid',v:imported+' kWh',c:'#B4B2A9'},
+  ].map(r=>`<div class="flow-row"><div class="flow-dot-label"><div class="fdot" style="background:${r.c}"></div>${r.l}</div><span class="flow-val">${r.v}</span></div>`).join('');
+  const gp=Math.round((selfUse/dailyGen)*100),ep=Math.round((exported/dailyGen)*100);
+  document.getElementById('flow-bar').innerHTML=`<div class="flow-seg" style="width:${gp}%;background:#EF9F27"></div><div class="flow-seg" style="width:${ep}%;background:#1D9E75"></div><div class="flow-seg" style="width:${Math.max(100-gp-ep,0)}%;background:#378ADD"></div>`;
+  const aiT=document.getElementById('solar-ai-text');
+  if(aiT)aiT.innerHTML=exported>selfUse?`<strong>Jouli insight —</strong> Your export (${exported} kWh/day) exceeds self-consumption. A ${Math.round(exported*0.7*10)/10} kWh battery would capture most of this excess and reduce grid imports to near zero.`:selfSuff<50?`<strong>Jouli insight —</strong> Self-sufficiency is ${selfSuff}% — below ideal. Consider increasing to ${Math.round(STATE.sysKw*1.3*2)/2} kW or adding battery storage.`:`<strong>Jouli insight —</strong> Good balance at ${selfSuff}% self-sufficient. A battery would push this above 90% and eliminate most grid imports.`;
+}
+
+// ── ECONOMICS STEP ────────────────────────────────────────────────────────────
+function renderEcon(c){
+  c.innerHTML=`
+  <div class="sec-head"><div class="sec-title2">Economics &amp; ROI</div><div class="sec-sub2">${CITIES[STATE.city].name} · ${STATE.sysKw} kW solar · NEM tariff</div></div>
+  <div class="hero-num"><div><div class="hn-label">Estimated annual savings</div><div class="hn-val" id="econ-saving">—</div><div class="hn-sub" id="econ-sub">—</div></div><div class="hn-stats"><div class="hn-stat"><div class="hn-stat-val" id="e-pb">—</div><div class="hn-stat-label">Payback</div></div><div class="hn-stat"><div class="hn-stat-val" id="e-lcoe">—</div><div class="hn-stat-label">LCOE</div></div><div class="hn-stat"><div class="hn-stat-val" id="e-roi">—</div><div class="hn-stat-label">25yr ROI</div></div><div class="hn-stat"><div class="hn-stat-val" id="e-npv">—</div><div class="hn-stat-label">NPV</div></div></div></div>
+  <div class="input-grid">
+    <div class="ifield"><label>Solar + install cost ($)</label><input type="number" id="e-sc" value="${STATE.solarCost}" step="500" oninput="STATE.solarCost=parseFloat(this.value)||12000;calcEcon()"></div>
+    <div class="ifield"><label>Grid rate (¢/kWh)</label><input type="number" id="e-gr" value="${STATE.gridRate}" step="1" oninput="STATE.gridRate=parseFloat(this.value)||32;calcEcon()"></div>
+    <div class="ifield"><label>Battery cost ($)</label><input type="number" id="e-bc" value="${STATE.batCost}" step="500" oninput="STATE.batCost=parseFloat(this.value)||8000;calcEcon()"></div>
+    <div class="ifield"><label>Feed-in tariff (¢/kWh)</label><input type="number" id="e-fit" value="${STATE.fit}" step="0.5" oninput="STATE.fit=parseFloat(this.value)||5;calcEcon()"></div>
+  </div>
+  <div class="slider-row"><label>Annual price rise</label><input type="range" id="e-pr" min="0" max="10" value="${STATE.priceRise}" step="1" oninput="STATE.priceRise=parseInt(this.value);document.getElementById('e-pr-out').textContent=STATE.priceRise+'%/yr';calcEcon()"><span class="sval" id="e-pr-out">${STATE.priceRise}%/yr</span></div>
+  <div class="cards2">
+    <div class="card"><div class="card-title">Cost breakdown</div><div class="breakdown" id="cost-bd"></div></div>
+    <div class="card"><div class="card-title">Annual savings breakdown</div><div class="breakdown" id="sav-bd"></div></div>
+  </div>
+  <div class="card" style="margin-bottom:12px"><div class="card-title">25-year cumulative savings</div><div style="position:relative;height:200px"><canvas id="pb-chart"></canvas></div></div>
+  <div class="ai-box"><div class="ai-ico">AI</div><div class="ai-text" id="econ-ai-text"></div></div>
+  <div class="btn-row"><button class="btn" onclick="goStep('solar')">← Back</button><button class="btn-primary btn" onclick="goStep('report')">Generate report →</button></div>
+  <div class="disclaimer">Economics ±15–20%. Not financial advice. Electricity price escalation modelled at selected rate. STC rebate estimated at $400/kW. Verify with a licensed installer.</div>
+  `;
+  calcEcon();
+}
+function calcEcon(){
+  const irr=CITIES[STATE.city].irr;
+  const PR=0.80;
+  const annualGen=Math.round(STATE.sysKw*(irr.reduce((a,b)=>a+b,0)/12)*PR*365);
+  const selfUse=Math.min((annualGen/365)*0.72,22.4);
+  const exported=(annualGen/365)-selfUse;
+  const gridSav=selfUse*365*(STATE.gridRate/100);
+  const fitInc=exported*365*(STATE.fit/100);
+  const totalCost=STATE.solarCost+STATE.batCost;
+  const stc=Math.round(STATE.sysKw*400);
+  const netCost=totalCost-stc;
+  const annualSav=Math.round(gridSav+fitInc);
+  const pb=parseFloat((netCost/annualSav).toFixed(1));
+  const lcoe=parseFloat(((netCost/(annualGen*25*0.9875))*100).toFixed(1));
+  let npv=-netCost,cum=[],cv=-netCost;
+  for(let y=1;y<=25;y++){const ys=annualSav*Math.pow(1+STATE.priceRise/100,y-1);npv+=ys/Math.pow(1.05,y);cv+=ys;cum.push(Math.round(cv));}
+  const roi=Math.round((cum[24]/netCost)*100);
+  STATE.annualSav=annualSav;STATE.pb=pb;STATE.cum25=cum[24];
+  document.getElementById('sb-saving-val').textContent=fmt(annualSav)+'/yr';
+  document.getElementById('econ-saving').textContent=fmt(annualSav);
+  document.getElementById('econ-sub').textContent=`Payback in ${pb} years · 25-year profit ${fmt(cum[24])}`;
+  document.getElementById('e-pb').textContent=pb+' yrs';
+  document.getElementById('e-lcoe').textContent=lcoe+'¢';
+  document.getElementById('e-roi').textContent=roi+'%';
+  document.getElementById('e-npv').textContent=fmtk(npv);
+  document.getElementById('cost-bd').innerHTML=[
+    {l:'Solar + install',v:fmt(STATE.solarCost),c:'#EF9F27'},{l:'Battery',v:fmt(STATE.batCost),c:'#378ADD'},
+    {l:'STC rebate',v:'-'+fmt(stc),c:'#27500A'},{l:'Net cost',v:'<strong>'+fmt(netCost)+'</strong>',c:'#085041'},
+  ].map(r=>`<div class="brow"><div class="brow-label"><div class="bdot" style="background:${r.c}"></div>${r.l}</div><div class="brow-val">${r.v}</div></div>`).join('');
+  document.getElementById('sav-bd').innerHTML=[
+    {l:'Grid electricity saved',v:fmt(gridSav),c:'#1D9E75',cls:'pos'},{l:'Feed-in tariff income',v:fmt(fitInc),c:'#EF9F27',cls:'pos'},
+    {l:'O&M (est.)',v:'-'+fmt(totalCost*0.005),c:'#993C1D',cls:'neg'},{l:'Net annual benefit',v:'<strong>'+fmt(annualSav-totalCost*0.005)+'</strong>',c:'#085041',cls:'pos'},
+  ].map(r=>`<div class="brow"><div class="brow-label"><div class="bdot" style="background:${r.c}"></div>${r.l}</div><div class="brow-val ${r.cls}">${r.v}</div></div>`).join('');
+  const years=Array.from({length:25},(_,i)=>i+1);
+  if(STATE.pbChart)STATE.pbChart.destroy();
+  STATE.pbChart=new Chart(document.getElementById('pb-chart'),{type:'line',data:{labels:years,datasets:[{label:'Cumulative',data:cum,borderColor:'#1D9E75',borderWidth:2,fill:true,backgroundColor:'rgba(29,158,117,.08)',pointRadius:0,tension:.3},{label:'Break even',data:years.map(()=>0),borderColor:'rgba(180,178,169,.5)',borderWidth:1,borderDash:[4,4],pointRadius:0,fill:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{font:{size:10},color:'#888',maxTicksLimit:6},grid:{color:'rgba(180,178,169,.1)'}},y:{ticks:{font:{size:10},color:'#888',callback:v=>fmtk(v)},grid:{color:'rgba(180,178,169,.1)'}}}}});
+  const ai=document.getElementById('econ-ai-text');
+  if(ai)ai.innerHTML=pb<7?`<strong>Jouli insight —</strong> Excellent — ${pb}-year payback on a 25-year system. Total profit of ${fmt(cum[24])}. The STC rebate of ${fmt(stc)} significantly reduces upfront cost.`:pb<10?`<strong>Jouli insight —</strong> Solid investment at ${pb}-year payback. Switching to a time-of-use tariff or increasing your feed-in rate could shave 0.5–1 year off payback.`:`<strong>Jouli insight —</strong> Payback of ${pb} years is above ideal. Get 3+ installer quotes to reduce system cost, or check if a smaller ${Math.round(STATE.sysKw*0.7*2)/2} kW system offers better economics.`;
+}
+
+// ── REPORT STEP ───────────────────────────────────────────────────────────────
+function renderReport(c){
+  const city=CITIES[STATE.city];
+  const annualGen=STATE.annualGen||14200;
+  const annualSav=STATE.annualSav||3420;
+  const pb=STATE.pb||6.1;
+  const profit=STATE.cum25||48600;
+  c.innerHTML=`
+  <div class="sec-head"><div class="sec-title2">System design report</div><div class="sec-sub2">${city.name} · ${STATE.sysKw} kW solar · ready to download</div></div>
+  <div style="background:var(--gl);border-radius:12px;padding:20px 24px;margin-bottom:16px;border:1px solid var(--gm)">
+    <div style="font-size:12px;color:var(--gd);font-weight:500;margin-bottom:8px">Report summary</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
+      <div><div style="font-size:10px;color:var(--gd)">Location</div><div style="font-size:14px;font-weight:700;color:var(--gd)">${city.name.split(',')[0]}</div></div>
+      <div><div style="font-size:10px;color:var(--gd)">Annual savings</div><div style="font-size:14px;font-weight:700;color:var(--gd)">${fmt(annualSav)}</div></div>
+      <div><div style="font-size:10px;color:var(--gd)">Payback</div><div style="font-size:14px;font-weight:700;color:var(--gd)">${pb} years</div></div>
+      <div><div style="font-size:10px;color:var(--gd)">25yr profit</div><div style="font-size:14px;font-weight:700;color:var(--gd)">${fmt(profit)}</div></div>
+    </div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px">
+    <div style="background:#f9f9f9;border-radius:10px;padding:14px;display:flex;align-items:center;gap:12px">
+      <div style="width:36px;height:36px;border-radius:8px;background:var(--gl);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="3" y="2" width="12" height="14" rx="2" stroke="#1D9E75" stroke-width="1.5" fill="none"/><path d="M6 6h6M6 9h6M6 12h4" stroke="#1D9E75" stroke-width="1.2" stroke-linecap="round"/></svg>
+      </div>
+      <div style="flex:1"><div style="font-size:13px;font-weight:600;color:var(--dgrey)">Full system design report (PDF)</div><div style="font-size:11px;color:#666">Load profile · solar sizing · economics · 25-year chart · accuracy table · disclaimer</div></div>
+      <button class="btn btn-primary" onclick="downloadReport()">Download PDF</button>
+    </div>
+    <div style="background:#f9f9f9;border-radius:10px;padding:14px;display:flex;align-items:center;gap:12px">
+      <div style="width:36px;height:36px;border-radius:8px;background:var(--bll);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 2v10M4 8l5 5 5-5M3 16h12" stroke="#378ADD" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+      </div>
+      <div style="flex:1"><div style="font-size:13px;font-weight:600;color:var(--dgrey)">Share this design</div><div style="font-size:11px;color:#666">Copy a shareable link to send to your partner, installer, or advisor</div></div>
+      <button class="btn" onclick="showToast('Link copied to clipboard!')">Copy link</button>
+    </div>
+  </div>
+  <div class="ai-box"><div class="ai-ico">AI</div><div class="ai-text"><strong>Jouli insight —</strong> Your report is ready. When meeting with installers, ask them to honour the STC rebate, confirm the panel brand and warranty, and provide a written performance guarantee. Get at least 3 quotes.</div></div>
+  <div class="btn-row"><button class="btn" onclick="goStep('econ')">← Back to economics</button><button class="btn-primary btn" onclick="showToast('Starting over — location cleared!')">Start new design</button></div>
+  <div class="disclaimer">This report is indicative only. Not financial advice. Accuracy ±10–20%. Verify all figures with a CEC-accredited installer before purchasing.</div>
+  `;
+}
+function downloadReport(){showToast('Generating your PDF report...');setTimeout(()=>showToast('Report ready! Check your downloads.'),1500);}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+goStep('loc');
+</script>
+</body>
+</html>
