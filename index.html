@@ -12,6 +12,61 @@
 
 
 
+
+/* ── INSTALLER DIRECTORY ──────────────────────────────────────────────────── */
+.inst-overlay{position:fixed;inset:0;background:var(--off);z-index:1500;display:none;flex-direction:column}
+.inst-overlay.open{display:flex}
+.inst-topbar{display:flex;align-items:center;justify-content:space-between;padding:12px 24px;background:white;border-bottom:0.5px solid var(--border);flex-shrink:0}
+.inst-logo{display:flex;align-items:center;gap:8px}
+.inst-logo-name{font-size:17px;font-weight:700;color:var(--gdp);letter-spacing:-.3px}
+.inst-close{font-size:12px;color:var(--text2);cursor:pointer;padding:6px 14px;border:0.5px solid var(--border);border-radius:20px}
+.inst-close:hover{background:var(--bg2)}
+.inst-body{flex:1;overflow-y:auto;padding:20px 24px;max-width:1100px;margin:0 auto;width:100%}
+.inst-hero{background:var(--gdp);border-radius:14px;padding:24px 28px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.inst-hero-title{font-size:22px;font-weight:700;color:white;letter-spacing:-.4px;margin-bottom:4px}
+.inst-hero-sub{font-size:13px;color:var(--gp);line-height:1.5}
+.inst-hero-badge{background:rgba(29,158,117,.3);border:0.5px solid var(--gm);border-radius:10px;padding:12px 16px;text-align:center}
+.inst-hero-badge-val{font-size:28px;font-weight:700;color:var(--gm)}
+.inst-hero-badge-label{font-size:11px;color:var(--gp)}
+.inst-filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;align-items:center}
+.inst-filter-label{font-size:12px;color:var(--text2);font-weight:500}
+.inst-filter-btn{font-size:12px;padding:6px 14px;border-radius:20px;border:0.5px solid var(--border);background:white;color:var(--text2);cursor:pointer;transition:all .15s;white-space:nowrap}
+.inst-filter-btn:hover{border-color:var(--g)}
+.inst-filter-btn.active{background:var(--gl);color:var(--gd);border-color:var(--gm);font-weight:500}
+.inst-search{flex:1;min-width:200px;max-width:300px;font-size:13px;padding:7px 14px;border-radius:20px;border:0.5px solid var(--border);outline:none;background:white}
+.inst-search:focus{border-color:var(--g)}
+.inst-count{font-size:12px;color:var(--text3);margin-bottom:12px}
+.inst-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin-bottom:20px}
+.inst-card{background:white;border:0.5px solid var(--border);border-radius:14px;padding:16px;transition:border-color .15s;position:relative}
+.inst-card:hover{border-color:var(--gm)}
+.inst-card.featured{border:1.5px solid var(--g)}
+.inst-card.selected{border:2px solid var(--g);background:var(--gl)}
+.inst-card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px}
+.inst-avatar{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:white;flex-shrink:0}
+.inst-name{font-size:14px;font-weight:700;color:var(--gdp);margin-bottom:2px}
+.inst-location{font-size:11px;color:var(--text3);display:flex;align-items:center;gap:4px}
+.inst-badges{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px}
+.inst-badge{font-size:10px;padding:2px 8px;border-radius:20px;font-weight:500}
+.inst-specs{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:12px}
+.inst-spec{display:flex;flex-direction:column;gap:1px}
+.inst-spec-label{font-size:10px;color:var(--text3)}
+.inst-spec-val{font-size:12px;font-weight:600;color:var(--gdp)}
+.inst-actions{display:flex;gap:6px}
+.inst-btn{flex:1;padding:7px;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;border:0.5px solid var(--border);background:transparent;color:var(--gdp);transition:all .15s}
+.inst-btn:hover{background:var(--bg2)}
+.inst-btn.primary{background:var(--gd);color:var(--gl);border-color:var(--gd)}
+.inst-btn.primary:hover{background:var(--gdp)}
+.inst-btn.selected-btn{background:var(--gl);color:var(--gd);border-color:var(--gm)}
+.inst-featured-badge{position:absolute;top:10px;right:10px;font-size:10px;background:var(--am);color:var(--ad);padding:2px 8px;border-radius:20px;font-weight:700}
+.inst-quote-bar{background:var(--gdp);border-radius:12px;padding:14px 20px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;display:none}
+.inst-quote-bar.visible{display:flex}
+.inst-quote-text{font-size:13px;color:var(--gp)}
+.inst-quote-text strong{color:var(--gm)}
+.inst-quote-btn{font-size:13px;padding:8px 20px;border-radius:10px;background:var(--g);color:white;border:none;cursor:pointer;font-weight:600}
+.inst-claim{background:var(--al);border-radius:12px;padding:16px 20px;text-align:center;margin-top:12px}
+.inst-claim-title{font-size:14px;font-weight:700;color:var(--ad);margin-bottom:4px}
+.inst-claim-sub{font-size:12px;color:var(--ad);margin-bottom:10px;opacity:.8}
+
 /* ── LIVE DASHBOARD ──────────────────────────────────────────────────────── */
 .dash-overlay{position:fixed;inset:0;background:#0D1B14;z-index:2000;display:none;flex-direction:column}
 .dash-overlay.open{display:flex}
@@ -522,6 +577,7 @@ posthog.init('phc_ENTgdxizjfqwyiu4WeAfQhkMKXvuBoLzUqhCpnK8tG0',{api_host:'https:
     <a onclick="scrollToSection('how-section')">How it works</a>
     <a onclick="scrollToSection('feat-section')">Features</a>
     <a onclick="scrollToSection('price-section')">Pricing</a>
+    <a onclick="openInstallers()">Find installers</a>
   </div>
   <button class="nav-btn" onclick="openApp()">Try Jouli free</button>
 </nav>
@@ -642,6 +698,77 @@ posthog.init('phc_ENTgdxizjfqwyiu4WeAfQhkMKXvuBoLzUqhCpnK8tG0',{api_host:'https:
 
 
 
+
+
+<!-- ── INSTALLER DIRECTORY ─────────────────────────────────────────────────── -->
+<div class="inst-overlay" id="inst-overlay">
+  <div class="inst-topbar">
+    <div class="inst-logo">
+      <svg width="26" height="26" viewBox="0 0 48 48" fill="none">
+        <rect width="48" height="48" rx="12" fill="white" stroke="#D3F0E4" stroke-width="1"/>
+        <circle cx="18" cy="20" r="9" fill="#1D9E75"/>
+        <rect x="20" y="30" width="8" height="8" rx="2" fill="#EF9F27" transform="rotate(-5 24 34)"/>
+        <rect x="31" y="30" width="7" height="7" rx="1.5" fill="#378ADD" transform="rotate(5 34 33)"/>
+      </svg>
+      <span class="inst-logo-name">jouli installers</span>
+    </div>
+    <div style="font-size:11px;color:var(--grey)">CEC-accredited · No referral kickbacks</div>
+    <div class="inst-close" onclick="closeInstallers()">← Back to design</div>
+  </div>
+
+  <div class="inst-body">
+
+    <div class="inst-hero">
+      <div>
+        <div class="inst-hero-title">Find a trusted installer</div>
+        <div class="inst-hero-sub">Every installer listed is CEC-accredited.<br>Jouli does not receive referral fees — ever.</div>
+      </div>
+      <div style="display:flex;gap:12px">
+        <div class="inst-hero-badge"><div class="inst-hero-badge-val">100%</div><div class="inst-hero-badge-label">CEC accredited</div></div>
+        <div class="inst-hero-badge"><div class="inst-hero-badge-val">$0</div><div class="inst-hero-badge-label">Referral fees</div></div>
+        <div class="inst-hero-badge"><div class="inst-hero-badge-val">3</div><div class="inst-hero-badge-label">Quotes recommended</div></div>
+      </div>
+    </div>
+
+    <!-- QUOTE BAR -->
+    <div class="inst-quote-bar" id="inst-quote-bar">
+      <div class="inst-quote-text"><strong id="inst-quote-count">0 installers</strong> selected · Get all 3 to quote on your Jouli design</div>
+      <button class="inst-quote-btn" onclick="sendQuoteRequest()">Send my design to these installers →</button>
+    </div>
+
+    <!-- FILTERS -->
+    <div class="inst-filters">
+      <span class="inst-filter-label">State:</span>
+      <div class="inst-filter-btn active" onclick="filterInst('state','all',this)">All states</div>
+      <div class="inst-filter-btn" onclick="filterInst('state','VIC',this)">VIC</div>
+      <div class="inst-filter-btn" onclick="filterInst('state','NSW',this)">NSW</div>
+      <div class="inst-filter-btn" onclick="filterInst('state','QLD',this)">QLD</div>
+      <div class="inst-filter-btn" onclick="filterInst('state','WA',this)">WA</div>
+      <div class="inst-filter-btn" onclick="filterInst('state','SA',this)">SA</div>
+      <div class="inst-filter-btn" onclick="filterInst('state','TAS',this)">TAS</div>
+    </div>
+    <div class="inst-filters">
+      <span class="inst-filter-label">Speciality:</span>
+      <div class="inst-filter-btn active" onclick="filterInst('spec','all',this)">All</div>
+      <div class="inst-filter-btn" onclick="filterInst('spec','solar',this)">Solar</div>
+      <div class="inst-filter-btn" onclick="filterInst('spec','battery',this)">Battery</div>
+      <div class="inst-filter-btn" onclick="filterInst('spec','ev',this)">EV charging</div>
+      <div class="inst-filter-btn" onclick="filterInst('spec','commercial',this)">Commercial</div>
+      <div class="inst-filter-btn" onclick="filterInst('spec','offgrid',this)">Off-grid</div>
+      <input class="inst-search" id="inst-search" placeholder="Search by name or suburb..." oninput="renderInstallers()"/>
+    </div>
+
+    <div class="inst-count" id="inst-count">Showing all installers</div>
+    <div class="inst-grid" id="inst-grid"></div>
+
+    <div class="inst-claim">
+      <div class="inst-claim-title">Are you a CEC-accredited installer?</div>
+      <div class="inst-claim-sub">Claim your free listing or upgrade to Jouli Business for verified badge, featured placement and lead notifications.</div>
+      <button style="font-size:13px;padding:9px 24px;border-radius:10px;background:#0D1B14;color:#E1F5EE;border:none;cursor:pointer;font-weight:600" onclick="showUpgradeModal()">Claim listing — Jouli Business $79/mo →</button>
+    </div>
+
+  </div>
+</div>
 
 <!-- ── LIVE DASHBOARD ──────────────────────────────────────────────────────── -->
 <div class="dash-overlay" id="dash-overlay">
@@ -1461,7 +1588,7 @@ function renderReport(c){
     </div>
   </div>
   <div class="ai-box"><div class="ai-ico">AI</div><div class="ai-text"><strong>Jouli insight —</strong> Your report is ready. When meeting with installers, ask them to honour the STC rebate, confirm the panel brand and warranty, and provide a written performance guarantee. Get at least 3 quotes.</div></div>
-  <div class="btn-row"><button class="btn" onclick="goStep('econ')">← Back to economics</button><button class="btn-primary btn" onclick="showToast('Starting over — location cleared!')">Start new design</button></div>
+  <div class="btn-row"><button class="btn" onclick="goStep('econ')">← Back to economics</button><button class="btn" onclick="openInstallers()">Find installers →</button><button class="btn-primary btn" onclick="showToast('Starting over — location cleared!')">Start new design</button></div>
   <div class="disclaimer">This report is indicative only. Not financial advice. Accuracy ±10–20%. Verify all figures with a CEC-accredited installer before purchasing.</div>
   `;
 }
@@ -2816,6 +2943,156 @@ async function connectInverter(){
   // Other inverters — show coming soon
   showToast(INVERTERS.find(function(i){return i.id===selInverter;}).name + ' API integration coming soon!');
   if(typeof posthog !== 'undefined') posthog.capture('inverter_connect_attempted', {type: selInverter});
+}
+
+
+// ── INSTALLER DIRECTORY ───────────────────────────────────────────────────────
+var INST_FILTERS = { state: 'all', spec: 'all' };
+var INST_SELECTED = [];
+
+var INSTALLERS = [
+  // VIC
+  {id:1,name:'SolarHub Melbourne',location:'Richmond, VIC',state:'VIC',specs:['solar','battery','ev'],systems:'500+',warranty:'10yr',founded:2012,featured:true,col:'#1D9E75',phone:'03 9XXX XXXX',web:'solarhubmelbourne.com.au',desc:'Melbourne\'s most awarded residential installer. Fronius and SolarEdge specialists.'},
+  {id:2,name:'Positive Energy Victoria',location:'Geelong, VIC',state:'VIC',specs:['solar','battery','offgrid'],systems:'300+',warranty:'10yr',founded:2014,col:'#085041',phone:'03 5XXX XXXX',web:'posenergyvic.com.au',desc:'Regional VIC specialists. Off-grid and hybrid system experts.'},
+  {id:3,name:'Sunergy Group',location:'Ringwood, VIC',state:'VIC',specs:['solar','battery','commercial'],systems:'800+',warranty:'10yr',founded:2010,col:'#EF9F27',phone:'03 9XXX XXXX',web:'sunergygroup.com.au',desc:'Commercial and residential. Tesla Powerwall certified installers.'},
+  {id:4,name:'Clean NRG',location:'Ballarat, VIC',state:'VIC',specs:['solar','offgrid'],systems:'200+',warranty:'5yr',founded:2016,col:'#639922',phone:'03 5XXX XXXX',web:'cleannrg.com.au',desc:'Country VIC specialists. Remote and off-grid system design.'},
+  // NSW
+  {id:5,name:'Solar Power Direct',location:'Parramatta, NSW',state:'NSW',specs:['solar','battery','ev'],systems:'1200+',warranty:'10yr',founded:2008,featured:true,col:'#378ADD',phone:'02 9XXX XXXX',web:'solarpowerdirect.com.au',desc:'Sydney\'s largest residential installer. Same-day quotes available.'},
+  {id:6,name:'GreenLight Energy',location:'Newcastle, NSW',state:'NSW',specs:['solar','battery'],systems:'450+',warranty:'10yr',founded:2013,col:'#1D9E75',phone:'02 4XXX XXXX',web:'greenlightenergy.com.au',desc:'Hunter Valley specialists. Enphase micro-inverter experts.'},
+  {id:7,name:'Infinite Energy NSW',location:'Wollongong, NSW',state:'NSW',specs:['solar','commercial'],systems:'600+',warranty:'10yr',founded:2011,col:'#534AB7',phone:'02 4XXX XXXX',web:'infiniteenergynsw.com.au',desc:'Commercial solar specialists. 100kW+ systems.'},
+  {id:8,name:'SunEdison Residential',location:'Penrith, NSW',state:'NSW',specs:['solar','battery','ev'],systems:'350+',warranty:'10yr',founded:2015,col:'#D85A30',phone:'02 4XXX XXXX',web:'sunedisonresidential.com.au',desc:'Western Sydney specialists. EV charger installations.'},
+  // QLD
+  {id:9,name:'Aussie Solar',location:'Brisbane, QLD',state:'QLD',specs:['solar','battery','commercial'],systems:'2000+',warranty:'10yr',founded:2007,featured:true,col:'#EF9F27',phone:'07 3XXX XXXX',web:'aussiesolar.com.au',desc:'Queensland\'s longest running solar installer. All brands stocked.'},
+  {id:10,name:'SunBrisbane',location:'Sunshine Coast, QLD',state:'QLD',specs:['solar','battery'],systems:'700+',warranty:'10yr',founded:2012,col:'#1D9E75',phone:'07 5XXX XXXX',web:'sunbrisbane.com.au',desc:'Coastal QLD specialists. High-irradiance system design experts.'},
+  {id:11,name:'North QLD Solar',location:'Cairns, QLD',state:'QLD',specs:['solar','offgrid','commercial'],systems:'400+',warranty:'10yr',founded:2010,col:'#085041',phone:'07 4XXX XXXX',web:'northqldsolar.com.au',desc:'Far North QLD specialists. Cyclone-rated mounting systems.'},
+  {id:12,name:'Gold Coast Solar Co',location:'Southport, QLD',state:'QLD',specs:['solar','battery','ev'],systems:'550+',warranty:'10yr',founded:2013,col:'#D4537E',phone:'07 5XXX XXXX',web:'goldcoastsolarco.com.au',desc:'Gold Coast\'s top-rated installer. EV home charging specialists.'},
+  // WA
+  {id:13,name:'Perth Solar Force',location:'Osborne Park, WA',state:'WA',specs:['solar','battery','commercial'],systems:'1500+',warranty:'10yr',founded:2009,featured:true,col:'#EF9F27',phone:'08 9XXX XXXX',web:'perthsolarforce.com.au',desc:'WA\'s highest-rated installer. Fronius Gold Partner.'},
+  {id:14,name:'Southwest Solar WA',location:'Bunbury, WA',state:'WA',specs:['solar','offgrid'],systems:'300+',warranty:'10yr',founded:2014,col:'#1D9E75',phone:'08 9XXX XXXX',web:'southwestsolarwa.com.au',desc:'Regional WA and off-grid specialists.'},
+  {id:15,name:'Synergy Solar Perth',location:'Fremantle, WA',state:'WA',specs:['solar','battery','ev'],systems:'600+',warranty:'10yr',founded:2011,col:'#378ADD',phone:'08 9XXX XXXX',web:'synergysolarperth.com.au',desc:'Perth\'s EV charging and battery storage specialists.'},
+  // SA
+  {id:16,name:'Adelaide Solar',location:'Norwood, SA',state:'SA',specs:['solar','battery','commercial'],systems:'900+',warranty:'10yr',founded:2010,featured:true,col:'#085041',phone:'08 8XXX XXXX',web:'adelaidesolar.com.au',desc:'SA\'s most established installer. SA Home Battery Scheme specialists.'},
+  {id:17,name:'Renew Energy SA',location:'Mount Gambier, SA',state:'SA',specs:['solar','offgrid','battery'],systems:'250+',warranty:'10yr',founded:2013,col:'#639922',phone:'08 8XXX XXXX',web:'renewenergysa.com.au',desc:'Regional SA specialists. Off-grid and rural system experts.'},
+  // TAS
+  {id:18,name:'Tasmanian Solar',location:'Hobart, TAS',state:'TAS',specs:['solar','battery'],systems:'200+',warranty:'10yr',founded:2015,col:'#378ADD',phone:'03 6XXX XXXX',web:'tasmaniansolar.com.au',desc:'TAS specialists. Cold-climate optimised system design.'},
+  {id:19,name:'Apple Isle Energy',location:'Launceston, TAS',state:'TAS',specs:['solar','offgrid'],systems:'150+',warranty:'5yr',founded:2017,col:'#5DCAA5',phone:'03 6XXX XXXX',web:'appleisleenergy.com.au',desc:'Northern TAS specialists. Off-grid rural systems.'},
+];
+
+function openInstallers(){
+  document.getElementById('inst-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  INST_SELECTED = [];
+  renderInstallers();
+  if(typeof posthog !== 'undefined') posthog.capture('installer_directory_opened');
+}
+
+function closeInstallers(){
+  document.getElementById('inst-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function filterInst(type, val, el){
+  INST_FILTERS[type] = val;
+  // Update button states
+  var parent = el.parentElement;
+  parent.querySelectorAll('.inst-filter-btn').forEach(function(b){ b.classList.remove('active'); });
+  el.classList.add('active');
+  renderInstallers();
+}
+
+function renderInstallers(){
+  var search = (document.getElementById('inst-search')||{}).value || '';
+  search = search.toLowerCase();
+
+  var filtered = INSTALLERS.filter(function(inst){
+    var stateOk = INST_FILTERS.state === 'all' || inst.state === INST_FILTERS.state;
+    var specOk = INST_FILTERS.spec === 'all' || inst.specs.includes(INST_FILTERS.spec);
+    var searchOk = !search || inst.name.toLowerCase().includes(search) || inst.location.toLowerCase().includes(search);
+    return stateOk && specOk && searchOk;
+  });
+
+  // Featured first
+  filtered.sort(function(a,b){ return (b.featured?1:0) - (a.featured?1:0); });
+
+  var count = document.getElementById('inst-count');
+  if(count) count.textContent = 'Showing ' + filtered.length + ' installer' + (filtered.length!==1?'s':'') + (INST_FILTERS.state!=='all'?' in '+INST_FILTERS.state:'') + (INST_FILTERS.spec!=='all'?' · '+INST_FILTERS.spec+' specialists':'');
+
+  var grid = document.getElementById('inst-grid');
+  if(!grid) return;
+
+  var SPEC_LABELS = {solar:'Solar',battery:'Battery',ev:'EV charging',commercial:'Commercial',offgrid:'Off-grid'};
+  var SPEC_COLORS = {solar:{bg:'#EAF3DE',tc:'#27500A'},battery:{bg:'#E1F5EE',tc:'#085041'},ev:{bg:'#E6F1FB',tc:'#0C447C'},commercial:{bg:'#FAEEDA',tc:'#633806'},offgrid:{bg:'#EEEDFE',tc:'#3C3489'}};
+
+  grid.innerHTML = filtered.map(function(inst){
+    var isSel = INST_SELECTED.includes(inst.id);
+    var initials = inst.name.split(' ').slice(0,2).map(function(w){return w[0];}).join('');
+    var specs = inst.specs.map(function(s){
+      var sc = SPEC_COLORS[s]||{bg:'#f5f5f5',tc:'#666'};
+      return '<span class="inst-badge" style="background:'+sc.bg+';color:'+sc.tc+'">'+SPEC_LABELS[s]+'</span>';
+    }).join('');
+
+    return '<div class="inst-card'+(inst.featured?' featured':'')+(isSel?' selected':'')+'" id="icard-'+inst.id+'">'
+      +(inst.featured?'<div class="inst-featured-badge">Featured</div>':'')
+      +'<div class="inst-card-top">'
+        +'<div style="display:flex;align-items:flex-start;gap:10px">'
+          +'<div class="inst-avatar" style="background:'+inst.col+'">'+initials+'</div>'
+          +'<div><div class="inst-name">'+inst.name+'</div><div class="inst-location">📍 '+inst.location+'</div></div>'
+        +'</div>'
+      +'</div>'
+      +'<div class="inst-badges">'+specs+'<span class="inst-badge" style="background:#f0f0f0;color:#666">CEC Accredited</span></div>'
+      +'<div style="font-size:11px;color:#888;margin-bottom:10px;line-height:1.5">'+inst.desc+'</div>'
+      +'<div class="inst-specs">'
+        +'<div class="inst-spec"><div class="inst-spec-label">Systems installed</div><div class="inst-spec-val">'+inst.systems+'</div></div>'
+        +'<div class="inst-spec"><div class="inst-spec-label">Workmanship warranty</div><div class="inst-spec-val">'+inst.warranty+'</div></div>'
+        +'<div class="inst-spec"><div class="inst-spec-label">Est. '+inst.founded+'</div><div class="inst-spec-val">'+(2026-inst.founded)+' yrs experience</div></div>'
+        +'<div class="inst-spec"><div class="inst-spec-label">Phone</div><div class="inst-spec-val">'+inst.phone+'</div></div>'
+      +'</div>'
+      +'<div class="inst-actions">'
+        +'<button class="inst-btn'+(isSel?' selected-btn':'')+'" onclick="toggleSelectInst('+inst.id+')">'+(isSel?'✓ Selected':'Select for quote')+'</button>'
+        +'<button class="inst-btn primary" onclick="showToast(\'Opening '+inst.name+' — '+inst.web+'\')">Visit website</button>'
+      +'</div>'
+    +'</div>';
+  }).join('');
+}
+
+function toggleSelectInst(id){
+  var idx = INST_SELECTED.indexOf(id);
+  if(idx > -1){
+    INST_SELECTED.splice(idx,1);
+  } else {
+    if(INST_SELECTED.length >= 3){ showToast('Select up to 3 installers for quotes.'); return; }
+    INST_SELECTED.push(id);
+  }
+  updateQuoteBar();
+  renderInstallers();
+  if(typeof posthog !== 'undefined') posthog.capture('installer_selected', {count: INST_SELECTED.length});
+}
+
+function updateQuoteBar(){
+  var bar = document.getElementById('inst-quote-bar');
+  var cnt = document.getElementById('inst-quote-count');
+  if(!bar) return;
+  if(INST_SELECTED.length > 0){
+    bar.classList.add('visible');
+    if(cnt) cnt.textContent = INST_SELECTED.length + ' installer'+(INST_SELECTED.length!==1?'s':'')+' selected';
+  } else {
+    bar.classList.remove('visible');
+  }
+}
+
+function sendQuoteRequest(){
+  var selected = INSTALLERS.filter(function(i){ return INST_SELECTED.includes(i.id); });
+  var names = selected.map(function(i){ return i.name; }).join(', ');
+  var sysKw = STATE.sysKw || 10;
+  var city = CITIES[STATE.city||'melbourne'].name;
+  var msg = 'Sending your '+sysKw+' kW '+city+' design to: '+names;
+  showToast(msg);
+  if(typeof posthog !== 'undefined') posthog.capture('quote_request_sent', {installers: names, sys_kw: sysKw});
+  // In production this would email the installers with the Jouli design PDF
+  setTimeout(function(){
+    showToast('\u2713 Quote request sent! Installers will contact you within 2 business days.');
+    closeInstallers();
+  }, 1500);
 }
 
 </script>
