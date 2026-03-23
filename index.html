@@ -8,6 +8,33 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
 
+
+/* ── STRIPE UPGRADE MODAL ────────────────────────────────────────────────── */
+.upgrade-overlay{position:fixed;inset:0;background:rgba(13,27,20,.6);z-index:1001;display:none;align-items:center;justify-content:center;padding:20px}
+.upgrade-overlay.open{display:flex}
+.upgrade-box{background:white;border-radius:20px;max-width:520px;width:100%;padding:0;overflow:hidden;box-shadow:0 32px 80px rgba(13,27,20,.25)}
+.upgrade-header{background:#0D1B14;padding:28px 32px 24px}
+.upgrade-header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.upgrade-logo{display:flex;align-items:center;gap:8px}
+.upgrade-logo-name{font-size:18px;font-weight:700;color:#9FE1CB;letter-spacing:-.3px}
+.upgrade-close{width:28px;height:28px;border-radius:50%;border:none;background:rgba(255,255,255,.1);cursor:pointer;color:#9FE1CB;font-size:14px;display:flex;align-items:center;justify-content:center}
+.upgrade-close:hover{background:rgba(255,255,255,.2)}
+.upgrade-plan-toggle{display:flex;gap:6px;background:rgba(255,255,255,.08);border-radius:10px;padding:4px}
+.upt-btn{flex:1;padding:8px 12px;border-radius:7px;border:none;background:transparent;color:#5DCAA5;font-size:12px;font-weight:500;cursor:pointer;transition:all .2s}
+.upt-btn.active{background:white;color:#0D1B14}
+.upgrade-price{text-align:center;padding:8px 0}
+.upgrade-price-val{font-size:42px;font-weight:700;color:white;letter-spacing:-1px;line-height:1}
+.upgrade-price-per{font-size:13px;color:#5DCAA5;margin-top:2px}
+.upgrade-price-save{font-size:11px;background:rgba(29,158,117,.3);color:#9FE1CB;padding:3px 10px;border-radius:20px;display:inline-block;margin-top:6px}
+.upgrade-body{padding:24px 32px 28px}
+.upgrade-features{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:20px}
+.uf{display:flex;align-items:center;gap:7px;font-size:12px;color:#444}
+.uf-dot{width:16px;height:16px;border-radius:50%;background:#E1F5EE;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;color:#1D9E75;font-weight:700}
+.upgrade-cta{width:100%;padding:14px;border-radius:12px;background:#1D9E75;color:white;border:none;font-size:15px;font-weight:700;cursor:pointer;letter-spacing:-.2px;transition:background .2s;margin-bottom:10px}
+.upgrade-cta:hover{background:#085041}
+.upgrade-note{text-align:center;font-size:11px;color:#999;line-height:1.5}
+.upgrade-divider{height:0.5px;background:#f0f0f0;margin:0 32px}
+
 /* ── ONBOARDING ──────────────────────────────────────────────────────────── */
 .ob-overlay{position:fixed;inset:0;background:rgba(13,27,20,.6);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px}
 .ob-overlay.open{display:flex}
@@ -343,6 +370,10 @@ footer{padding:28px 40px;background:var(--gdp);border-top:1px solid rgba(255,255
   .pricing{padding:40px 20px}
 }
 </style>
+<script>
+!function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]);t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="capture identify alias people.set people.set_once set_config register register_once unregister opt_out_capturing has_opted_out_capturing opt_in_capturing reset isFeatureEnabled onFeatureFlags getFeatureFlag getFeatureFlagPayload reloadFeatureFlags group updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures getActiveMatchingSurveys getSurveys getNextSurveyStep onSessionId".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+posthog.init('phc_ENTgdxizjfqwyiu4WeAfQhkMKXvuBoLzUqhCpnK8tG0',{api_host:'https://us.posthog.com'});
+</script>
 </head>
 <body>
 
@@ -484,6 +515,57 @@ footer{padding:28px 40px;background:var(--gdp);border-top:1px solid rgba(255,255
 </footer>
 
 
+
+
+<!-- ── STRIPE UPGRADE MODAL ───────────────────────────────────────────────── -->
+<div class="upgrade-overlay" id="upgrade-overlay" onclick="if(event.target===this)closeUpgrade()">
+  <div class="upgrade-box">
+    <div class="upgrade-header">
+      <div class="upgrade-header-top">
+        <div class="upgrade-logo">
+          <svg width="26" height="26" viewBox="0 0 48 48" fill="none">
+            <rect width="48" height="48" rx="12" fill="#0D1B14" stroke="#2a4a3a" stroke-width="1"/>
+            <circle cx="18" cy="20" r="9" fill="#5DCAA5"/>
+            <rect x="20" y="30" width="8" height="8" rx="2" fill="#EF9F27" transform="rotate(-5 24 34)"/>
+            <rect x="31" y="30" width="7" height="7" rx="1.5" fill="#85B7EB" transform="rotate(5 34 33)"/>
+          </svg>
+          <span class="upgrade-logo-name">jouli pro</span>
+        </div>
+        <button class="upgrade-close" onclick="closeUpgrade()">✕</button>
+      </div>
+      <div style="display:flex;justify-content:center;margin-bottom:16px">
+        <div class="upgrade-plan-toggle">
+          <button class="upt-btn active" id="upt-monthly" onclick="setUpgradePlan('monthly')">Monthly</button>
+          <button class="upt-btn" id="upt-annual" onclick="setUpgradePlan('annual')">Annual</button>
+        </div>
+      </div>
+      <div class="upgrade-price">
+        <div class="upgrade-price-val" id="upgrade-price-val">$14</div>
+        <div class="upgrade-price-per" id="upgrade-price-per">per month · cancel anytime</div>
+        <div class="upgrade-price-save" id="upgrade-price-save" style="display:none">Save $34/year vs monthly</div>
+      </div>
+    </div>
+    <div class="upgrade-body">
+      <div class="upgrade-features">
+        <div class="uf"><div class="uf-dot">✓</div>Battery sizing engine</div>
+        <div class="uf"><div class="uf-dot">✓</div>EV charging scheduler</div>
+        <div class="uf"><div class="uf-dot">✓</div>V2G / V2H modeller</div>
+        <div class="uf"><div class="uf-dot">✓</div>Live NASA postcode API</div>
+        <div class="uf"><div class="uf-dot">✓</div>Unlimited scenarios</div>
+        <div class="uf"><div class="uf-dot">✓</div>Save &amp; return designs</div>
+        <div class="uf"><div class="uf-dot">✓</div>Smart EV scheduler</div>
+        <div class="uf"><div class="uf-dot">✓</div>Resilience analyser</div>
+      </div>
+      <button class="upgrade-cta" id="upgrade-cta-btn" onclick="startStripeCheckout()">
+        Start 30-day free trial →
+      </button>
+      <div class="upgrade-note">
+        No credit card required for trial · Cancel anytime · Billed via Stripe<br>
+        <span id="upgrade-trial-note">$14/month after trial · First month free</span>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- ── ONBOARDING MODAL ─────────────────────────────────────────────────────── -->
 <div class="ob-overlay" id="ob-overlay">
@@ -778,6 +860,8 @@ function openApp(){
 
 function goStep(s){
   const steps=['loc','load','solar','bat','ev','v2g','econ','report'];
+  // Analytics: track step navigation
+  if(typeof posthog !== 'undefined') posthog.capture('step_viewed', {step: s, user_role: USER.role || 'unknown'});
   steps.forEach(st=>{
     const el=document.getElementById('step-'+st);
     const sb=document.getElementById('sb-'+st);
@@ -800,8 +884,19 @@ function scrollToSection(id){const el=document.getElementById(id);if(el)el.scrol
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.className='toast show';setTimeout(()=>t.className='toast',3000);}
 function signup(id){
   const v=document.getElementById(id)?.value||'';
-  if(v&&v.includes('@')){showToast('Thanks! You are on the Jouli waitlist.');}
-  else{showToast('Please enter a valid email.');}
+  if(!v||!v.includes('@')){showToast('Please enter a valid email.');return;}
+  // Save to Loops.so — replace LOOPS_API_KEY with your key from loops.so/settings/api
+  const LOOPS_KEY = '8c10a3422947564ef263e12a9af9df86';
+  if(LOOPS_KEY !== 'LOOPS_API_KEY_HERE'){
+    fetch('https://app.loops.so/api/v1/contacts/create', {
+      method:'POST',
+      headers:{'Authorization':'Bearer '+LOOPS_KEY,'Content-Type':'application/json'},
+      body:JSON.stringify({email:v,source:'jouli_waitlist',userGroup:'waitlist'})
+    }).then(()=>{}).catch(()=>{});
+  }
+  if(typeof posthog !== 'undefined') posthog.capture('email_signup', {source: id});
+  showToast('\u2713 You are on the Jouli waitlist — we will be in touch!');
+  const el=document.getElementById(id); if(el)el.value='';
 }
 
 // ── LOCATION STEP ─────────────────────────────────────────────────────────────
@@ -1393,6 +1488,11 @@ function finishOnboarding(){
   USER.role = ob_role;
   document.getElementById('ob-overlay').classList.remove('open');
   document.body.style.overflow = '';
+  // Analytics: track onboarding
+  if(typeof posthog !== 'undefined') {
+    posthog.identify(USER.name || 'anonymous');
+    posthog.capture('onboarding_completed', {role: USER.role, provided_name: !!USER.name});
+  }
   applyPersonalisation();
   goStep('loc');
 }
@@ -1438,6 +1538,7 @@ function getPersonalisedGreeting(){
 
 // ── PRO GATE ─────────────────────────────────────────────────────────────────
 function renderProGate(module, features){
+  if(typeof posthog !== 'undefined') posthog.capture('pro_gate_hit', {module: module});
   return '<div class="pro-gate">' +
     '<div class="pro-gate-badge">⭐ Pro feature</div>' +
     '<div class="pro-gate-title">'+module+' is a Jouli Pro feature</div>' +
@@ -1448,9 +1549,67 @@ function renderProGate(module, features){
     '<div style="font-size:12px;color:#888;margin-top:8px;text-align:center">Already have Pro? <span style="color:#1D9E75;cursor:pointer" onclick="showToast(&quot;Sign in coming soon!&quot;)">Sign in →</span></div>';
 }
 
+// showUpgradeModal defined in Stripe section below
+
+
+// ── STRIPE PAYMENTS ───────────────────────────────────────────────────────────
+var upgradePlan = 'monthly';
+var STRIPE_MONTHLY_LINK = 'https://buy.stripe.com/4gM7sNgR9cZj4un8jh3gk03'; // Replace with your Stripe payment link
+var STRIPE_ANNUAL_LINK  = 'https://buy.stripe.com/fZu7sN7gz8J36CvdDB3gk04';  // Replace with your Stripe payment link
+
 function showUpgradeModal(){
-  showToast('Stripe payments coming very soon — join the waitlist!');
+  if(typeof posthog !== 'undefined') posthog.capture('upgrade_clicked', {from_module: 'pro_gate'});
+  document.getElementById('upgrade-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
 }
+
+function closeUpgrade(){
+  document.getElementById('upgrade-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function setUpgradePlan(plan){
+  upgradePlan = plan;
+  document.getElementById('upt-monthly').className = 'upt-btn' + (plan==='monthly'?' active':'');
+  document.getElementById('upt-annual').className  = 'upt-btn' + (plan==='annual'?' active':'');
+  var priceEl = document.getElementById('upgrade-price-val');
+  var perEl   = document.getElementById('upgrade-price-per');
+  var saveEl  = document.getElementById('upgrade-price-save');
+  var trialEl = document.getElementById('upgrade-trial-note');
+  if(plan === 'annual'){
+    priceEl.textContent = '$11';
+    perEl.textContent   = 'per month · billed $134/year';
+    saveEl.style.display = 'inline-block';
+    if(trialEl) trialEl.textContent = '$134/year after trial · First month free';
+  } else {
+    priceEl.textContent = '$14';
+    perEl.textContent   = 'per month · cancel anytime';
+    saveEl.style.display = 'none';
+    if(trialEl) trialEl.textContent = '$14/month after trial · First month free';
+  }
+}
+
+function startStripeCheckout(){
+  var link = upgradePlan === 'annual' ? STRIPE_ANNUAL_LINK : STRIPE_MONTHLY_LINK;
+  if(link.includes('STRIPE_PAYMENT_LINK')){
+    // Stripe not yet configured — show waitlist instead
+    closeUpgrade();
+    if(typeof posthog !== 'undefined') posthog.capture('checkout_attempted_no_stripe');
+    document.getElementById('upgrade-overlay').classList.remove('open');
+    document.body.style.overflow = '';
+    showToast('\u2713 Payments launching soon — you are first on the list!');
+    return;
+  }
+  // Add email prefill if we have it
+  var email = USER.name ? '' : '';
+  var url = link + (email ? '?prefilled_email='+encodeURIComponent(email) : '');
+  if(typeof posthog !== 'undefined') posthog.capture('stripe_checkout_started', {plan: upgradePlan});
+  window.open(url, '_blank');
+}
+
+document.addEventListener('keydown', function(e){
+  if(e.key === 'Escape') closeUpgrade();
+});
 
 </script>
 </body>
