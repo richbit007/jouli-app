@@ -1203,6 +1203,10 @@ function goStep(s){
   if(s==='resil') renderResil(c);
   if(s==='econ')  renderEcon(c);
   if(s==='report') renderReport(c);
+  // Auto-save on step change if logged in
+  if(typeof currentUser !== 'undefined' && currentUser && typeof supabase !== 'undefined' && supabase && s !== 'loc'){
+    setTimeout(function(){ if(typeof saveDesign === 'function') saveDesign(); }, 800);
+  }
 }
 function scrollToSection(id){const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth'})}
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.className='toast show';setTimeout(()=>t.className='toast',3000);}
@@ -2174,14 +2178,7 @@ function showSaveIndicator(){
   showToast('\u2713 Design saved!');
 }
 
-// Auto-save when navigating steps
-var _origGoStep = goStep;
-function goStep(s){
-  _origGoStep(s);
-  if(currentUser && supabase && s !== 'loc') {
-    setTimeout(saveDesign, 500);
-  }
-}
+// Auto-save integrated into goStep directly (see goStep function above)
 
 
 // ── GRID INTERACTION MODULE ───────────────────────────────────────────────────
