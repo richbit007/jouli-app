@@ -436,6 +436,8 @@ footer{padding:28px 40px;background:var(--gdp);border-top:1px solid rgba(255,255
       <div class="app-step done" id="step-loc" onclick="goStep('loc')">Location</div>
       <div class="app-step" id="step-load" onclick="goStep('load')">Load</div>
       <div class="app-step" id="step-solar" onclick="goStep('solar')">Solar</div>
+      <div class="app-step" id="step-ev" onclick="goStep('ev')">EV</div>
+      <div class="app-step" id="step-v2g" onclick="goStep('v2g')">V2G</div>
       <div class="app-step" id="step-econ" onclick="goStep('econ')">Economics</div>
       <div class="app-step" id="step-report" onclick="goStep('report')">Report</div>
     </div>
@@ -447,6 +449,8 @@ footer{padding:28px 40px;background:var(--gdp);border-top:1px solid rgba(255,255
       <div class="sb-item active" id="sb-loc" onclick="goStep('loc')"><div class="sb-dot" style="background:#1D9E75"></div>Location</div>
       <div class="sb-item" id="sb-load" onclick="goStep('load')"><div class="sb-dot" style="background:#1D9E75"></div>Load profiler</div>
       <div class="sb-item" id="sb-solar" onclick="goStep('solar')"><div class="sb-dot" style="background:#EF9F27"></div>Solar sizing</div>
+      <div class="sb-item" id="sb-ev" onclick="goStep('ev')"><div class="sb-dot" style="background:#378ADD"></div>EV scheduler</div>
+      <div class="sb-item" id="sb-v2g" onclick="goStep('v2g')"><div class="sb-dot" style="background:#534AB7"></div>V2G / V2H</div>
       <div class="sb-item" id="sb-econ" onclick="goStep('econ')"><div class="sb-dot" style="background:#639922"></div>Economics</div>
       <div class="sb-item" id="sb-report" onclick="goStep('report')"><div class="sb-dot" style="background:#534AB7"></div>Report</div>
       <div class="sb-sum">
@@ -516,6 +520,7 @@ function goStep(s){
   if(s==='loc')   renderLoc(c);
   if(s==='load')  renderLoad(c);
   if(s==='solar') renderSolar(c);
+  if(s==='v2g'){var vv=document.getElementById('view-v2g');if(vv){['view-loc','view-load','view-solar','view-bat','view-ev','view-econ','view-report'].forEach(function(id){var el=document.getElementById(id);if(el)el.style.display='none';});vv.style.display='block';setV2GMode('v2h');}} if(s==='ev'){var ve=document.getElementById('view-ev');if(ve){['view-loc','view-load','view-solar','view-bat','view-econ','view-report'].forEach(function(id){var el=document.getElementById(id);if(el)el.style.display='none';});ve.style.display='block';renderEVCars();calcEV();}} if(s==='bat') { document.getElementById('view-bat').style.display='block'; calcBat(); document.getElementById('step-econ').className='app-step'; } else { var vb=document.getElementById('view-bat'); if(vb) vb.style.display='none'; }
   if(s==='econ')  renderEcon(c);
   if(s==='report') renderReport(c);
   if(STATE.pbChart){STATE.pbChart.destroy();STATE.pbChart=null;}
@@ -559,7 +564,7 @@ function selectCity(k){
   document.getElementById('sb-loc-val').textContent=CITIES[k].name.split(',')[0];
   renderLoc(document.getElementById('app-content'));
 }
-function lookupPostcode(){
+function lookupPostcodeOLD(){
   const pc=document.getElementById('postcode-inp').value.trim();
   const map={'3':['melbourne','VIC'],'2':['sydney','NSW'],'4':['brisbane','QLD'],'6':['perth','WA'],'5':['adelaide','SA'],'7':['hobart','TAS']};
   const match=map[pc[0]];
@@ -611,7 +616,7 @@ function renderSolar(c){
   calcSolar();
 }
 function calcSolar(){
-  const irr=CITIES[STATE.city].irr;
+  var irr=(STATE.liveIrr)||CITIES[STATE.city||'melbourne'].irr;
   const tiltF=1-Math.abs(STATE.tilt-22)*0.003;
   const shadingF=1-STATE.shading/100;
   const PR=0.80*STATE.orient*tiltF*shadingF;
@@ -670,7 +675,7 @@ function renderEcon(c){
   calcEcon();
 }
 function calcEcon(){
-  const irr=CITIES[STATE.city].irr;
+  var irr=(STATE.liveIrr)||CITIES[STATE.city||'melbourne'].irr;
   const PR=0.80;
   const annualGen=Math.round(STATE.sysKw*(irr.reduce((a,b)=>a+b,0)/12)*PR*365);
   const selfUse=Math.min((annualGen/365)*0.72,22.4);
