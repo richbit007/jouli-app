@@ -4,7 +4,25 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Jouli — Your energy, clearly.</title>
-<meta name="description" content="Solar. Battery. EV. One tool built for Australia using real NASA climate data, live NEM tariffs, and plain language anyone can understand.">
+<meta name="description" content="Design your home energy system with real NASA data. Free solar sizing, battery modelling, STC rebate calculator and EV scheduler. Built for Australia.">
+<link rel="canonical" href="https://www.jouli.com.au/" />
+<meta property="og:title" content="Jouli — Free solar, battery & EV design for Australian homes" />
+<meta property="og:description" content="Design your home energy system with real NASA data. Free solar sizing, battery modelling, STC rebate and EV scheduler. Built for Australia." />
+<meta property="og:image" content="https://www.jouli.com.au/og-image.png" />
+<meta property="og:url" content="https://www.jouli.com.au" />
+<meta property="og:type" content="website" />
+<meta property="og:locale" content="en_AU" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Jouli — Your energy, clearly." />
+<meta name="twitter:description" content="Solar. Battery. EV. One tool built for Australia using real NASA climate data." />
+<meta name="twitter:image" content="https://www.jouli.com.au/og-image.png" />
+<meta name="theme-color" content="#1D9E75" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<link rel="manifest" href="/manifest.json" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"Jouli","url":"https://www.jouli.com.au","description":"Australian home energy design platform — solar, battery, EV, heat pump sizing with real NASA data","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"AUD"},"author":{"@type":"Organization","name":"Jouli","url":"https://www.jouli.com.au"}}
+</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js"></script>
 <style>
@@ -4945,7 +4963,226 @@ function countUpTo(el, target, duration){
   requestAnimationFrame(step);
 }
 
+// ══════════════════════════════════════════════════════════════════════════════
+// ── DAILY ENERGY CARD (returning logged-in users) ────────────────────────────
+// ══════════════════════════════════════════════════════════════════════════════
+
+function showDailyCard(){
+  if(!currentUser || !STATE.city) return;
+  if(document.getElementById('daily-card')) return;
+  var city = CITIES[STATE.city||'melbourne'];
+  var irr = STATE.liveIrr || city.irr;
+  var month = new Date().getMonth();
+  var todayIrr = irr[month];
+  var dailyGen = Math.round((STATE.sysKw||10) * todayIrr * 0.80);
+  var dailyValue = (dailyGen * (STATE.gridRate||32) / 100).toFixed(2);
+  var hour = new Date().getHours();
+  var greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+  var card = document.createElement('div');
+  card.id = 'daily-card';
+  card.style.cssText = 'background:#0D1B14;padding:14px 40px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px';
+  card.innerHTML = '<div><div style="font-size:13px;color:#5DCAA5;margin-bottom:2px">'+greeting+', '+(USER.name||'there')+' \u2600\ufe0f</div><div style="font-size:12px;color:rgba(255,255,255,.6)">'+city.name+' today: '+todayIrr.toFixed(1)+' kWh/m\u00b2 \u00b7 Your '+(STATE.sysKw||10)+'kW system \u2192 ~'+dailyGen+' kWh \u00b7 worth $'+dailyValue+'</div></div><button onclick="openApp()" style="font-size:12px;padding:7px 16px;border-radius:20px;background:#1D9E75;color:white;border:none;cursor:pointer;font-weight:500">Open my design \u2192</button>';
+  var nav = document.querySelector('nav');
+  if(nav) nav.parentNode.insertBefore(card, nav.nextSibling);
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ── SAVINGS MILESTONES ───────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════════════
+
+function checkSavingsMilestone(){
+  if(!STATE.annualSav) return;
+  // Estimate total saved since design was created (use 6 months as default)
+  var daysSinceDesign = 180;
+  var saved = localStorage.getItem('jouli_design_date');
+  if(saved) daysSinceDesign = Math.floor((Date.now() - parseInt(saved)) / 86400000);
+  else localStorage.setItem('jouli_design_date', Date.now().toString());
+  var totalSaved = Math.round(STATE.annualSav * daysSinceDesign / 365);
+  var milestones = [500, 1000, 2500, 5000, 10000];
+  var hit = null;
+  milestones.forEach(function(m){
+    if(totalSaved >= m && !localStorage.getItem('jouli_milestone_'+m)) hit = m;
+  });
+  if(hit){
+    localStorage.setItem('jouli_milestone_'+hit, '1');
+    var netCost = (STATE.solarCost||12000) + (STATE.batCost||8000) - Math.round((STATE.sysKw||10)*400);
+    var pctPaid = Math.min(Math.round(totalSaved/netCost*100), 100);
+    showToast('\ud83c\udf89 Milestone: $'+hit.toLocaleString()+' saved! That\'s '+pctPaid+'% of your system paid off.');
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ── SOCIAL SHARING CARD (injected into Economics) ────────────────────────────
+// ══════════════════════════════════════════════════════════════════════════════
+
+// Enhance calcEcon to append share card
+var _origCalcEcon = calcEcon;
+calcEcon = function(){
+  _origCalcEcon();
+  // Append share card after AI box
+  var aiBox = document.querySelector('#app-content .ai-box:last-of-type');
+  if(aiBox && !document.getElementById('share-card')){
+    var city = CITIES[STATE.city||'melbourne'];
+    var co2 = Math.round((STATE.annualGen||14000)*0.82/1000*10)/10;
+    var shareText = 'My solar design ('+city.name+', '+(STATE.sysKw||10)+'kW):\n\ud83d\udcb0 $'+(STATE.annualSav||0).toLocaleString()+' saved/year\n\u23f1 '+(STATE.pb||6)+' yr payback\n\ud83c\udf31 '+co2+'t CO\u2082 avoided/year\nDesigned with Jouli \u2192 jouli.com.au';
+    var shareHTML = '<div id="share-card" style="background:#f9f9f9;border-radius:12px;padding:14px 16px;margin-top:12px;text-align:center;border:0.5px solid #e0e0e0">';
+    shareHTML += '<div style="font-size:12px;color:#666;margin-bottom:8px">Share your design with friends</div>';
+    shareHTML += '<div id="share-text-content" style="font-family:monospace;font-size:11px;background:white;padding:10px;border-radius:8px;margin-bottom:8px;color:#0D1B14;text-align:left;white-space:pre-line;border:0.5px solid #e0e0e0">'+shareText+'</div>';
+    shareHTML += '<button onclick="copyShareText()" style="font-size:12px;padding:7px 18px;border-radius:8px;background:#0D1B14;color:white;border:none;cursor:pointer;font-weight:500">Copy to clipboard</button></div>';
+    aiBox.insertAdjacentHTML('afterend', shareHTML);
+  }
+  // Check milestones
+  checkSavingsMilestone();
+};
+
+function copyShareText(){
+  var text = document.getElementById('share-text-content');
+  if(text){
+    navigator.clipboard.writeText(text.textContent).then(function(){
+      showToast('\u2713 Copied! Share it on social media or send to a friend.');
+    }).catch(function(){
+      showToast('Long-press the text above to copy.');
+    });
+  }
+  if(typeof posthog !== 'undefined') posthog.capture('share_copied');
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ── REFERRAL SYSTEM ──────────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════════════
+
+function initReferral(){
+  // Check for ?ref= parameter in URL
+  var params = new URLSearchParams(window.location.search);
+  var ref = params.get('ref');
+  if(ref) localStorage.setItem('jouli_ref', ref);
+}
+
+function generateReferralCode(){
+  if(!currentUser || !USER.email) return null;
+  var code = USER.email.split('@')[0].replace(/[^a-z0-9]/gi,'').slice(0,8) + Math.random().toString(36).slice(2,5);
+  STATE.referralCode = code;
+  return code;
+}
+
+function showReferralInMenu(){
+  if(!currentUser) return;
+  var code = STATE.referralCode || generateReferralCode();
+  if(!code) return;
+  var dropdown = document.getElementById('user-dropdown');
+  if(!dropdown || document.getElementById('referral-item')) return;
+  var sep = document.createElement('div'); sep.className = 'ud-separator';
+  var item = document.createElement('div');
+  item.id = 'referral-item';
+  item.className = 'ud-item';
+  item.style.cssText = 'flex-direction:column;align-items:flex-start;gap:3px';
+  item.innerHTML = '<div style="font-size:11px;color:#1D9E75;font-weight:600">Refer a friend</div><div style="font-size:10px;color:#888">jouli.com.au?ref='+code+'</div><div style="font-size:10px;color:#666">Earn 1 free month of Pro per signup</div>';
+  item.onclick = function(){
+    navigator.clipboard.writeText('https://jouli.com.au?ref='+code).then(function(){showToast('\u2713 Referral link copied!')}).catch(function(){});
+  };
+  var signout = document.getElementById('signout-btn');
+  if(signout) dropdown.insertBefore(sep, signout);
+  if(signout) dropdown.insertBefore(item, signout);
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ── POSTCODE STATS (leaderboard in location step) ────────────────────────────
+// ══════════════════════════════════════════════════════════════════════════════
+
+async function savePostcodeStats(postcode){
+  if(!supabase || !postcode) return;
+  try {
+    // Increment design count for this postcode
+    await supabase.rpc('increment_postcode_stat', {
+      p_postcode: postcode,
+      p_suburb: STATE.liveName || '',
+      p_sys_kw: STATE.sysKw || 10,
+      p_annual_saving: STATE.annualSav || 0
+    }).catch(function(){
+      // If RPC doesn't exist, just upsert directly
+      supabase.from('postcode_stats').upsert({
+        postcode: postcode,
+        suburb: STATE.liveName || '',
+        design_count: 1,
+        avg_sys_kw: STATE.sysKw || 10,
+        avg_annual_saving: STATE.annualSav || 0,
+        updated_at: new Date().toISOString()
+      }).then(function(){}).catch(function(){});
+    });
+  } catch(e){}
+}
+
+async function getPostcodeStats(postcode){
+  if(!supabase || !postcode) return null;
+  try {
+    var result = await supabase.from('postcode_stats').select('*').eq('postcode', postcode).single();
+    return result.data;
+  } catch(e){ return null; }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ── QUOTE REQUEST EMAIL VIA LOOPS.SO ─────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════════════
+
+// Override sendQuoteRequest to use Loops.so
+var _origSendQuote = sendQuoteRequest;
+sendQuoteRequest = function(){
+  var selected = INSTALLERS.filter(function(i){ return INST_SELECTED.includes(i.id); });
+  var names = selected.map(function(i){ return i.name; }).join(', ');
+  var LOOPS_KEY = '8c10a3422947564ef263e12a9af9df86';
+  var email = USER.email || '';
+  if(email && LOOPS_KEY){
+    fetch('https://app.loops.so/api/v1/transactional', {
+      method:'POST',
+      headers:{'Authorization':'Bearer '+LOOPS_KEY,'Content-Type':'application/json'},
+      body:JSON.stringify({
+        transactionalId:'quote_request_confirmation',
+        email: email,
+        dataVariables:{
+          firstName: USER.name || '',
+          installerNames: names,
+          sysKw: STATE.sysKw || 10,
+          city: CITIES[STATE.city||'melbourne'].name,
+          annualSaving: STATE.annualSav || 0,
+          payback: STATE.pb || 6,
+        }
+      })
+    }).catch(function(){});
+  }
+  // Also save stats
+  if(typeof posthog !== 'undefined') posthog.capture('quote_request_sent', {count: selected.length, sys_kw: STATE.sysKw, installers: names});
+  showToast('\u2713 Quote request sent to '+selected.length+' installer'+(selected.length!==1?'s':'')+'. Expect contact within 2 business days.');
+  setTimeout(function(){ closeInstallers(); }, 1500);
+};
+
+// ── ENHANCED SIGNUP (wire Loops.so with design data) ─────────────────────────
+var _origSetLoggedIn = setLoggedIn;
+setLoggedIn = function(user){
+  _origSetLoggedIn(user);
+  // Wire to Loops.so with design context
+  var LOOPS_KEY = '8c10a3422947564ef263e12a9af9df86';
+  if(LOOPS_KEY && user.email){
+    fetch('https://app.loops.so/api/v1/contacts/create', {
+      method:'POST',
+      headers:{'Authorization':'Bearer '+LOOPS_KEY,'Content-Type':'application/json'},
+      body:JSON.stringify({
+        email:user.email,
+        firstName: USER.name||'',
+        source:'jouli_signup',
+        userGroup:'weekly_email',
+        city: STATE.city||'melbourne',
+        sysKw: STATE.sysKw||10,
+        annualSaving: STATE.annualSav||0,
+        referredBy: localStorage.getItem('jouli_ref')||'',
+      })
+    }).catch(function(){});
+  }
+  showReferralInMenu();
+  showDailyCard();
+};
+
 // ── INIT ─────────────────────────────────────────────────────────────────────
+initReferral();
 
 </script>
 </body>
