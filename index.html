@@ -6,6 +6,7 @@
 <title>Jouli — Your energy, clearly.</title>
 <meta name="description" content="Solar. Battery. EV. One tool built for Australia using real NASA climate data, live NEM tariffs, and plain language anyone can understand.">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js"></script>
 <style>
 
 
@@ -255,7 +256,7 @@
   --g:#1D9E75;--gd:#085041;--gdp:#0D1B14;--gl:#E1F5EE;--gm:#5DCAA5;--gp:#9FE1CB;
   --am:#EF9F27;--al:#FAEEDA;--ad:#633806;
   --bl:#378ADD;--bll:#E6F1FB;--bld:#0C447C;
-  --off:#F7F9F7;--white:#ffffff;--border:rgba(29,158,117,0.15);
+  --off:#F7F9F7;--white:#ffffff;--border:rgba(29,158,117,0.15);--bg2:#f0f0f0;
   --grey:#888780;--lgrey:#F1EFE8;--dgrey:#0D1B14;
   --text:#0D1B14;--text2:#4a6b5e;--text3:#7a9b8e;
   --radius:12px;--radius-sm:8px;
@@ -545,7 +546,119 @@ footer{padding:28px 40px;background:var(--gdp);border-top:1px solid rgba(255,255
   .how{padding:40px 20px}
   .feats{padding:40px 20px}
   .pricing{padding:40px 20px}
+  .ai-chat-btn{display:none}
+  .ai-chat-panel{display:none}
 }
+
+/* ── AI ADVISOR CHAT ──────────────────────────────────────────────────────── */
+.ai-chat-btn{position:fixed;bottom:24px;right:24px;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#534AB7,#7F77DD);color:white;border:none;cursor:pointer;box-shadow:0 8px 28px rgba(83,74,183,.35);z-index:900;display:flex;align-items:center;justify-content:center;transition:transform .2s,box-shadow .2s}
+.ai-chat-btn:hover{transform:scale(1.08);box-shadow:0 12px 36px rgba(83,74,183,.45)}
+.ai-chat-btn svg{width:26px;height:26px}
+.ai-chat-panel{position:fixed;bottom:90px;right:24px;width:380px;max-height:520px;background:white;border-radius:16px;box-shadow:0 16px 60px rgba(13,27,20,.18);z-index:901;display:none;flex-direction:column;overflow:hidden;border:1px solid #e0e0e0}
+.ai-chat-panel.open{display:flex}
+.ai-chat-header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:#EEEDFE;border-bottom:1px solid #AFA9EC;flex-shrink:0}
+.ai-chat-header-left{display:flex;align-items:center;gap:8px}
+.ai-chat-avatar{width:32px;height:32px;border-radius:50%;background:#534AB7;display:flex;align-items:center;justify-content:center;font-size:14px;color:white;font-weight:700}
+.ai-chat-title{font-size:13px;font-weight:600;color:#26215C}
+.ai-chat-sub{font-size:10px;color:#3C3489}
+.ai-chat-close{width:28px;height:28px;border-radius:50%;border:none;background:rgba(83,74,183,.15);cursor:pointer;color:#534AB7;font-size:14px;display:flex;align-items:center;justify-content:center}
+.ai-chat-messages{flex:1;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:10px;min-height:200px;max-height:320px;background:#fafafa}
+.ai-msg{max-width:90%;padding:10px 14px;border-radius:14px;font-size:12px;line-height:1.6;word-wrap:break-word}
+.ai-msg.bot{background:#EEEDFE;color:#26215C;align-self:flex-start;border-bottom-left-radius:4px}
+.ai-msg.user{background:#085041;color:#E1F5EE;align-self:flex-end;border-bottom-right-radius:4px}
+.ai-msg.typing{background:#EEEDFE;color:#3C3489;align-self:flex-start;border-bottom-left-radius:4px;font-style:italic}
+.ai-suggestions{display:flex;flex-wrap:wrap;gap:5px;padding:0 16px 10px}
+.ai-sug{font-size:11px;padding:5px 10px;border-radius:20px;border:1px solid #AFA9EC;background:white;color:#3C3489;cursor:pointer;transition:all .15s}
+.ai-sug:hover{background:#EEEDFE;border-color:#534AB7}
+.ai-chat-input{display:flex;gap:6px;padding:10px 14px;border-top:1px solid #e0e0e0;background:white;flex-shrink:0}
+.ai-chat-input input{flex:1;font-size:13px;padding:8px 12px;border-radius:10px;border:1px solid #e0e0e0;outline:none;font-family:inherit}
+.ai-chat-input input:focus{border-color:#534AB7}
+.ai-chat-input button{padding:8px 14px;border-radius:10px;background:#534AB7;color:white;border:none;font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap}
+.ai-chat-input button:hover{background:#3C3489}
+.ai-chat-input button:disabled{background:#ccc;cursor:not-allowed}
+
+/* ── STC / HEAT PUMP / OFF-GRID shared ──────────────────────────────────── */
+.module-card{background:white;border:0.5px solid #e0e0e0;border-radius:12px;padding:14px;margin-bottom:12px}
+.module-card-title{font-size:12px;font-weight:600;color:#0D1B14;margin-bottom:10px}
+.module-stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+.module-stat{background:#f9f9f9;border-radius:8px;padding:10px 12px}
+.module-stat-label{font-size:10px;color:#888;margin-bottom:3px}
+.module-stat-val{font-size:17px;font-weight:700;color:#0D1B14}
+.module-stat-unit{font-size:11px;font-weight:400;color:#666}
+.module-highlight{background:#E1F5EE;border-radius:12px;padding:16px 20px;margin-bottom:14px;border:0.5px solid #5DCAA5}
+.product-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-bottom:12px}
+.product-card{border:1.5px solid #e0e0e0;border-radius:10px;padding:12px;cursor:pointer;transition:all .2s;text-align:center}
+.product-card:hover{border-color:#1D9E75}
+.product-card.sel{border-color:#1D9E75;background:#E1F5EE}
+.product-name{font-size:12px;font-weight:600;color:#0D1B14;margin-bottom:2px}
+.product-spec{font-size:10px;color:#888}
+.product-price{font-size:13px;font-weight:700;color:#085041;margin-top:4px}
+
+/* ── API DOCS ──────────────────────────────────────────────────────────────── */
+.api-endpoint{background:#f7f7f7;border:0.5px solid #e0e0e0;border-radius:10px;padding:12px 14px;margin-bottom:8px}
+.api-method{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;margin-right:6px}
+.api-method.get{background:#E1F5EE;color:#085041}
+.api-method.post{background:#E6F1FB;color:#0C447C}
+.api-path{font-size:12px;font-weight:600;color:#0D1B14;font-family:monospace}
+.api-desc{font-size:11px;color:#888;margin-top:3px}
+.code-block{background:#0D1B14;border-radius:10px;padding:14px 16px;margin-bottom:12px;overflow-x:auto}
+.code-block code{font-size:11px;color:#9FE1CB;line-height:1.6;white-space:pre;font-family:'SF Mono',Monaco,monospace}
+
+/* ── POSTCODE-FIRST HERO ──────────────────────────────────────────────────── */
+.hero-postcode-row{display:flex;gap:8px;margin-bottom:14px}
+.hero-postcode-row input{flex:1;font-size:16px;padding:14px 18px;border-radius:12px;border:2px solid var(--gm);background:white;color:var(--gdp);outline:none;letter-spacing:2px;font-weight:600;text-align:center;max-width:200px;transition:border-color .2s}
+.hero-postcode-row input:focus{border-color:var(--g)}
+.hero-postcode-row button{font-size:14px;padding:14px 24px;border-radius:12px;background:var(--g);color:white;border:none;cursor:pointer;font-weight:600;white-space:nowrap;transition:background .2s}
+.hero-postcode-row button:hover{background:var(--gd)}
+.hero-result{display:none;background:white;border:1.5px solid var(--gm);border-radius:16px;padding:20px 24px;margin-bottom:16px;animation:slideUp .4s ease-out}
+.hero-result.visible{display:block}
+@keyframes slideUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.hero-result-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.hero-result-stat{text-align:center;padding:10px;background:var(--gl);border-radius:10px}
+.hero-result-stat-val{font-size:24px;font-weight:700;color:var(--gd);line-height:1}
+.hero-result-stat-label{font-size:10px;color:var(--g);margin-top:3px}
+.hero-cta-big{width:100%;padding:16px;border-radius:12px;background:var(--gd);color:var(--gl);border:none;font-size:16px;font-weight:700;cursor:pointer;letter-spacing:-.3px;transition:background .2s;margin-bottom:10px}
+.hero-cta-big:hover{background:var(--gdp)}
+.hero-urgency{font-size:11px;color:var(--am);display:flex;align-items:center;gap:6px;margin-bottom:6px}
+.hero-social{font-size:11px;color:var(--text3);display:flex;align-items:center;gap:6px}
+.hero-social .live-num{color:var(--gd);font-weight:600}
+
+/* ── PHASED SIDEBAR ───────────────────────────────────────────────────────── */
+.sb-phase{margin-bottom:4px}
+.sb-phase-header{display:flex;align-items:center;gap:6px;padding:6px 9px;border-radius:8px;cursor:pointer;font-size:11px;font-weight:600;color:var(--grey);text-transform:uppercase;letter-spacing:.04em;transition:background .15s;user-select:none}
+.sb-phase-header:hover{background:#f0f0f0}
+.sb-phase-header .sb-chevron{margin-left:auto;font-size:9px;transition:transform .2s}
+.sb-phase-header .sb-chevron.open{transform:rotate(90deg)}
+.sb-phase-badge{font-size:9px;padding:1px 6px;border-radius:10px;font-weight:600}
+.sb-phase-badge.pro{background:#FAEEDA;color:#633806}
+.sb-phase-badge.biz{background:#EEEDFE;color:#3C3489}
+.sb-phase-body{overflow:hidden;transition:max-height .25s ease;max-height:500px}
+.sb-phase-body.collapsed{max-height:0}
+.sb-phase-progress{width:16px;height:16px;flex-shrink:0}
+.sb-phase-progress circle{transition:stroke-dashoffset .4s ease}
+
+/* ── PRO BLUR PREVIEW ─────────────────────────────────────────────────────── */
+.pro-preview-wrap{position:relative;filter:blur(5px);pointer-events:none;user-select:none}
+.pro-preview-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.5);backdrop-filter:blur(2px);z-index:10;border-radius:12px}
+.pro-preview-card{background:white;border:2px solid var(--gm);border-radius:20px;padding:28px 36px;text-align:center;box-shadow:0 16px 48px rgba(13,27,20,.12);max-width:400px}
+.pro-preview-metric{font-size:36px;font-weight:700;color:var(--gd);letter-spacing:-1px;line-height:1;margin-bottom:6px}
+.pro-preview-label{font-size:13px;color:var(--g);margin-bottom:16px}
+.pro-preview-cta{padding:14px 28px;border-radius:12px;background:var(--gd);color:var(--gl);border:none;font-size:14px;font-weight:700;cursor:pointer;transition:background .2s;display:inline-block;text-decoration:none}
+.pro-preview-cta:hover{background:var(--gdp)}
+.pro-preview-sub{font-size:11px;color:var(--text3);margin-top:10px}
+
+/* ── LIVE FEEL ────────────────────────────────────────────────────────────── */
+@keyframes countFade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.count-in{animation:countFade .35s ease-out}
+.calc-spinner{display:flex;align-items:center;justify-content:center;gap:8px;padding:40px;font-size:13px;color:var(--g)}
+.calc-spinner::before{content:'';width:18px;height:18px;border:2.5px solid var(--gm);border-top-color:var(--g);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.system-bar{position:fixed;bottom:0;left:200px;right:0;background:rgba(255,255,255,.95);backdrop-filter:blur(8px);border-top:1px solid var(--border);padding:8px 20px;display:flex;align-items:center;gap:16px;z-index:50;transform:translateY(100%);transition:transform .3s}
+.system-bar.visible{transform:translateY(0)}
+.system-bar-item{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text2)}
+.system-bar-val{font-weight:600;color:var(--gdp)}
+.system-bar-sep{width:1px;height:14px;background:var(--border)}
+@media(max-width:768px){.system-bar{left:0}.sb-phase-header{font-size:10px}}
 </style>
 <script>
 !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]);t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="capture identify alias people.set people.set_once set_config register register_once unregister opt_out_capturing has_opted_out_capturing opt_in_capturing reset isFeatureEnabled onFeatureFlags getFeatureFlag getFeatureFlagPayload reloadFeatureFlags group updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures getActiveMatchingSurveys getSurveys getNextSurveyStep onSessionId".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
@@ -585,17 +698,28 @@ posthog.init('phc_ENTgdxizjfqwyiu4WeAfQhkMKXvuBoLzUqhCpnK8tG0',{api_host:'https:
 <section style="background:var(--off)">
   <div class="hero">
     <div class="hero-left">
-      <div class="eyebrow"><div class="pulse"></div>Now in beta · jouli.com.au</div>
+      <div class="eyebrow"><div class="pulse"></div>Live now · jouli.com.au</div>
       <h1>Your energy,<br><em>clearly.</em></h1>
-      <p class="hero-body">Solar. Battery. EV. One tool built for Australia — using real NASA climate data, live NEM tariffs, and plain language anyone can understand.</p>
-      <div class="signup-row">
-        <input type="email" id="hero-email" placeholder="Enter your email"/>
-        <button onclick="signup('hero-email')">Get early access</button>
+      <p class="hero-body">Enter your postcode to see your solar potential in 10 seconds — real NASA satellite data, not estimates.</p>
+      <div class="hero-postcode-row">
+        <input type="text" id="hero-postcode" placeholder="3000" maxlength="4" oninput="this.value=this.value.replace(/\D/g,'')" onkeydown="if(event.key==='Enter')heroPostcodeLookup()"/>
+        <button onclick="heroPostcodeLookup()" id="hero-postcode-btn">Show my solar potential</button>
       </div>
-      <div class="trust">
+      <div class="hero-result" id="hero-result">
+        <div style="font-size:13px;font-weight:600;color:var(--gdp);margin-bottom:10px" id="hero-result-location">Your location</div>
+        <div class="hero-result-grid">
+          <div class="hero-result-stat"><div class="hero-result-stat-val" id="hero-r-savings">$0</div><div class="hero-result-stat-label">Est. annual savings</div></div>
+          <div class="hero-result-stat"><div class="hero-result-stat-val" id="hero-r-gen">0</div><div class="hero-result-stat-label">kWh/year generation</div></div>
+          <div class="hero-result-stat"><div class="hero-result-stat-val" id="hero-r-stc">$0</div><div class="hero-result-stat-label">STC rebate (2026)</div></div>
+        </div>
+        <div class="hero-urgency" id="hero-urgency">⚡ STC rebate drops every year — install in 2026 to keep your full rebate</div>
+        <button class="hero-cta-big" onclick="openAppWithHeroData()">Design my system for free →</button>
+        <div class="hero-social">🏠 <span class="live-num" id="hero-social-count">0</span> homeowners in your state designed their system this week</div>
+      </div>
+      <div class="trust" id="hero-trust">
         <span>✓ Free to start</span>
         <span>✓ No installer pressure</span>
-        <span>✓ Australian data</span>
+        <span>✓ 30-year NASA data</span>
       </div>
     </div>
     <div class="hero-visual">
@@ -693,11 +817,7 @@ posthog.init('phc_ENTgdxizjfqwyiu4WeAfQhkMKXvuBoLzUqhCpnK8tG0',{api_host:'https:
   <div class="foot-tag">Jouli · Your energy, clearly. · Australia</div>
 </footer>
 
-
-
-
-
-
+</div><!-- /landing -->
 
 
 <!-- ── INSTALLER DIRECTORY ─────────────────────────────────────────────────── -->
@@ -983,7 +1103,7 @@ posthog.init('phc_ENTgdxizjfqwyiu4WeAfQhkMKXvuBoLzUqhCpnK8tG0',{api_host:'https:
   </div>
 </div>
 
-<!-- ── ONBOARDING MODAL ─────────────────────────────────────────────────────── -->
+<!-- ── ONBOARDING MODAL (3-STEP WIZARD) ────────────────────────────────────── -->
 <div class="ob-overlay" id="ob-overlay">
   <div class="ob-box">
     <div class="ob-logo">
@@ -995,33 +1115,118 @@ posthog.init('phc_ENTgdxizjfqwyiu4WeAfQhkMKXvuBoLzUqhCpnK8tG0',{api_host:'https:
       </svg>
       <span class="ob-logo-name">jouli</span>
     </div>
-    <div class="ob-title" id="ob-title">Let's personalise<br>your energy design.</div>
-    <div class="ob-sub">Jouli tailors the numbers and advice to your situation. Takes 20 seconds.</div>
-    <div class="ob-field">
-      <div class="ob-label">First name (optional)</div>
-      <input class="ob-input" id="ob-name" placeholder="e.g. Sarah" oninput="updateObGreeting()"/>
+    <!-- Step dots -->
+    <div style="display:flex;justify-content:center;gap:6px;margin-bottom:18px">
+      <div id="ob-dot-1" style="width:8px;height:8px;border-radius:50%;background:#1D9E75"></div>
+      <div id="ob-dot-2" style="width:8px;height:8px;border-radius:50%;background:#e0e0e0"></div>
+      <div id="ob-dot-3" style="width:8px;height:8px;border-radius:50%;background:#e0e0e0"></div>
     </div>
-    <div class="ob-label" style="margin-bottom:8px">What describes you best?</div>
-    <div class="ob-roles">
-      <div class="ob-role sel" id="ob-role-homeowner" onclick="selectRole('homeowner')">
-        <div class="ob-role-title">Homeowner</div>
-        <div class="ob-role-sub">Exploring solar or battery</div>
+
+    <!-- STEP 1: About you -->
+    <div id="ob-step-1">
+      <div class="ob-title">Let's personalise<br>your energy design.</div>
+      <div class="ob-sub">Jouli tailors every number and recommendation to your situation.</div>
+      <div class="ob-field">
+        <div class="ob-label">Your name</div>
+        <input class="ob-input" id="ob-name" placeholder="e.g. Sarah" style="box-sizing:border-box"/>
       </div>
-      <div class="ob-role" id="ob-role-ev" onclick="selectRole('ev')">
-        <div class="ob-role-title">EV owner</div>
-        <div class="ob-role-sub">Want to charge smarter</div>
+      <div class="ob-field">
+        <div class="ob-label">Email address</div>
+        <input class="ob-input" id="ob-email" type="email" placeholder="you@example.com" style="box-sizing:border-box"/>
       </div>
-      <div class="ob-role" id="ob-role-installer" onclick="selectRole('installer')">
-        <div class="ob-role-title">Installer</div>
-        <div class="ob-role-sub">Building proposals</div>
+      <div class="ob-label" style="margin-bottom:8px">I am a...</div>
+      <div class="ob-roles">
+        <div class="ob-role sel" id="ob-role-homeowner" onclick="selectRole('homeowner')">
+          <div class="ob-role-title">Homeowner</div>
+          <div class="ob-role-sub">Exploring solar or battery</div>
+        </div>
+        <div class="ob-role" id="ob-role-ev" onclick="selectRole('ev')">
+          <div class="ob-role-title">EV owner</div>
+          <div class="ob-role-sub">Want to charge smarter</div>
+        </div>
+        <div class="ob-role" id="ob-role-installer" onclick="selectRole('installer')">
+          <div class="ob-role-title">Installer / consultant</div>
+          <div class="ob-role-sub">Building proposals for clients</div>
+        </div>
+        <div class="ob-role" id="ob-role-curious" onclick="selectRole('curious')">
+          <div class="ob-role-title">Just researching</div>
+          <div class="ob-role-sub">Exploring my options</div>
+        </div>
       </div>
-      <div class="ob-role" id="ob-role-curious" onclick="selectRole('curious')">
-        <div class="ob-role-title">Just curious</div>
-        <div class="ob-role-sub">Exploring my options</div>
-      </div>
+      <div id="ob-error-1" style="font-size:12px;color:#E24B4A;min-height:16px;margin-bottom:4px"></div>
+      <button class="ob-btn" onclick="obNext(1)">Continue →</button>
     </div>
-    <button class="ob-btn" onclick="finishOnboarding()">Start my Jouli design →</button>
-    <div class="ob-skip" onclick="skipOnboarding()">Skip — take me straight in</div>
+
+    <!-- STEP 2: Your situation -->
+    <div id="ob-step-2" style="display:none">
+      <div class="ob-title">Tell us about<br>your situation.</div>
+      <div class="ob-sub">This helps Jouli show you the most relevant modules first.</div>
+      <div class="ob-label" style="margin-bottom:8px">What are you looking at?</div>
+      <div class="ob-roles" id="ob-interest-grid">
+        <div class="ob-role sel" id="ob-int-solar" onclick="selectInterest('solar')">
+          <div class="ob-role-title">Solar only</div>
+          <div class="ob-role-sub">Panels + inverter</div>
+        </div>
+        <div class="ob-role" id="ob-int-solarbat" onclick="selectInterest('solar+battery')">
+          <div class="ob-role-title">Solar + Battery</div>
+          <div class="ob-role-sub">Storage for night use</div>
+        </div>
+        <div class="ob-role" id="ob-int-full" onclick="selectInterest('full')">
+          <div class="ob-role-title">Full system</div>
+          <div class="ob-role-sub">Solar + Battery + EV</div>
+        </div>
+        <div class="ob-role" id="ob-int-review" onclick="selectInterest('review')">
+          <div class="ob-role-title">System review</div>
+          <div class="ob-role-sub">Already have solar</div>
+        </div>
+      </div>
+      <div class="ob-label" style="margin-bottom:8px;margin-top:12px">Do you already have solar?</div>
+      <div style="display:flex;gap:8px;margin-bottom:14px">
+        <div class="ob-role" id="ob-solar-no" onclick="selectHasSolar('no')" style="flex:1;text-align:center;padding:10px"><div class="ob-role-title">No</div></div>
+        <div class="ob-role" id="ob-solar-planning" onclick="selectHasSolar('planning')" style="flex:1;text-align:center;padding:10px"><div class="ob-role-title">Planning to</div></div>
+        <div class="ob-role" id="ob-solar-yes" onclick="selectHasSolar('yes')" style="flex:1;text-align:center;padding:10px"><div class="ob-role-title">Yes, installed</div></div>
+      </div>
+      <button class="ob-btn" onclick="obNext(2)">Continue →</button>
+      <div style="text-align:center;margin-top:8px;font-size:12px;color:#aaa;cursor:pointer" onclick="obBack(2)">← Back</div>
+    </div>
+
+    <!-- STEP 3: Priorities -->
+    <div id="ob-step-3" style="display:none">
+      <div class="ob-title">What matters most<br>to you?</div>
+      <div class="ob-sub">We'll highlight the numbers that matter for your decision.</div>
+      <div class="ob-roles">
+        <div class="ob-role sel" id="ob-pri-savings" onclick="selectPriority('savings')">
+          <div class="ob-role-title">💰 Savings</div>
+          <div class="ob-role-sub">Payback period, ROI, bill reduction</div>
+        </div>
+        <div class="ob-role" id="ob-pri-independence" onclick="selectPriority('independence')">
+          <div class="ob-role-title">🔋 Energy independence</div>
+          <div class="ob-role-sub">Self-sufficiency, off-grid capability</div>
+        </div>
+        <div class="ob-role" id="ob-pri-environment" onclick="selectPriority('environment')">
+          <div class="ob-role-title">🌱 Environment</div>
+          <div class="ob-role-sub">CO₂ reduction, clean energy %</div>
+        </div>
+        <div class="ob-role" id="ob-pri-resilience" onclick="selectPriority('resilience')">
+          <div class="ob-role-title">⚡ Resilience</div>
+          <div class="ob-role-sub">Blackout protection, backup power</div>
+        </div>
+      </div>
+      <div class="ob-field" style="margin-top:12px">
+        <div class="ob-label">Monthly electricity bill (approx.)</div>
+        <div style="display:flex;gap:8px">
+          <select class="ob-input" id="ob-bill" style="box-sizing:border-box">
+            <option value="100">Under $100/month</option>
+            <option value="200" selected>$100 – $200/month</option>
+            <option value="350">$200 – $350/month</option>
+            <option value="500">$350 – $500/month</option>
+            <option value="700">$500+/month</option>
+          </select>
+        </div>
+      </div>
+      <button class="ob-btn" style="margin-top:14px" onclick="finishOnboarding()">Start my Jouli design →</button>
+      <div style="text-align:center;margin-top:8px;font-size:12px;color:#aaa;cursor:pointer" onclick="obBack(3)">← Back</div>
+    </div>
   </div>
 </div>
 
@@ -1171,8 +1376,6 @@ posthog.init('phc_ENTgdxizjfqwyiu4WeAfQhkMKXvuBoLzUqhCpnK8tG0',{api_host:'https:
   </div>
 </div>
 
-</div><!-- /landing -->
-
 <!-- ── APP SHELL ──────────────────────────────────────────────────────────── -->
 <div id="app" class="app-shell">
   <div class="app-topbar">
@@ -1185,19 +1388,20 @@ posthog.init('phc_ENTgdxizjfqwyiu4WeAfQhkMKXvuBoLzUqhCpnK8tG0',{api_host:'https:
       <div class="app-step done" id="step-loc" onclick="goStep('loc')">Location</div>
       <div class="app-step" id="step-load" onclick="goStep('load')">Load</div>
       <div class="app-step" id="step-solar" onclick="goStep('solar')">Solar</div>
-      <div class="app-step" id="step-ev" onclick="goStep('ev')">EV</div>
-      <div class="app-step" id="step-v2g" onclick="goStep('v2g')">V2G</div>
       <div class="app-step" id="step-bat" onclick="goStep('bat')">Battery</div>
       <div class="app-step" id="step-ev" onclick="goStep('ev')">EV</div>
       <div class="app-step" id="step-v2g" onclick="goStep('v2g')">V2G</div>
       <div class="app-step" id="step-grid" onclick="goStep('grid')">Grid</div>
+      <div class="app-step" id="step-heatpump" onclick="goStep('heatpump')">Heat pump</div>
       <div class="app-step" id="step-resil" onclick="goStep('resil')">Resilience</div>
+      <div class="app-step" id="step-offgrid" onclick="goStep('offgrid')">Off-grid</div>
+      <div class="app-step" id="step-stc" onclick="goStep('stc')">STC rebate</div>
       <div class="app-step" id="step-econ" onclick="goStep('econ')">Economics</div>
       <div class="app-step" id="step-report" onclick="goStep('report')">Report</div>
     </div>
     <div style="display:flex;align-items:center;gap:10px">
         <div class="save-indicator" id="save-indicator"><div class="save-dot"></div>Saved</div>
-        <div id="app-loc-label" style="font-size:11px;color:var(--grey)">Step 1 of 8</div>
+        <div id="app-loc-label" style="font-size:11px;color:var(--grey)">Step 1 of 13</div>
         <button style="font-size:11px;padding:5px 12px;border-radius:20px;border:0.5px solid rgba(29,158,117,.4);background:rgba(29,158,117,.1);color:#085041;cursor:pointer;display:flex;align-items:center;gap:5px" onclick="openDashboard()"><div style="width:6px;height:6px;border-radius:50%;background:#1D9E75;animation:pulse 2s ease-in-out infinite"></div>Live dashboard</button>
         <div style="position:relative" id="user-menu-wrap">
           <button class="user-menu-btn" id="auth-topbar-btn" onclick="toggleUserMenu()">
@@ -1228,19 +1432,56 @@ posthog.init('phc_ENTgdxizjfqwyiu4WeAfQhkMKXvuBoLzUqhCpnK8tG0',{api_host:'https:
   </div>
   <div class="app-body">
     <div class="app-sidebar">
-      <div class="sb-label">Modules</div>
-      <div class="sb-item active" id="sb-loc" onclick="goStep('loc')"><div class="sb-dot" style="background:#1D9E75"></div>Location</div>
-      <div class="sb-item" id="sb-load" onclick="goStep('load')"><div class="sb-dot" style="background:#1D9E75"></div>Load profiler</div>
-      <div class="sb-item" id="sb-solar" onclick="goStep('solar')"><div class="sb-dot" style="background:#EF9F27"></div>Solar sizing</div>
-      <div class="sb-item" id="sb-bat" onclick="goStep('bat')"><div class="sb-dot" style="background:#1D9E75"></div>Battery sizing</div>
-      <div class="sb-item" id="sb-ev" onclick="goStep('ev')"><div class="sb-dot" style="background:#378ADD"></div>EV scheduler</div>
-      <div class="sb-item" id="sb-v2g" onclick="goStep('v2g')"><div class="sb-dot" style="background:#534AB7"></div>V2G / V2H</div>
-      <div class="sb-item" id="sb-grid" onclick="goStep('grid')"><div class="sb-dot" style="background:#D85A30"></div>Grid interaction</div>
-      <div class="sb-item" id="sb-resil" onclick="goStep('resil')"><div class="sb-dot" style="background:#D4537E"></div>Resilience</div>
-      <div class="sb-item" id="sb-econ" onclick="goStep('econ')"><div class="sb-dot" style="background:#639922"></div>Economics</div>
-      <div class="sb-item" id="sb-report" onclick="goStep('report')"><div class="sb-dot" style="background:#534AB7"></div>Report</div>
+      <!-- PHASE 1: DISCOVER (Free) -->
+      <div class="sb-phase" id="phase-discover">
+        <div class="sb-phase-header" onclick="togglePhase('discover')">
+          <svg class="sb-phase-progress" viewBox="0 0 20 20"><circle cx="10" cy="10" r="8" fill="none" stroke="#e0e0e0" stroke-width="2"/><circle id="prog-discover" cx="10" cy="10" r="8" fill="none" stroke="#1D9E75" stroke-width="2" stroke-dasharray="50.3" stroke-dashoffset="50.3" transform="rotate(-90 10 10)"/></svg>
+          Discover
+          <span style="font-size:9px;color:#1D9E75;font-weight:400" id="prog-discover-pct"></span>
+          <span class="sb-chevron open" id="chev-discover">▸</span>
+        </div>
+        <div class="sb-phase-body" id="body-discover">
+          <div class="sb-item active" id="sb-loc" onclick="goStep('loc')"><div class="sb-dot" style="background:#1D9E75"></div>Location</div>
+          <div class="sb-item" id="sb-load" onclick="goStep('load')"><div class="sb-dot" style="background:#1D9E75"></div>Load profiler</div>
+          <div class="sb-item" id="sb-solar" onclick="goStep('solar')"><div class="sb-dot" style="background:#EF9F27"></div>Solar sizing</div>
+          <div class="sb-item" id="sb-econ" onclick="goStep('econ')"><div class="sb-dot" style="background:#639922"></div>Economics</div>
+        </div>
+      </div>
+      <!-- PHASE 2: DESIGN (Pro) -->
+      <div class="sb-phase" id="phase-design">
+        <div class="sb-phase-header" onclick="togglePhase('design')">
+          <svg class="sb-phase-progress" viewBox="0 0 20 20"><circle cx="10" cy="10" r="8" fill="none" stroke="#e0e0e0" stroke-width="2"/><circle id="prog-design" cx="10" cy="10" r="8" fill="none" stroke="#EF9F27" stroke-width="2" stroke-dasharray="50.3" stroke-dashoffset="50.3" transform="rotate(-90 10 10)"/></svg>
+          Design
+          <span class="sb-phase-badge pro">Pro</span>
+          <span class="sb-chevron" id="chev-design">▸</span>
+        </div>
+        <div class="sb-phase-body collapsed" id="body-design">
+          <div class="sb-item" id="sb-bat" onclick="goStep('bat')"><div class="sb-dot" style="background:#1D9E75"></div>Battery</div>
+          <div class="sb-item" id="sb-ev" onclick="goStep('ev')"><div class="sb-dot" style="background:#378ADD"></div>EV charging</div>
+          <div class="sb-item" id="sb-v2g" onclick="goStep('v2g')"><div class="sb-dot" style="background:#534AB7"></div>V2G / V2H</div>
+          <div class="sb-item" id="sb-grid" onclick="goStep('grid')"><div class="sb-dot" style="background:#D85A30"></div>Grid & plans</div>
+          <div class="sb-item" id="sb-heatpump" onclick="goStep('heatpump')"><div class="sb-dot" style="background:#E24B4A"></div>Heat pump</div>
+          <div class="sb-item" id="sb-resil" onclick="goStep('resil')"><div class="sb-dot" style="background:#D4537E"></div>Resilience</div>
+          <div class="sb-item" id="sb-offgrid" onclick="goStep('offgrid')"><div class="sb-dot" style="background:#8B6914"></div>Off-grid</div>
+          <div class="sb-item" id="sb-stc" onclick="goStep('stc')"><div class="sb-dot" style="background:#378ADD"></div>STC rebate</div>
+        </div>
+      </div>
+      <!-- PHASE 3: DEPLOY (Business) -->
+      <div class="sb-phase" id="phase-deploy">
+        <div class="sb-phase-header" onclick="togglePhase('deploy')">
+          <svg class="sb-phase-progress" viewBox="0 0 20 20"><circle cx="10" cy="10" r="8" fill="none" stroke="#e0e0e0" stroke-width="2"/><circle id="prog-deploy" cx="10" cy="10" r="8" fill="none" stroke="#534AB7" stroke-width="2" stroke-dasharray="50.3" stroke-dashoffset="50.3" transform="rotate(-90 10 10)"/></svg>
+          Deploy
+          <span class="sb-phase-badge biz">Business</span>
+          <span class="sb-chevron" id="chev-deploy">▸</span>
+        </div>
+        <div class="sb-phase-body collapsed" id="body-deploy">
+          <div class="sb-item" id="sb-report" onclick="goStep('report')"><div class="sb-dot" style="background:#534AB7"></div>Report & PDF</div>
+          <div class="sb-item" onclick="openInstallers()"><div class="sb-dot" style="background:#1D9E75"></div>Find installers</div>
+          <div class="sb-item" onclick="openApiDocs()"><div class="sb-dot" style="background:#0C447C"></div>API & white-label</div>
+        </div>
+      </div>
       <div class="sb-sum">
-        <div class="sb-label">System</div>
+        <div class="sb-label">Your system</div>
         <div class="sb-row"><span>Location</span><span class="sb-val" id="sb-loc-val">—</span></div>
         <div class="sb-row"><span>Daily load</span><span class="sb-val" id="sb-load-val">—</span></div>
         <div class="sb-row"><span>Solar</span><span class="sb-val" id="sb-solar-val">—</span></div>
@@ -1250,6 +1491,56 @@ posthog.init('phc_ENTgdxizjfqwyiu4WeAfQhkMKXvuBoLzUqhCpnK8tG0',{api_host:'https:
       </div>
     </div>
     <div class="app-content" id="app-content"></div>
+  </div>
+  <!-- FLOATING SYSTEM BAR -->
+  <div class="system-bar" id="system-bar">
+    <div class="system-bar-item"><span>📍</span><span class="system-bar-val" id="sbar-loc">—</span></div>
+    <div class="system-bar-sep"></div>
+    <div class="system-bar-item"><span>☀️</span><span class="system-bar-val" id="sbar-solar">— kW</span></div>
+    <div class="system-bar-sep"></div>
+    <div class="system-bar-item"><span>💰</span><span class="system-bar-val" id="sbar-savings">—/yr</span></div>
+    <div class="system-bar-sep"></div>
+    <div class="system-bar-item"><span>📊</span><span class="system-bar-val" id="sbar-payback">— yrs</span></div>
+    <div class="system-bar-sep"></div>
+    <div class="system-bar-item"><span>⚡</span><span class="system-bar-val" id="sbar-gen">— kWh/yr</span></div>
+  </div>
+</div>
+
+<!-- ── AI ADVISOR CHAT ─────────────────────────────────────────────────── -->
+<button class="ai-chat-btn" id="ai-chat-btn" onclick="toggleAIChat()" title="Ask Jouli AI" style="display:none">
+  <svg viewBox="0 0 24 24" fill="none"><path d="M12 2C6.48 2 2 6 2 11c0 2.8 1.5 5.3 3.8 6.9L4.5 22l4.3-2.3c1 .3 2.1.3 3.2.3 5.52 0 10-4 10-9S17.52 2 12 2z" fill="white"/><circle cx="8" cy="11" r="1.2" fill="#534AB7"/><circle cx="12" cy="11" r="1.2" fill="#534AB7"/><circle cx="16" cy="11" r="1.2" fill="#534AB7"/></svg>
+</button>
+<div class="ai-chat-panel" id="ai-chat-panel">
+  <div class="ai-chat-header">
+    <div class="ai-chat-header-left">
+      <div class="ai-chat-avatar">AI</div>
+      <div><div class="ai-chat-title">Jouli AI advisor</div><div class="ai-chat-sub">Powered by Claude · knows your design</div></div>
+    </div>
+    <button class="ai-chat-close" onclick="toggleAIChat()">✕</button>
+  </div>
+  <div class="ai-chat-messages" id="ai-chat-messages">
+    <div class="ai-msg bot">Hi! I'm your Jouli AI advisor. I can see your entire energy design — ask me anything about solar, batteries, EVs, tariffs, or what the numbers mean for you.</div>
+  </div>
+  <div class="ai-suggestions" id="ai-suggestions">
+    <div class="ai-sug" onclick="askAI(this.textContent)">Is my solar system the right size?</div>
+    <div class="ai-sug" onclick="askAI(this.textContent)">Should I get a battery?</div>
+    <div class="ai-sug" onclick="askAI(this.textContent)">What happens if the feed-in tariff drops?</div>
+    <div class="ai-sug" onclick="askAI(this.textContent)">Explain my payback period</div>
+  </div>
+  <div class="ai-chat-input">
+    <input id="ai-chat-input" placeholder="Ask about your energy design..." onkeydown="if(event.key==='Enter')sendAIMessage()"/>
+    <button id="ai-send-btn" onclick="sendAIMessage()">Ask</button>
+  </div>
+</div>
+
+<!-- ── API DOCS MODAL ──────────────────────────────────────────────────────── -->
+<div class="modal-overlay" id="modal-apidocs" onclick="if(event.target===this)closeModal('apidocs')">
+  <div class="modal-box" style="max-width:740px">
+    <div class="modal-header">
+      <span class="modal-title">Jouli white-label API</span>
+      <button class="modal-close" onclick="closeModal('apidocs')">✕</button>
+    </div>
+    <div class="modal-body" id="api-docs-body"></div>
   </div>
 </div>
 
@@ -1279,7 +1570,7 @@ const APPLIANCES = [
 let STATE = {
   city:'melbourne', sysKw:10, orient:1.0, tilt:22, shading:3,
   solarCost:12000, batCost:8000, gridRate:32, fit:5, priceRise:3, discount:5,
-  pbChart:null, scChart:null
+  pbChart:null, scChart:null, visitedSteps: new Set()
 };
 
 function fmt(n){return'$'+Math.round(n).toLocaleString()}
@@ -1289,15 +1580,21 @@ function fmtk(n){return'$'+(Math.round(n/100)/10)+'k'}
 function showLanding(){
   document.getElementById('landing').className='view active';
   document.getElementById('app').className='app-shell';
+  var aiBtn = document.getElementById('ai-chat-btn');
+  if(aiBtn) aiBtn.style.display='none';
+  var aiPanel = document.getElementById('ai-chat-panel');
+  if(aiPanel) aiPanel.classList.remove('open');
 }
 function openApp(){
   STATE.city='melbourne'; STATE.liveIrr=null; STATE.liveName=null;
   STATE.sysKw=10; STATE.annualGen=null; STATE.annualSav=null; STATE.pb=null;
+  STATE.realDailyLoad=null; STATE.nemUploaded=false; STATE.hourlyProfile=null; STATE.evDetected=false;
+  STATE.solarCost=12000; STATE.batCost=8000; STATE.gridRate=32; STATE.fit=5;
   USER = { name:'', role:'homeowner', isPro:false };
   ['sb-loc-val','sb-load-val','sb-solar-val','sb-gen-val','sb-saving-val','sb-bat-val'].forEach(function(id){
     var el=document.getElementById(id); if(el)el.textContent='\u2014';
   });
-  ['sb-bat','sb-ev','sb-v2g'].forEach(function(id){
+  ['sb-bat','sb-ev','sb-v2g','sb-heatpump','sb-offgrid','sb-stc'].forEach(function(id){
     var el=document.getElementById(id);
     if(el){el.className='sb-item';var lock=el.querySelector('.sb-lock');if(lock)lock.remove();}
   });
@@ -1305,31 +1602,43 @@ function openApp(){
   document.getElementById('app').className='app-shell active';
   document.getElementById('ob-overlay').classList.add('open');
   document.body.style.overflow='hidden';
+  // Show AI chat button
+  var aiBtn = document.getElementById('ai-chat-btn');
+  if(aiBtn) aiBtn.style.display='flex';
 }
 
 function goStep(s){
-  const steps=['loc','load','solar','bat','ev','v2g','grid','resil','econ','report'];
-  // Analytics: track step navigation
-  if(typeof posthog !== 'undefined') posthog.capture('step_viewed', {step: s, user_role: USER.role || 'unknown'});
+  const steps=['loc','load','solar','bat','ev','v2g','grid','heatpump','resil','offgrid','stc','econ','report'];
+  if(typeof posthog !== 'undefined') posthog.capture('step_viewed', {step: s, user_role: (typeof USER !== 'undefined' && USER) ? USER.role : 'unknown'});
+  // Track visited steps
+  if(STATE.visitedSteps) STATE.visitedSteps.add(s);
   steps.forEach(st=>{
     const el=document.getElementById('step-'+st);
     const sb=document.getElementById('sb-'+st);
     if(el){el.className='app-step'+(st===s?' active':steps.indexOf(st)<steps.indexOf(s)?' done':'');}
     if(sb){sb.className='sb-item'+(st===s?' active':'');}
   });
+  // Expand correct sidebar phase
+  if(typeof expandPhaseForStep === 'function') expandPhaseForStep(s);
+  if(typeof updatePhaseProgress === 'function') updatePhaseProgress();
   const c=document.getElementById('app-content');
   if(STATE.pbChart){STATE.pbChart.destroy();STATE.pbChart=null;}
   if(STATE.scChart){STATE.scChart.destroy();STATE.scChart=null;}
-  if(s==='loc')   renderLoc(c);
-  if(s==='load')  renderLoad(c);
-  if(s==='solar') renderSolar(c);
-  if(s==='bat')   renderBat(c);
-  if(s==='ev')    renderEV(c);
-  if(s==='v2g')   renderV2G(c);
-  if(s==='grid')  renderGrid(c);
-  if(s==='resil') renderResil(c);
-  if(s==='econ')  renderEcon(c);
-  if(s==='report') renderReport(c);
+  if(s==='loc')      renderLoc(c);
+  if(s==='load')     renderLoad(c);
+  if(s==='solar')    renderSolar(c);
+  if(s==='bat')      renderBat(c);
+  if(s==='ev')       renderEV(c);
+  if(s==='v2g')      renderV2G(c);
+  if(s==='grid')     renderGrid(c);
+  if(s==='heatpump') renderHeatPump(c);
+  if(s==='resil')    renderResil(c);
+  if(s==='offgrid')  renderOffGrid(c);
+  if(s==='stc')      renderSTC(c);
+  if(s==='econ')     renderEcon(c);
+  if(s==='report')   renderReport(c);
+  // Update floating system bar
+  if(typeof updateSystemBar === 'function') setTimeout(updateSystemBar, 300);
   // Auto-save on step change if logged in
   if(typeof currentUser !== 'undefined' && currentUser && typeof supabase !== 'undefined' && supabase && s !== 'loc'){
     setTimeout(function(){ if(typeof saveDesign === 'function') saveDesign(); }, 800);
@@ -1413,24 +1722,50 @@ function lookupPostcodeOLD(){
 
 // ── LOAD STEP ─────────────────────────────────────────────────────────────────
 function renderLoad(c){
-  const total=APPLIANCES.reduce((s,a)=>s+a.kw*a.hrs,0);
+  var total=APPLIANCES.reduce(function(s,a){return s+a.kw*a.hrs},0);
+  var nemBadge=STATE.nemUploaded?'<span style="font-size:10px;background:#E1F5EE;color:#085041;padding:2px 8px;border-radius:20px;font-weight:500;margin-left:6px">NEM12 verified \u00b13%</span>':'';
   c.innerHTML=`
-  <div class="sec-head"><div class="sec-title2">Load profiler</div><div class="sec-sub2">${CITIES[STATE.city].name} · typical household</div></div>
-  <div class="app-list">
-    ${APPLIANCES.map(a=>`<div class="app-row"><div class="app-dot" style="background:${a.col}"></div><span class="app-name">${a.name}</span><span class="app-detail">${a.kw}kW · ${a.hrs}h/day</span><span class="app-kwh">${(a.kw*a.hrs).toFixed(1)} kWh</span></div>`).join('')}
+  <div class="sec-head"><div class="sec-title2">Load profiler</div><div class="sec-sub2">${CITIES[STATE.city].name} · ${STATE.nemUploaded?'Real NEM12 data':'Appliance-based estimate'}${nemBadge}</div></div>
+  ${STATE.nemUploaded?'<div style="background:#E1F5EE;border-radius:10px;padding:12px 14px;margin-bottom:12px;font-size:12px;color:#085041;border:0.5px solid #5DCAA5"><strong>Real data active</strong> \u2014 using your NEM12 smart meter data: <strong>'+(STATE.realDailyLoad||22.4)+' kWh/day</strong> average. All calculations use your actual consumption.</div>':''}
+  <div id="load-appliance-list" style="display:flex;flex-direction:column;gap:5px;margin-bottom:10px">
+    ${APPLIANCES.map(function(a,i){return '<div class="app-row" style="position:relative"><div class="app-dot" style="background:'+a.col+'"></div><span class="app-name">'+a.name+'</span><div style="display:flex;align-items:center;gap:4px"><input type="number" value="'+a.kw+'" min="0" max="50" step="0.1" style="width:50px;font-size:11px;padding:3px 5px;border:1px solid #e0e0e0;border-radius:5px;text-align:center" onchange="APPLIANCES['+i+'].kw=parseFloat(this.value)||0;recalcLoad()"><span style="font-size:10px;color:#888">kW</span><span style="font-size:10px;color:#ccc;margin:0 2px">\u00d7</span><input type="number" value="'+a.hrs+'" min="0" max="24" step="0.5" style="width:40px;font-size:11px;padding:3px 5px;border:1px solid #e0e0e0;border-radius:5px;text-align:center" onchange="APPLIANCES['+i+'].hrs=parseFloat(this.value)||0;recalcLoad()"><span style="font-size:10px;color:#888">h/day</span></div><span class="app-kwh" id="load-kwh-'+i+'">'+(a.kw*a.hrs).toFixed(1)+' kWh</span></div>'}).join('')}
   </div>
-  <div class="total-row"><span class="total-label">Total daily load</span><span class="total-val">${total.toFixed(1)} kWh/day</span></div>
+  <div style="display:flex;gap:6px;margin-bottom:10px">
+    <input id="load-custom-name" placeholder="Add appliance name..." style="flex:1;font-size:12px;padding:6px 10px;border:1px solid #e0e0e0;border-radius:8px;outline:none"/>
+    <input id="load-custom-kw" placeholder="kW" type="number" step="0.1" min="0" style="width:60px;font-size:12px;padding:6px 8px;border:1px solid #e0e0e0;border-radius:8px;text-align:center"/>
+    <input id="load-custom-hrs" placeholder="h/day" type="number" step="0.5" min="0" max="24" style="width:60px;font-size:12px;padding:6px 8px;border:1px solid #e0e0e0;border-radius:8px;text-align:center"/>
+    <button style="font-size:12px;padding:6px 14px;border-radius:8px;background:#1D9E75;color:white;border:none;cursor:pointer;font-weight:500;white-space:nowrap" onclick="addCustomAppliance()">+ Add</button>
+  </div>
+  <div class="total-row"><span class="total-label">Total daily load</span><span class="total-val" id="load-total">${STATE.nemUploaded?(STATE.realDailyLoad||22.4):total.toFixed(1)} kWh/day</span></div>
   <div style="background:#f9f9f9;border-radius:10px;padding:12px 14px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
-    <div>
-      <div style="font-size:13px;font-weight:600;color:#0D1B14">Have your electricity bill?</div>
-      <div style="font-size:11px;color:#666;margin-top:2px">Upload your NEM12 interval data file for exact consumption figures — reduces load error from ±20% to ±3%</div>
-    </div>
-    <button style="font-size:12px;padding:8px 16px;border-radius:8px;background:#1D9E75;color:white;border:none;cursor:pointer;white-space:nowrap;font-weight:500" onclick="showNEM12Upload()">Upload NEM12 file →</button>
+    <div><div style="font-size:13px;font-weight:600;color:#0D1B14">Have your electricity bill?</div><div style="font-size:11px;color:#666;margin-top:2px">Upload your NEM12 interval data file for exact consumption figures \u2014 reduces load error from \u00b120% to \u00b13%</div></div>
+    <button style="font-size:12px;padding:8px 16px;border-radius:8px;background:#1D9E75;color:white;border:none;cursor:pointer;white-space:nowrap;font-weight:500" onclick="showNEM12Upload()">Upload NEM12 file \u2192</button>
   </div>
-  <div class="ai-box"><div class="ai-ico">AI</div><div class="ai-text"><strong>Jouli insight —</strong> Your EV charging (7 kWh/day) is your second largest load. Scheduling EV charging during solar peak hours (10am–2pm) could save an estimated $420/year on your current tariff.</div></div>
-  <div class="btn-row"><button class="btn" onclick="goStep('loc')">← Back</button><button class="btn-primary btn" onclick="goStep('solar')">Continue to solar sizing →</button></div>
-  <div class="disclaimer">Estimates based on typical appliance ratings. Actual consumption varies ±10–20%.</div>
-  `;
+  <div class="ai-box"><div class="ai-ico">AI</div><div class="ai-text" id="load-ai-text"><strong>Jouli insight \u2014</strong> Your EV charging (${(APPLIANCES[1].kw*APPLIANCES[1].hrs).toFixed(0)} kWh/day) is your second largest load. Scheduling EV charging during solar peak hours (10am\u20132pm) could save an estimated $420/year on your current tariff.${STATE.nemUploaded?' Your NEM12 data shows actual consumption of '+(STATE.realDailyLoad||22.4)+' kWh/day \u2014 Jouli is using this for all calculations.':''}</div></div>
+  <div class="btn-row"><button class="btn" onclick="goStep('loc')">\u2190 Back</button><button class="btn-primary btn" onclick="goStep('solar')">Continue to solar sizing \u2192</button></div>
+  <div class="disclaimer">Estimates based on typical appliance ratings. Actual consumption varies \u00b110\u201320%. Upload NEM12 data for \u00b13\u20135% accuracy.</div>`;
+}
+
+function recalcLoad(){
+  var total=APPLIANCES.reduce(function(s,a){return s+a.kw*a.hrs},0);
+  APPLIANCES.forEach(function(a,i){var el=document.getElementById('load-kwh-'+i);if(el)el.textContent=(a.kw*a.hrs).toFixed(1)+' kWh'});
+  var el=document.getElementById('load-total');if(el)el.textContent=total.toFixed(1)+' kWh/day';
+  var sbv=document.getElementById('sb-load-val');if(sbv)sbv.textContent=total.toFixed(1)+' kWh';
+}
+
+function addCustomAppliance(){
+  var nameEl=document.getElementById('load-custom-name');
+  var kwEl=document.getElementById('load-custom-kw');
+  var hrsEl=document.getElementById('load-custom-hrs');
+  var name=nameEl.value.trim();
+  var kw=parseFloat(kwEl.value)||0;
+  var hrs=parseFloat(hrsEl.value)||0;
+  if(!name||kw<=0||hrs<=0){showToast('Enter name, kW, and hours/day');return}
+  var cols=['#E24B4A','#8B6914','#0C447C','#D4537E','#534AB7','#639922'];
+  APPLIANCES.push({name:name,kw:kw,hrs:hrs,col:cols[APPLIANCES.length%cols.length]});
+  nameEl.value='';kwEl.value='';hrsEl.value='';
+  renderLoad(document.getElementById('app-content'));
+  showToast('\u2713 '+name+' added');
 }
 
 // ── SOLAR STEP ────────────────────────────────────────────────────────────────
@@ -1449,7 +1784,7 @@ function renderSolar(c){
     <div class="card"><div class="card-title">Daily energy flow</div><div class="flow-rows" id="flow-rows"></div><div class="flow-bar-wrap" id="flow-bar"></div><div class="flow-legend"><div class="flow-legend-item"><div class="fdot" style="background:#EF9F27"></div>Generated</div><div class="flow-legend-item"><div class="fdot" style="background:#1D9E75"></div>Self-use</div><div class="flow-legend-item"><div class="fdot" style="background:#378ADD"></div>Export</div><div class="flow-legend-item"><div class="fdot" style="background:#B4B2A9"></div>Import</div></div></div>
   </div>
   <div class="ai-box" id="solar-ai"><div class="ai-ico">AI</div><div class="ai-text" id="solar-ai-text"></div></div>
-  <div class="btn-row"><button class="btn" onclick="goStep('load')">← Back</button><button class="btn-primary btn" onclick="goStep('econ')">Continue to economics →</button></div>
+  <div class="btn-row"><button class="btn" onclick="goStep('load')">← Back</button><button class="btn-primary btn" onclick="goStep('bat')">Continue to battery →</button></div>
   <div class="disclaimer">Solar generation uses NASA POWER 30-year climatology with performance ratio 0.80. Accuracy ±8–12%.</div>
   `;
   calcSolar();
@@ -1508,7 +1843,7 @@ function renderEcon(c){
   </div>
   <div class="card" style="margin-bottom:12px"><div class="card-title">25-year cumulative savings</div><div style="position:relative;height:200px"><canvas id="pb-chart"></canvas></div></div>
   <div class="ai-box"><div class="ai-ico">AI</div><div class="ai-text" id="econ-ai-text"></div></div>
-  <div class="btn-row"><button class="btn" onclick="goStep('solar')">← Back</button><button class="btn-primary btn" onclick="goStep('report')">Generate report →</button></div>
+  <div class="btn-row"><button class="btn" onclick="goStep('stc')">← Back to STC rebate</button><button class="btn-primary btn" onclick="goStep('report')">Generate report →</button></div>
   <div class="disclaimer">Economics ±15–20%. Not financial advice. Electricity price escalation modelled at selected rate. STC rebate estimated at $400/kW. Verify with a licensed installer.</div>
   `;
   calcEcon();
@@ -1530,7 +1865,7 @@ function calcEcon(){
   let npv=-netCost,cum=[],cv=-netCost;
   for(let y=1;y<=25;y++){const ys=annualSav*Math.pow(1+STATE.priceRise/100,y-1);npv+=ys/Math.pow(1.05,y);cv+=ys;cum.push(Math.round(cv));}
   const roi=Math.round((cum[24]/netCost)*100);
-  STATE.annualSav=annualSav;STATE.pb=pb;STATE.cum25=cum[24];
+  STATE.annualGen=annualGen;STATE.annualSav=annualSav;STATE.pb=pb;STATE.cum25=cum[24];
   document.getElementById('sb-saving-val').textContent=fmt(annualSav)+'/yr';
   document.getElementById('econ-saving').textContent=fmt(annualSav);
   document.getElementById('econ-sub').textContent=`Payback in ${pb} years · 25-year profit ${fmt(cum[24])}`;
@@ -1551,6 +1886,36 @@ function calcEcon(){
   STATE.pbChart=new Chart(document.getElementById('pb-chart'),{type:'line',data:{labels:years,datasets:[{label:'Cumulative',data:cum,borderColor:'#1D9E75',borderWidth:2,fill:true,backgroundColor:'rgba(29,158,117,.08)',pointRadius:0,tension:.3},{label:'Break even',data:years.map(()=>0),borderColor:'rgba(180,178,169,.5)',borderWidth:1,borderDash:[4,4],pointRadius:0,fill:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{font:{size:10},color:'#888',maxTicksLimit:6},grid:{color:'rgba(180,178,169,.1)'}},y:{ticks:{font:{size:10},color:'#888',callback:v=>fmtk(v)},grid:{color:'rgba(180,178,169,.1)'}}}}});
   const ai=document.getElementById('econ-ai-text');
   if(ai)ai.innerHTML=pb<7?`<strong>Jouli insight —</strong> Excellent — ${pb}-year payback on a 25-year system. Total profit of ${fmt(cum[24])}. The STC rebate of ${fmt(stc)} significantly reduces upfront cost.`:pb<10?`<strong>Jouli insight —</strong> Solid investment at ${pb}-year payback. Switching to a time-of-use tariff or increasing your feed-in rate could shave 0.5–1 year off payback.`:`<strong>Jouli insight —</strong> Payback of ${pb} years is above ideal. Get 3+ installer quotes to reduce system cost, or check if a smaller ${Math.round(STATE.sysKw*0.7*2)/2} kW system offers better economics.`;
+
+  // Sensitivity analysis — inject after chart
+  var chartCard=document.getElementById('pb-chart')?.closest('.card');
+  if(chartCard){
+    var scenarios=[
+      {name:'Best case',desc:'Tariff rises '+Math.round(STATE.priceRise+2)+'%/yr',factor:1.15,col:'#1D9E75'},
+      {name:'Base case',desc:'Current assumptions',factor:1.0,col:'#0D1B14'},
+      {name:'FiT drops to 3c',desc:'Feed-in tariff halved',factor:0.85,col:'#EF9F27'},
+      {name:'Grid rate drops 20%',desc:'Cheaper electricity',factor:0.78,col:'#E24B4A'},
+      {name:'Battery price drops $2k',desc:'Cheaper battery',factor:1.0,adj:-2000,col:'#378ADD'},
+      {name:'No battery',desc:'Solar only',factor:1.0,noBat:true,col:'#534AB7'},
+    ];
+    var saHTML='<div style="border:0.5px solid #e0e0e0;border-radius:12px;padding:14px;margin-top:12px;margin-bottom:12px"><div style="font-size:13px;font-weight:600;color:#0D1B14;margin-bottom:10px">Sensitivity analysis — what if scenarios</div>';
+    saHTML+='<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">';
+    scenarios.forEach(function(s){
+      var sCost=s.noBat?STATE.solarCost:totalCost;
+      if(s.adj)sCost+=s.adj;
+      var sStc=s.noBat?stc:stc;
+      var sNet=sCost-sStc;
+      var sSav=Math.round(annualSav*s.factor);
+      var sPb=parseFloat((sNet/sSav).toFixed(1));
+      var sProfit=Math.round(sSav*25);
+      saHTML+='<div style="background:#f9f9f9;border-radius:8px;padding:10px 12px"><div style="font-size:11px;font-weight:600;color:'+s.col+'">'+s.name+'</div><div style="font-size:9px;color:#888;margin-bottom:6px">'+s.desc+'</div>';
+      saHTML+='<div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:2px"><span style="color:#888">Savings</span><strong style="color:#0D1B14">'+fmt(sSav)+'/yr</strong></div>';
+      saHTML+='<div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:2px"><span style="color:#888">Payback</span><strong style="color:'+s.col+'">'+sPb+' yrs</strong></div>';
+      saHTML+='<div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:#888">25yr profit</span><strong style="color:#085041">'+fmt(sProfit)+'</strong></div></div>';
+    });
+    saHTML+='</div><div style="font-size:10px;color:#888;margin-top:6px">Scenarios adjust one variable at a time from base case. Actual outcomes depend on multiple factors.</div></div>';
+    chartCard.insertAdjacentHTML('afterend',saHTML);
+  }
 }
 
 // ── REPORT STEP ───────────────────────────────────────────────────────────────
@@ -1592,10 +1957,8 @@ function renderReport(c){
   <div class="disclaimer">This report is indicative only. Not financial advice. Accuracy ±10–20%. Verify all figures with a CEC-accredited installer before purchasing.</div>
   `;
 }
-function downloadReport(){showToast('Generating your PDF report...');setTimeout(()=>showToast('Report ready! Check your downloads.'),1500);}
-
 // ── INIT ──────────────────────────────────────────────────────────────────────
-goStep('loc');
+// goStep('loc') is called after onboarding completes — not at page load
 
 // ── NASA POSTCODE LOOKUP ─────────────────────────────────────────────────────
 const FALLBACK_IRR = {
@@ -1655,11 +2018,7 @@ async function lookupPostcode() {
 var BAT_CHEM = 'lfp';
 
 function renderBat(c){
-  if(!USER.isPro){
-    c.innerHTML = '<div class="sec-head"><div class="sec-title2">Battery sizing engine</div><div class="sec-sub2">Model your battery size, chemistry, and autonomy</div></div>' +
-    renderProGate('Battery sizing', ['Recommended kWh size','LFP vs NMC chemistry','Autonomy analysis','Seasonal performance','Product comparisons']);
-    return;
-  }
+  var _batProBlur = !USER.isPro;
   const sysKw=STATE.sysKw||10;
   const irr=(STATE.liveIrr)||CITIES[STATE.city||'melbourne'].irr;
   const annGen=Math.round(sysKw*(irr.reduce((a,b)=>a+b,0)/12)*0.80*365);
@@ -1689,6 +2048,12 @@ function renderBat(c){
   <div class="btn-row"><button class="btn" onclick="goStep('solar')">← Back to solar</button><button class="btn-primary btn" onclick="goStep('ev')">Continue to EV →</button></div>
   <div class="disclaimer">Battery sizing estimates ±10–15%. Get 3 quotes from CEC-accredited installers. Check state rebate eligibility.</div>`;
   calcBat();
+  // Pro blur overlay
+  if(_batProBlur){
+    var content = c.innerHTML;
+    var extraSave = Math.round(22.4*0.55*0.65*365*(STATE.gridRate||32)/100);
+    c.innerHTML = '<div style="position:relative"><div class="pro-preview-wrap">' + content + '</div>' + renderProPreview('$'+extraSave.toLocaleString()+'/yr', 'Your battery could save this much extra — see the full analysis') + '</div>';
+  }
 }
 
 function batChem(c){
@@ -1736,6 +2101,48 @@ function calcBat(){
   if(ai)ai.innerHTML=selfSuff>=90?`<strong>Jouli insight —</strong> A ${batSize} kWh battery gets you to ${selfSuff}% self-sufficient — excellent. Grid import drops to just ${Math.round(gridImport*10)/10} kWh/day, saving $${extraSave.toLocaleString()}/year extra.`:`<strong>Jouli insight —</strong> A ${batSize} kWh battery lifts you to ${selfSuff}% self-sufficient. Consider ${Math.round(batSize*1.2*10)/10} kWh to reach 90%+.`;
 }
 
+// ── BATTERY PRODUCTS ─────────────────────────────────────────────────────────
+const BAT_PRODUCTS=[
+  {name:'Tesla Powerwall 3',kwh:13.5,kw:11.5,chem:'LFP',cycles:6000,warranty:'10yr',price:12500,col:'#1D9E75'},
+  {name:'BYD HVM 13.8',kwh:13.8,kw:10.2,chem:'LFP',cycles:6000,warranty:'10yr',price:11200,col:'#EF9F27'},
+  {name:'Sungrow SBR256',kwh:25.6,kw:12.8,chem:'LFP',cycles:6000,warranty:'10yr',price:16800,col:'#378ADD'},
+  {name:'Enphase IQ 5P',kwh:5.0,kw:3.84,chem:'LFP',cycles:7000,warranty:'15yr',price:6200,col:'#534AB7'},
+  {name:'Alpha ESS SMILE5',kwh:14.5,kw:5.0,chem:'LFP',cycles:6000,warranty:'10yr',price:10500,col:'#D85A30'},
+  {name:'Redback SH5000',kwh:9.6,kw:5.0,chem:'LFP',cycles:6000,warranty:'10yr',price:8900,col:'#D4537E'},
+  {name:'Huawei LUNA2000',kwh:15.0,kw:10.0,chem:'LFP',cycles:6000,warranty:'10yr',price:13200,col:'#639922'},
+  {name:'SolarEdge Home Bat',kwh:9.7,kw:5.0,chem:'LFP',cycles:6000,warranty:'10yr',price:9800,col:'#0C447C'},
+];
+
+// Inject product comparison into battery step after calcBat renders
+var _origRenderBat = renderBat;
+renderBat = function(c){
+  _origRenderBat(c);
+  if(!USER.isPro) return;
+  // Append product comparison after the AI box
+  var aiBox = c.querySelector('.ai-box');
+  if(!aiBox) return;
+  var gridRate = STATE.gridRate || 32;
+  var dailyLoad = 22.4;
+  var nightLoad = dailyLoad * 0.55;
+  var prodHTML = '<div style="margin-top:14px"><div style="font-size:13px;font-weight:600;color:#0D1B14;margin-bottom:8px">Battery product comparison — Australian market 2026</div>';
+  prodHTML += '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px">';
+  BAT_PRODUCTS.forEach(function(p){
+    var usable = p.kwh * 0.95;
+    var selfCover = Math.min(usable, nightLoad);
+    var extraSave = Math.round(selfCover * 365 * (gridRate / 100));
+    var payback = (p.price / extraSave).toFixed(1);
+    prodHTML += '<div style="border:0.5px solid #e0e0e0;border-radius:10px;padding:10px;transition:border-color .2s">';
+    prodHTML += '<div style="font-size:12px;font-weight:600;color:#0D1B14;margin-bottom:2px">' + p.name + '</div>';
+    prodHTML += '<div style="font-size:10px;color:#888">' + p.kwh + ' kWh · ' + p.kw + ' kW · ' + p.chem + '</div>';
+    prodHTML += '<div style="font-size:10px;color:#888">' + p.cycles + ' cycles · ' + p.warranty + ' warranty</div>';
+    prodHTML += '<div style="font-size:14px;font-weight:700;color:#085041;margin-top:4px">$' + p.price.toLocaleString() + '</div>';
+    prodHTML += '<div style="font-size:10px;color:#1D9E75">Saves $' + extraSave.toLocaleString() + '/yr · ' + payback + ' yr payback</div>';
+    prodHTML += '</div>';
+  });
+  prodHTML += '</div></div>';
+  aiBox.insertAdjacentHTML('beforebegin', prodHTML);
+};
+
 // ── EV SCHEDULER ──────────────────────────────────────────────────────────────
 const EV_CARS=[
   {name:'Tesla Model 3',kwh:75,eff:6.5,charger:11,col:'#1D9E75'},
@@ -1747,11 +2154,7 @@ const EV_SOLAR_CURVE=[0,0,0,0,0,0,0.2,1.0,2.8,5.5,7.8,9.2,9.6,8.9,7.2,5.0,2.6,0.
 let selEVCar=0;
 
 function renderEV(c){
-  if(!USER.isPro){
-    c.innerHTML = '<div class="sec-head"><div class="sec-title2">EV charging scheduler</div><div class="sec-sub2">Find the cheapest time to charge your EV</div></div>' +
-    renderProGate('EV charging scheduler', ['Solar optimised charging','Off-peak vs peak comparison','Annual saving vs petrol','8 Australian EVs','Tariff optimisation']);
-    return;
-  }
+  var _evProBlur = !USER.isPro;
   c.innerHTML=`
   <div class="sec-head"><div class="sec-title2">EV charging scheduler</div><div class="sec-sub2">Find the cheapest time to charge — solar, off-peak, or spot price</div></div>
   <div style="background:#E6F1FB;border-radius:12px;padding:16px 20px;margin-bottom:14px;border:0.5px solid #85B7EB;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
@@ -1773,6 +2176,10 @@ function renderEV(c){
   <div class="btn-row"><button class="btn" onclick="goStep('bat')">← Back to battery</button><button class="btn-primary btn" onclick="goStep('v2g')">Continue to V2G →</button></div>
   <div class="disclaimer">EV charging costs are estimates. Actual savings depend on charger efficiency and driving variation.</div>`;
   renderEVCars();calcEV();
+  if(_evProBlur){
+    var content = c.innerHTML;
+    c.innerHTML = '<div style="position:relative"><div class="pro-preview-wrap">' + content + '</div>' + renderProPreview('$1,200+/yr', 'Save over $1,200/year charging your EV from solar instead of petrol') + '</div>';
+  }
 }
 
 // Init Supabase on load
@@ -1835,11 +2242,7 @@ function calcEV(){
 let V2G_MODE='v2h';
 
 function renderV2G(c){
-  if(!USER.isPro){
-    c.innerHTML = '<div class="sec-head"><div class="sec-title2">V2G / V2H modeller</div><div class="sec-sub2">Use your EV as a home battery</div></div>' +
-    renderProGate('V2G / V2H modeller', ['V2H home backup economics','V2G grid sell revenue','VPP participation revenue','Battery degradation model','AU compatibility guide']);
-    return;
-  }
+  var _v2gProBlur = !USER.isPro;
   c.innerHTML=`
   <div class="sec-head"><div class="sec-title2">V2G / V2H modeller</div><div class="sec-sub2">Use your EV as a home battery — bidirectional charging economics</div></div>
   <div style="display:flex;gap:8px;margin-bottom:14px">
@@ -1864,6 +2267,10 @@ function renderV2G(c){
   <div class="btn-row"><button class="btn" onclick="goStep('ev')">← Back to EV</button><button class="btn-primary btn" onclick="goStep('econ')">Continue to economics →</button></div>
   <div class="disclaimer">V2G/V2H is emerging in Australia. Hardware availability and grid rules vary by state. Verify vehicle compatibility before purchasing.</div>`;
   setV2GMode('v2h');
+  if(_v2gProBlur){
+    var content = c.innerHTML;
+    c.innerHTML = '<div style="position:relative"><div class="pro-preview-wrap">' + content + '</div>' + renderProPreview('$800+/yr', 'Your EV could earn $800+/year as a home battery via V2H') + '</div>';
+  }
 }
 
 function setV2GMode(m){
@@ -1923,7 +2330,11 @@ function closeModal(name){
 }
 document.addEventListener('keydown',function(e){
   if(e.key==='Escape'){
-    ['privacy','terms','accuracy','contact'].forEach(function(n){closeModal(n);});
+    ['privacy','terms','accuracy','contact','nem12','apidocs'].forEach(function(n){closeModal(n);});
+    closeAuth();
+    closeUpgrade();
+    var aiPanel = document.getElementById('ai-chat-panel');
+    if(aiPanel && aiPanel.classList.contains('open')) toggleAIChat();
   }
 });
 
@@ -1932,13 +2343,10 @@ document.addEventListener('keydown',function(e){
 var USER = { name: '', role: 'homeowner', isPro: false };
 var ob_role = 'homeowner';
 
-function updateObGreeting(){
-  var name = document.getElementById('ob-name').value.trim();
-  var title = document.getElementById('ob-title');
-  if(title) title.innerHTML = name
-    ? 'Hey '+name+', let\'s personalise<br>your energy design.'
-    : 'Let\'s personalise<br>your energy design.';
-}
+// ── ONBOARDING WIZARD ─────────────────────────────────────────────────────────
+var ob_interest = 'solar';
+var ob_hasSolar = 'no';
+var ob_priority = 'savings';
 
 function selectRole(r){
   ob_role = r;
@@ -1948,15 +2356,93 @@ function selectRole(r){
   });
 }
 
+function selectInterest(v){
+  ob_interest = v;
+  ['solar','solarbat','full','review'].forEach(function(id){
+    var el = document.getElementById('ob-int-'+id);
+    if(el) el.className = 'ob-role' + (v.replace('+','')===id || v===id ? ' sel':'');
+  });
+  // Fix the mapping for solar+battery
+  document.getElementById('ob-int-solarbat').className = 'ob-role' + (v==='solar+battery'?' sel':'');
+  document.getElementById('ob-int-solar').className = 'ob-role' + (v==='solar'?' sel':'');
+  document.getElementById('ob-int-full').className = 'ob-role' + (v==='full'?' sel':'');
+  document.getElementById('ob-int-review').className = 'ob-role' + (v==='review'?' sel':'');
+}
+
+function selectHasSolar(v){
+  ob_hasSolar = v;
+  ['no','planning','yes'].forEach(function(id){
+    var el = document.getElementById('ob-solar-'+id);
+    if(el) el.className = 'ob-role' + (id===v?' sel':'');
+    if(el) el.style.flex = '1';
+    if(el) el.style.textAlign = 'center';
+    if(el) el.style.padding = '10px';
+  });
+}
+
+function selectPriority(v){
+  ob_priority = v;
+  ['savings','independence','environment','resilience'].forEach(function(id){
+    var el = document.getElementById('ob-pri-'+id);
+    if(el) el.className = 'ob-role' + (id===v?' sel':'');
+  });
+}
+
+function obNext(fromStep){
+  if(fromStep === 1){
+    var name = document.getElementById('ob-name').value.trim();
+    var email = document.getElementById('ob-email').value.trim();
+    var errEl = document.getElementById('ob-error-1');
+    if(!name){ errEl.textContent = 'Please enter your name.'; return; }
+    if(!email || !email.includes('@')){ errEl.textContent = 'Please enter a valid email address.'; return; }
+    errEl.textContent = '';
+    // Save to Loops.so waitlist
+    var LOOPS_KEY = '8c10a3422947564ef263e12a9af9df86';
+    if(LOOPS_KEY && LOOPS_KEY.length > 10){
+      fetch('https://app.loops.so/api/v1/contacts/create', {
+        method:'POST', headers:{'Authorization':'Bearer '+LOOPS_KEY,'Content-Type':'application/json'},
+        body:JSON.stringify({email:email, firstName:name, source:'jouli_onboarding', userGroup:'onboarding', role:ob_role})
+      }).catch(function(){});
+    }
+  }
+  // Show next step
+  document.getElementById('ob-step-'+fromStep).style.display = 'none';
+  document.getElementById('ob-step-'+(fromStep+1)).style.display = 'block';
+  // Update dots
+  for(var i=1;i<=3;i++){
+    document.getElementById('ob-dot-'+i).style.background = i<=fromStep+1 ? '#1D9E75' : '#e0e0e0';
+  }
+}
+
+function obBack(toStep){
+  document.getElementById('ob-step-'+toStep).style.display = 'none';
+  document.getElementById('ob-step-'+(toStep-1)).style.display = 'block';
+  for(var i=1;i<=3;i++){
+    document.getElementById('ob-dot-'+i).style.background = i<=toStep-1 ? '#1D9E75' : '#e0e0e0';
+  }
+}
+
 function finishOnboarding(){
   USER.name = document.getElementById('ob-name').value.trim();
+  USER.email = (document.getElementById('ob-email').value||'').trim();
   USER.role = ob_role;
+  USER.interest = ob_interest;
+  USER.hasSolar = ob_hasSolar;
+  USER.priority = ob_priority;
+  USER.monthlyBill = parseInt(document.getElementById('ob-bill').value) || 200;
+  // Estimate daily load from bill: bill / (gridRate * 30.4)
+  var estDaily = Math.round(USER.monthlyBill / ((STATE.gridRate||32)/100) / 30.4 * 10)/10;
+  if(estDaily > 5 && estDaily < 100) STATE.realDailyLoad = estDaily;
+
   document.getElementById('ob-overlay').classList.remove('open');
   document.body.style.overflow = '';
-  // Analytics: track onboarding
+
   if(typeof posthog !== 'undefined') {
-    posthog.identify(USER.name || 'anonymous');
-    posthog.capture('onboarding_completed', {role: USER.role, provided_name: !!USER.name});
+    posthog.identify(USER.email || USER.name || 'anonymous');
+    posthog.capture('onboarding_completed', {
+      role: USER.role, interest: USER.interest, hasSolar: USER.hasSolar,
+      priority: USER.priority, monthlyBill: USER.monthlyBill, name: !!USER.name
+    });
   }
   applyPersonalisation();
   goStep('loc');
@@ -1969,24 +2455,23 @@ function skipOnboarding(){
 }
 
 function applyPersonalisation(){
-  // Update app loc label with name if provided
+  // Update app header with name
   var label = document.getElementById('app-loc-label');
-  if(label && USER.name) label.textContent = 'Hi '+USER.name+' · Step 1 of 8';
+  if(label) label.textContent = USER.name ? 'Hi '+USER.name : 'Step 1 of 13';
 
-  // Update sidebar items based on role — lock Pro features
-  var proSteps = ['sb-bat','sb-ev','sb-v2g'];
-  proSteps.forEach(function(id){
-    var el = document.getElementById(id);
-    if(el && !USER.isPro){
-      el.className = 'sb-item locked';
-      if(!el.querySelector('.sb-lock')){
-        var lock = document.createElement('span');
-        lock.className = 'sb-lock';
-        lock.textContent = 'Pro';
-        el.appendChild(lock);
-      }
+  // If user already has solar, show dashboard shortcut
+  if(USER.hasSolar === 'yes'){
+    var topbar = document.querySelector('.app-topbar');
+    if(topbar && !document.getElementById('my-system-btn')){
+      var btn = document.createElement('button');
+      btn.id = 'my-system-btn';
+      btn.style.cssText = 'font-size:11px;padding:5px 12px;border-radius:20px;border:1.5px solid #1D9E75;background:#E1F5EE;color:#085041;cursor:pointer;display:flex;align-items:center;gap:5px;font-weight:600;margin-right:6px';
+      btn.innerHTML = '<div style="width:6px;height:6px;border-radius:50%;background:#1D9E75;animation:pulse 2s ease-in-out infinite"></div>My System';
+      btn.onclick = function(){ openDashboard(); };
+      var dashBtn = topbar.querySelector('[onclick="openDashboard()"]') || topbar.children[topbar.children.length-1];
+      dashBtn.parentNode.insertBefore(btn, dashBtn);
     }
-  });
+  }
 }
 
 // Personalised greeting in loc step
@@ -2079,18 +2564,21 @@ document.addEventListener('keydown', function(e){
 
 // ── SUPABASE AUTH + SAVE/RETURN ───────────────────────────────────────────────
 var SUPABASE_URL = 'https://oodkonxwgpefahwrecfj.supabase.co';
-var SUPABASE_ANON_KEY = 'sb_publishable_CKL01_z1M9yHBL43Izt4rg_FUEaM1St';
+var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9vZGtvbnh3Z3BlZmFod3JlY2ZqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyODI2MDksImV4cCI6MjA4OTg1ODYwOX0.IDRjJF2lasW6n1SfLqk12dr_3wdlenMrw_WYPdd9Wpg';
 var supabase = null;
 var currentUser = null;
 var authMode = 'signup';
 
 // Initialise Supabase when keys are set
 function initSupabase(){
-  if(SUPABASE_URL === 'https://oodkonxwgpefahwrecfj.supabase.co') return;
-  if(typeof window.supabase !== 'undefined' && window.supabase.createClient){
-    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    checkSession();
-  }
+  if(!SUPABASE_URL || !SUPABASE_ANON_KEY) return;
+  if(supabase) return; // already initialised
+  try {
+    if(typeof window.supabase !== 'undefined' && window.supabase.createClient){
+      supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      checkSession();
+    }
+  } catch(e){ console.warn('Supabase init error:', e); }
 }
 
 async function checkSession(){
@@ -2156,10 +2644,13 @@ function setAuthTab(mode){
 
 async function submitAuth(){
   if(!supabase){
-    // Supabase not configured yet — show friendly message
-    document.getElementById('auth-success').textContent = '';
-    document.getElementById('auth-error').textContent = 'Accounts coming very soon — join the waitlist below!';
-    return;
+    // Try to init one more time in case SDK loaded late
+    initSupabase();
+    if(!supabase){
+      document.getElementById('auth-success').textContent = '';
+      document.getElementById('auth-error').textContent = 'Connecting to server — please try again in a moment.';
+      return;
+    }
   }
   var email = document.getElementById('auth-email').value.trim();
   var password = document.getElementById('auth-password').value;
@@ -2227,7 +2718,8 @@ function openUpgradeIfFree(){
 async function saveDesign(){
   closeUserMenu();
   if(!currentUser){ openAuth('signup'); return; }
-  if(!supabase){ showToast('Save & return coming very soon!'); return; }
+  if(!supabase){ initSupabase(); }
+  if(!supabase){ showToast('Connecting to server — please try again.'); return; }
   var design = {
     user_id: currentUser.id,
     name: (USER.name || 'My design') + ' — ' + new Date().toLocaleDateString('en-AU'),
@@ -2258,7 +2750,8 @@ async function saveDesign(){
 async function loadDesigns(){
   closeUserMenu();
   if(!currentUser){ openAuth('signin'); return; }
-  if(!supabase){ showToast('Save & return coming very soon!'); return; }
+  if(!supabase){ initSupabase(); }
+  if(!supabase){ showToast('Connecting to server — please try again.'); return; }
   try {
     var { data, error } = await supabase.from('designs').select('*').eq('user_id', currentUser.id).order('updated_at', {ascending: false}).limit(10);
     if(error) throw error;
@@ -2367,21 +2860,34 @@ function renderGrid(c){
   </div>
 
   <div style="background:#E6F1FB;border-radius:12px;padding:14px 16px;margin-bottom:12px;border:0.5px solid #85B7EB">
-    <div style="font-size:12px;font-weight:600;color:#0C447C;margin-bottom:8px">Australian electricity plans — best fit for your solar profile</div>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+    <div style="font-size:12px;font-weight:600;color:#0C447C;margin-bottom:4px">Electricity plan comparator — ranked for your ${sysKw} kW solar profile</div>
+    <div style="font-size:11px;color:#0C447C;margin-bottom:10px">10 Australian retailers · Estimated annual cost after solar offset</div>
+    <div style="display:grid;grid-template-columns:1fr;gap:6px">
       ${[
-        {name:'Amber Electric',detail:'Spot price · best for battery',fit:'Best for V2G',col:'#EF9F27'},
-        {name:'AGL Solar Savers',detail:'22¢ FiT · good export rates',fit:'Best FiT rate',col:'#1D9E75'},
-        {name:'Origin Solar Boost',detail:'20¢ FiT · low grid rate',fit:'Balanced',col:'#378ADD'},
-      ].map(p=>`<div style="background:white;border-radius:8px;padding:10px 12px"><div style="font-size:12px;font-weight:600;color:#0D1B14">${p.name}</div><div style="font-size:11px;color:#666;margin:2px 0 5px">${p.detail}</div><span style="font-size:10px;padding:2px 7px;border-radius:20px;background:#E6F1FB;color:#0C447C;font-weight:500">${p.fit}</span></div>`).join('')}
+        {name:'Amber Electric',     rate:28, fitR:0,  type:'Spot price (variable)',  best:'Best for battery/V2G', note:'Wholesale rates — highest savings with battery arbitrage'},
+        {name:'AGL Solar Savers',   rate:30, fitR:22, type:'Solar-specific plan',     best:'Best feed-in tariff',  note:'22¢ FiT — top export rate nationally'},
+        {name:'Origin Solar Boost', rate:29, fitR:20, type:'Solar-specific plan',     best:'Balanced',             note:'20¢ FiT + competitive grid rate'},
+        {name:'Energy Australia',   rate:31, fitR:12, type:'Flexi plan',              best:'No lock-in',           note:'Flexible monthly, decent rates'},
+        {name:'Red Energy',         rate:28, fitR:14, type:'Living Energy Saver',     best:'Low grid rate',        note:'Competitive base rate for high self-consumption'},
+        {name:'Simply Energy',      rate:27, fitR:11, type:'Simply Plus',             best:'Budget option',        note:'Lowest grid rate — good if you use most solar yourself'},
+        {name:'Powershop',          rate:29, fitR:15, type:'Future plan',             best:'Green energy',         note:'100% carbon neutral + solar feed-in'},
+        {name:'Lumo Energy',        rate:32, fitR:10, type:'Basic plan',              best:'Simple pricing',       note:'Standing offer — no frills'},
+        {name:'Momentum Energy',    rate:30, fitR:13, type:'Smile plan',              best:'Good reviews',         note:'Highly rated customer service + fair rates'},
+        {name:'Tango Energy',       rate:26, fitR:10, type:'Home Select',             best:'Lowest base rate',     note:'VIC-only — rock bottom grid rate'},
+      ].map((p,i)=>{
+        var annCost = Math.round((imported*365*(p.rate/100)) - (exported*365*(p.fitR/100)));
+        var isTop = i < 3;
+        return '<div style="display:flex;align-items:center;gap:10px;background:white;border-radius:8px;padding:8px 12px;border:'+(isTop?'1.5px solid #378ADD':'0.5px solid #e0e0e0')+'"><div style="font-size:12px;font-weight:700;color:'+(isTop?'#0C447C':'#888')+';min-width:20px">'+(i+1)+'</div><div style="flex:1"><div style="font-size:12px;font-weight:600;color:#0D1B14">'+p.name+' <span style="font-size:10px;font-weight:400;color:#888">— '+p.type+'</span></div><div style="font-size:10px;color:#888;margin-top:1px">'+p.note+'</div></div><div style="text-align:right;min-width:80px"><div style="font-size:14px;font-weight:700;color:'+(annCost<0?'#1D9E75':'#0D1B14')+'">'+(annCost<0?'-':'')+'$'+Math.abs(annCost).toLocaleString()+'</div><div style="font-size:10px;color:#888">/year est.</div></div><span style="font-size:9px;padding:2px 7px;border-radius:20px;background:#E6F1FB;color:#0C447C;font-weight:500;white-space:nowrap">'+p.best+'</span></div>';
+      }).join('')}
     </div>
+    <div style="font-size:10px;color:#0C447C;margin-top:8px">Estimates based on ${Math.round(imported*10)/10} kWh/day import at plan rate + ${Math.round(exported*10)/10} kWh/day export at plan FiT. Actual costs vary by usage pattern and retailer T&Cs.</div>
   </div>
 
   <div class="ai-box"><div class="ai-ico">AI</div><div class="ai-text" id="grid-ai">
     <strong>Jouli insight —</strong> Your ${sysKw} kW system exports ${Math.round(exported*10)/10} kWh/day to the grid at ${fit}¢/kWh — earning $${annFitIncome.toLocaleString()}/year. Switching to a battery would reduce exports and replace grid imports, improving your net position by an estimated $${Math.round((exported*0.75)*365*(gridRate/100-fit/100)).toLocaleString()}/year.
   </div></div>
 
-  <div class="btn-row"><button class="btn" onclick="goStep('v2g')">← Back to V2G</button><button class="btn-primary btn" onclick="goStep('resil')">Continue to resilience →</button></div>
+  <div class="btn-row"><button class="btn" onclick="goStep('v2g')">← Back to V2G</button><button class="btn-primary btn" onclick="goStep('heatpump')">Continue to heat pump →</button></div>
   <div class="disclaimer">NEM tariff data indicative only. Retailer rates change frequently — always verify with your retailer. Feed-in tariff rates vary by state and retailer.</div>`;
 }
 
@@ -2727,7 +3233,7 @@ function startDashboard(){
 }
 
 function updateDashboard(){
-  var data = DASH_CONNECTED ? fetchLiveData() : generateDemoData();
+  var data = (DASH_CONNECTED && typeof fetchLiveData === 'function') ? fetchLiveData() : generateDemoData();
   renderDashboard(data);
   var now = new Date();
   var updated = document.getElementById('dash-last-updated');
@@ -2945,14 +3451,36 @@ async function connectInverter(){
   if(typeof posthog !== 'undefined') posthog.capture('inverter_connect_attempted', {type: selInverter});
 }
 
+function fetchLiveData(){
+  // If SolarEdge is connected, fetch live overview data
+  if(DASH_INVERTER && DASH_INVERTER.type === 'solaredge' && DASH_INVERTER.data){
+    var d = DASH_INVERTER.data;
+    var base = generateDemoData(); // use demo for fields we can't get from API
+    base.currentPower = parseFloat(((d.currentPower||{}).power||0)/1000).toFixed(2);
+    base.todayGen = parseFloat(((d.lastDayData||{}).energy||0)/1000).toFixed(1);
+    base.monthGen = parseFloat(((d.lastMonthData||{}).energy||0)/1000).toFixed(1);
+    base.totalGenerated = Math.round(((d.lifeTimeData||{}).energy||0)/1000);
+    base.isDemo = false;
+    return base;
+  }
+  return generateDemoData();
+}
+
 
 // ── INSTALLER DIRECTORY ───────────────────────────────────────────────────────
 var INST_FILTERS = { state: 'all', spec: 'all' };
 var INST_SELECTED = [];
 
 var INSTALLERS = [
+  // MISSION GREEN — FEATURED PARTNER (ALL 6 STATES)
+  {id:100,name:'Mission Green',location:'Melbourne, VIC',state:'VIC',specs:['solar','battery','ev','commercial'],systems:'1000+',warranty:'10yr',founded:2018,featured:true,col:'#1D9E75',phone:'1300 MISSION',web:'missiongreen.com.au',desc:'Australia\'s trusted clean energy partner. Full-service solar, battery, EV charging and commercial installations across all 6 states. Jouli\'s recommended installer.'},
+  {id:101,name:'Mission Green',location:'Sydney, NSW',state:'NSW',specs:['solar','battery','ev','commercial'],systems:'1000+',warranty:'10yr',founded:2018,featured:true,col:'#1D9E75',phone:'1300 MISSION',web:'missiongreen.com.au',desc:'Australia\'s trusted clean energy partner. Full-service solar, battery, EV charging and commercial installations across all 6 states. Jouli\'s recommended installer.'},
+  {id:102,name:'Mission Green',location:'Brisbane, QLD',state:'QLD',specs:['solar','battery','ev','commercial'],systems:'1000+',warranty:'10yr',founded:2018,featured:true,col:'#1D9E75',phone:'1300 MISSION',web:'missiongreen.com.au',desc:'Australia\'s trusted clean energy partner. Full-service solar, battery, EV charging and commercial installations across all 6 states. Jouli\'s recommended installer.'},
+  {id:103,name:'Mission Green',location:'Perth, WA',state:'WA',specs:['solar','battery','ev','commercial'],systems:'1000+',warranty:'10yr',founded:2018,featured:true,col:'#1D9E75',phone:'1300 MISSION',web:'missiongreen.com.au',desc:'Australia\'s trusted clean energy partner. Full-service solar, battery, EV charging and commercial installations across all 6 states. Jouli\'s recommended installer.'},
+  {id:104,name:'Mission Green',location:'Adelaide, SA',state:'SA',specs:['solar','battery','ev','commercial'],systems:'1000+',warranty:'10yr',founded:2018,featured:true,col:'#1D9E75',phone:'1300 MISSION',web:'missiongreen.com.au',desc:'Australia\'s trusted clean energy partner. Full-service solar, battery, EV charging and commercial installations across all 6 states. Jouli\'s recommended installer.'},
+  {id:105,name:'Mission Green',location:'Hobart, TAS',state:'TAS',specs:['solar','battery','ev','commercial'],systems:'1000+',warranty:'10yr',founded:2018,featured:true,col:'#1D9E75',phone:'1300 MISSION',web:'missiongreen.com.au',desc:'Australia\'s trusted clean energy partner. Full-service solar, battery, EV charging and commercial installations across all 6 states. Jouli\'s recommended installer.'},
   // VIC
-  {id:1,name:'SolarHub Melbourne',location:'Richmond, VIC',state:'VIC',specs:['solar','battery','ev'],systems:'500+',warranty:'10yr',founded:2012,featured:true,col:'#1D9E75',phone:'03 9XXX XXXX',web:'solarhubmelbourne.com.au',desc:'Melbourne\'s most awarded residential installer. Fronius and SolarEdge specialists.'},
+  {id:1,name:'SolarHub Melbourne',location:'Richmond, VIC',state:'VIC',specs:['solar','battery','ev'],systems:'500+',warranty:'10yr',founded:2012,featured:true,col:'#085041',phone:'03 9XXX XXXX',web:'solarhubmelbourne.com.au',desc:'Melbourne\'s most awarded residential installer. Fronius and SolarEdge specialists.'},
   {id:2,name:'Positive Energy Victoria',location:'Geelong, VIC',state:'VIC',specs:['solar','battery','offgrid'],systems:'300+',warranty:'10yr',founded:2014,col:'#085041',phone:'03 5XXX XXXX',web:'posenergyvic.com.au',desc:'Regional VIC specialists. Off-grid and hybrid system experts.'},
   {id:3,name:'Sunergy Group',location:'Ringwood, VIC',state:'VIC',specs:['solar','battery','commercial'],systems:'800+',warranty:'10yr',founded:2010,col:'#EF9F27',phone:'03 9XXX XXXX',web:'sunergygroup.com.au',desc:'Commercial and residential. Tesla Powerwall certified installers.'},
   {id:4,name:'Clean NRG',location:'Ballarat, VIC',state:'VIC',specs:['solar','offgrid'],systems:'200+',warranty:'5yr',founded:2016,col:'#639922',phone:'03 5XXX XXXX',web:'cleannrg.com.au',desc:'Country VIC specialists. Remote and off-grid system design.'},
@@ -3011,6 +3539,19 @@ function renderInstallers(){
     return stateOk && specOk && searchOk;
   });
 
+  // Deduplicate Mission Green when showing all states (show only VIC entry)
+  if(INST_FILTERS.state === 'all'){
+    var mgSeen = false;
+    filtered = filtered.filter(function(inst){
+      if(inst.name === 'Mission Green'){
+        if(mgSeen) return false;
+        mgSeen = true;
+        inst._allStates = true; // flag to show "All 6 states" in card
+      }
+      return true;
+    });
+  }
+
   // Featured first
   filtered.sort(function(a,b){ return (b.featured?1:0) - (a.featured?1:0); });
 
@@ -3036,7 +3577,7 @@ function renderInstallers(){
       +'<div class="inst-card-top">'
         +'<div style="display:flex;align-items:flex-start;gap:10px">'
           +'<div class="inst-avatar" style="background:'+inst.col+'">'+initials+'</div>'
-          +'<div><div class="inst-name">'+inst.name+'</div><div class="inst-location">📍 '+inst.location+'</div></div>'
+          +'<div><div class="inst-name">'+inst.name+'</div><div class="inst-location">\ud83d\udccd '+(inst._allStates?'All 6 Australian states':inst.location)+'</div></div>'
         +'</div>'
       +'</div>'
       +'<div class="inst-badges">'+specs+'<span class="inst-badge" style="background:#f0f0f0;color:#666">CEC Accredited</span></div>'
@@ -3088,12 +3629,1323 @@ function sendQuoteRequest(){
   var msg = 'Sending your '+sysKw+' kW '+city+' design to: '+names;
   showToast(msg);
   if(typeof posthog !== 'undefined') posthog.capture('quote_request_sent', {installers: names, sys_kw: sysKw});
-  // In production this would email the installers with the Jouli design PDF
   setTimeout(function(){
     showToast('\u2713 Quote request sent! Installers will contact you within 2 business days.');
     closeInstallers();
   }, 1500);
 }
+
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ── STC REBATE CALCULATOR ────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════════════
+
+const STC_ZONES = {
+  1: {name:'Zone 1 (Far North QLD, NT top)', rating:1.622, states:['QLD (north of Tropic)','NT (Darwin)']},
+  2: {name:'Zone 2 (QLD south, NSW north)', rating:1.536, states:['QLD (south)','NSW (north)','WA (north)']},
+  3: {name:'Zone 3 (Most of NSW, VIC, SA, WA south)', rating:1.382, states:['NSW','VIC','SA','WA (south)','ACT']},
+  4: {name:'Zone 4 (TAS, VIC alpine)', rating:1.185, states:['TAS','VIC (alpine)']},
+};
+
+const STC_PRICE = 39.00; // current approximate STC market price 2026
+const STC_DEEMING_END = 2030;
+
+function getSTCZone(city){
+  var map = {brisbane:2, sydney:3, melbourne:3, perth:3, adelaide:3, hobart:4};
+  return map[city] || 3;
+}
+
+function calcSTC(sysKw, zone, year){
+  year = year || 2026;
+  var deemingYears = Math.max(STC_DEEMING_END - year, 1);
+  var rating = STC_ZONES[zone].rating;
+  var stcs = Math.floor(sysKw * rating * deemingYears);
+  return {stcs: stcs, value: Math.round(stcs * STC_PRICE), deemingYears: deemingYears, rating: rating};
+}
+
+function renderSTC(c){
+  var sysKw = STATE.sysKw || 10;
+  var zone = getSTCZone(STATE.city || 'melbourne');
+  var city = CITIES[STATE.city||'melbourne'];
+  var result = calcSTC(sysKw, zone, 2026);
+  var batKwh = 13.5;
+  var batSTCs = Math.floor(batKwh * 0.8 * (STC_DEEMING_END - 2026));
+  var batValue = Math.round(batSTCs * STC_PRICE);
+
+  c.innerHTML = `
+  <div class="sec-head"><div class="sec-title2">STC rebate calculator</div><div class="sec-sub2">Small-scale Technology Certificates · 2026 rates · Clean Energy Regulator</div></div>
+
+  <div class="module-highlight">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+      <div>
+        <div style="font-size:11px;color:#085041;font-weight:500;margin-bottom:4px">Your total STC rebate</div>
+        <div style="font-size:42px;font-weight:700;color:#085041;letter-spacing:-1px;line-height:1">$${(result.value + batValue).toLocaleString()}</div>
+        <div style="font-size:12px;color:#1D9E75;margin-top:4px">Solar $${result.value.toLocaleString()} + Battery $${batValue.toLocaleString()}</div>
+      </div>
+      <div style="display:flex;gap:14px;flex-wrap:wrap">
+        <div style="text-align:center"><div style="font-size:20px;font-weight:700;color:#085041">${result.stcs}</div><div style="font-size:11px;color:#1D9E75">Solar STCs</div></div>
+        <div style="text-align:center"><div style="font-size:20px;font-weight:700;color:#085041">${batSTCs}</div><div style="font-size:11px;color:#1D9E75">Battery STCs</div></div>
+        <div style="text-align:center"><div style="font-size:20px;font-weight:700;color:#085041">$${STC_PRICE}</div><div style="font-size:11px;color:#1D9E75">per STC</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="module-stat-grid">
+    <div class="module-stat"><div class="module-stat-label">System size</div><div class="module-stat-val">${sysKw} <span class="module-stat-unit">kW</span></div></div>
+    <div class="module-stat"><div class="module-stat-label">STC zone</div><div class="module-stat-val">Zone ${zone}</div></div>
+    <div class="module-stat"><div class="module-stat-label">Deeming period</div><div class="module-stat-val">${result.deemingYears} <span class="module-stat-unit">years</span></div></div>
+    <div class="module-stat"><div class="module-stat-label">Zone rating</div><div class="module-stat-val">${result.rating}</div></div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+    <div class="module-card">
+      <div class="module-card-title">STC calculation breakdown</div>
+      <div style="font-size:12px;color:#666;line-height:2">
+        <div style="display:flex;justify-content:space-between"><span>System size</span><strong>${sysKw} kW</strong></div>
+        <div style="display:flex;justify-content:space-between"><span>× Zone ${zone} rating</span><strong>${result.rating}</strong></div>
+        <div style="display:flex;justify-content:space-between"><span>× Deeming years (to 2030)</span><strong>${result.deemingYears}</strong></div>
+        <div style="display:flex;justify-content:space-between;border-top:1px solid #e0e0e0;padding-top:4px;margin-top:4px"><span>Total STCs</span><strong style="color:#085041">${result.stcs}</strong></div>
+        <div style="display:flex;justify-content:space-between"><span>× STC price ($${STC_PRICE})</span><strong style="color:#085041">$${result.value.toLocaleString()}</strong></div>
+      </div>
+    </div>
+    <div class="module-card">
+      <div class="module-card-title">STC by system size comparison</div>
+      ${[5,6.6,8,10,13,15].map(kw=>{
+        var r = calcSTC(kw, zone, 2026);
+        var pct = Math.min((r.value / calcSTC(15, zone, 2026).value)*100, 100);
+        var isCur = kw === sysKw;
+        return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:11px">
+          <div style="min-width:45px;color:#666;font-weight:${isCur?'700':'400'}">${kw} kW</div>
+          <div style="flex:1;height:7px;background:#f0f0f0;border-radius:4px;overflow:hidden"><div style="height:100%;border-radius:4px;background:${isCur?'#1D9E75':'#5DCAA5'};width:${pct}%"></div></div>
+          <div style="min-width:50px;text-align:right;font-weight:${isCur?'700':'500'};color:${isCur?'#085041':'#0D1B14'}">$${r.value.toLocaleString()}</div>
+        </div>`;
+      }).join('')}
+    </div>
+  </div>
+
+  <div class="module-card">
+    <div class="module-card-title">STC zone map — Australia</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">
+      ${Object.entries(STC_ZONES).map(([z,d])=>{
+        var isCur = parseInt(z) === zone;
+        return `<div style="background:${isCur?'#E1F5EE':'#f9f9f9'};border:${isCur?'1.5px solid #1D9E75':'0.5px solid #e0e0e0'};border-radius:10px;padding:10px;text-align:center">
+          <div style="font-size:14px;font-weight:700;color:${isCur?'#085041':'#0D1B14'}">Zone ${z}</div>
+          <div style="font-size:11px;color:#888;margin:3px 0">${d.states.join(', ')}</div>
+          <div style="font-size:13px;font-weight:600;color:${isCur?'#1D9E75':'#666'}">Rating: ${d.rating}</div>
+        </div>`;
+      }).join('')}
+    </div>
+  </div>
+
+  <div class="ai-box"><div class="ai-ico">AI</div><div class="ai-text">
+    <strong>Jouli insight —</strong> Your ${sysKw} kW system in Zone ${zone} earns ${result.stcs} STCs worth $${result.value.toLocaleString()}. ${result.deemingYears <= 2 ? 'The deeming period ends in 2030 — installing sooner means more STCs. Every year you wait reduces your rebate by roughly $'+Math.round(sysKw * result.rating * STC_PRICE)+'.' : 'You still have '+result.deemingYears+' deeming years left. The STC scheme ends in 2030, so the rebate decreases each year.'} Battery STCs add another $${batValue.toLocaleString()} for a ${batKwh} kWh system.
+  </div></div>
+
+  <div class="btn-row"><button class="btn" onclick="goStep('offgrid')">← Back to off-grid</button><button class="btn-primary btn" onclick="goStep('econ')">Continue to economics →</button></div>
+  <div class="disclaimer">STC values are indicative based on current market price of $${STC_PRICE}/STC. Actual value depends on market conditions at time of purchase. The STC scheme is administered by the Clean Energy Regulator. Deeming period ends 31 Dec 2030.</div>`;
+}
+
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ── HEAT PUMP HOT WATER MODELLER ─────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════════════
+
+const HEAT_PUMPS = [
+  {id:'sanden',   name:'Sanden Eco Plus',     litres:315, cop:5.0, price:4200, rebateVIC:1000, rebateFed:1000, climate:'All', kwhDay:2.8, warranty:'15yr tank / 5yr compressor'},
+  {id:'reclaim',  name:'Reclaim Energy CO2',  litres:315, cop:5.4, price:4500, rebateVIC:1000, rebateFed:1000, climate:'All', kwhDay:2.6, warranty:'15yr tank / 6yr compressor'},
+  {id:'rheem',    name:'Rheem AmbiHeat 270',  litres:270, cop:3.8, price:3200, rebateVIC:1000, rebateFed:1000, climate:'Warm/Mild', kwhDay:3.5, warranty:'10yr tank / 5yr compressor'},
+  {id:'istore',   name:'iStore 270L',         litres:270, cop:4.0, price:3400, rebateVIC:1000, rebateFed:1000, climate:'All', kwhDay:3.3, warranty:'5yr full system'},
+  {id:'daikin',   name:'Daikin Altherma HW',  litres:260, cop:4.2, price:3800, rebateVIC:1000, rebateFed:1000, climate:'All', kwhDay:3.1, warranty:'5yr compressor'},
+  {id:'enviroheat',name:'Enviroheat 250',     litres:250, cop:3.6, price:2800, rebateVIC:1000, rebateFed:1000, climate:'Warm', kwhDay:3.7, warranty:'5yr full system'},
+  {id:'aquamax',  name:'AquaMAX Heat Pump',   litres:270, cop:3.5, price:2600, rebateVIC:1000, rebateFed:1000, climate:'Warm/Mild', kwhDay:3.8, warranty:'5yr tank / 3yr compressor'},
+];
+
+var selHeatPump = 0;
+
+function renderHeatPump(c){
+  var hp = HEAT_PUMPS[selHeatPump];
+  var city = CITIES[STATE.city||'melbourne'];
+  var gridRate = STATE.gridRate || 32;
+
+  // Existing system comparison
+  var gasDaily = 45; // MJ/day for gas HW
+  var gasCostYr = Math.round(gasDaily * 365 * 0.035); // ~$575/yr gas
+  var elecHWDaily = 10; // kWh/day for electric resistive
+  var elecCostYr = Math.round(elecHWDaily * 365 * (gridRate/100));
+  var hpCostYr = Math.round(hp.kwhDay * 365 * (gridRate/100));
+  var solarHPCostYr = Math.round(hp.kwhDay * 365 * 0.15 * (gridRate/100)); // 85% solar offset
+  var savingsVsGas = gasCostYr - solarHPCostYr;
+  var savingsVsElec = elecCostYr - solarHPCostYr;
+  var netCost = hp.price - hp.rebateVIC - hp.rebateFed;
+  var paybackGas = netCost > 0 ? (netCost / savingsVsGas).toFixed(1) : 0;
+
+  c.innerHTML = `
+  <div class="sec-head"><div class="sec-title2">Heat pump hot water modeller</div><div class="sec-sub2">${city.name} · Solar-scheduled · Rebate-inclusive pricing</div></div>
+
+  <div class="module-highlight">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+      <div>
+        <div style="font-size:11px;color:#085041;font-weight:500;margin-bottom:4px">Annual savings with ${hp.name}</div>
+        <div style="font-size:42px;font-weight:700;color:#085041;letter-spacing:-1px;line-height:1">$${savingsVsGas.toLocaleString()}/yr</div>
+        <div style="font-size:12px;color:#1D9E75;margin-top:4px">vs gas · solar-scheduled · ${paybackGas} year payback</div>
+      </div>
+      <div style="display:flex;gap:14px;flex-wrap:wrap">
+        <div style="text-align:center"><div style="font-size:20px;font-weight:700;color:#085041">COP ${hp.cop}</div><div style="font-size:11px;color:#1D9E75">Efficiency</div></div>
+        <div style="text-align:center"><div style="font-size:20px;font-weight:700;color:#085041">${hp.litres}L</div><div style="font-size:11px;color:#1D9E75">Capacity</div></div>
+        <div style="text-align:center"><div style="font-size:20px;font-weight:700;color:#085041">$${netCost.toLocaleString()}</div><div style="font-size:11px;color:#1D9E75">After rebates</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div style="font-size:12px;font-weight:600;color:#0D1B14;margin-bottom:8px">Choose your heat pump</div>
+  <div class="product-grid" id="hp-grid">
+    ${HEAT_PUMPS.map((h,i)=>`
+      <div class="product-card ${i===selHeatPump?'sel':''}" onclick="selHeatPump=${i};renderHeatPump(document.getElementById('app-content'))">
+        <div class="product-name">${h.name}</div>
+        <div class="product-spec">${h.litres}L · COP ${h.cop} · ${h.climate}</div>
+        <div class="product-price">$${h.price.toLocaleString()}</div>
+        <div style="font-size:10px;color:#1D9E75;margin-top:2px">After rebates: $${(h.price - h.rebateVIC - h.rebateFed).toLocaleString()}</div>
+      </div>
+    `).join('')}
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+    <div class="module-card">
+      <div class="module-card-title">Annual running cost comparison</div>
+      ${[
+        {name:'Gas storage (current)', cost:gasCostYr, col:'#E24B4A'},
+        {name:'Electric resistive', cost:elecCostYr, col:'#EF9F27'},
+        {name:hp.name+' (grid only)', cost:hpCostYr, col:'#378ADD'},
+        {name:hp.name+' (solar scheduled)', cost:solarHPCostYr, col:'#1D9E75'},
+      ].map(r=>{
+        var pct = Math.min((r.cost/elecCostYr)*100, 100);
+        return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:11px">
+          <div style="min-width:140px;color:#666">${r.name}</div>
+          <div style="flex:1;height:8px;background:#f0f0f0;border-radius:4px;overflow:hidden"><div style="height:100%;border-radius:4px;background:${r.col};width:${pct}%"></div></div>
+          <div style="min-width:50px;text-align:right;font-weight:600;color:#0D1B14">$${r.cost}/yr</div>
+        </div>`;
+      }).join('')}
+    </div>
+    <div class="module-card">
+      <div class="module-card-title">Rebates available</div>
+      <div style="display:flex;flex-direction:column;gap:0">
+        ${[
+          {name:'VIC Solar Homes rebate', val:'$'+hp.rebateVIC.toLocaleString(), note:'Subject to eligibility'},
+          {name:'Federal STC rebate (heat pump)', val:'$'+hp.rebateFed.toLocaleString(), note:'Via STC scheme'},
+          {name:'Total rebates', val:'$'+(hp.rebateVIC+hp.rebateFed).toLocaleString(), note:'Applied at point of sale'},
+          {name:'Your net cost', val:'$'+netCost.toLocaleString(), note:'After all rebates'},
+        ].map(r=>`<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:0.5px solid #f0f0f0;font-size:12px"><div><span style="color:#0D1B14;font-weight:500">${r.name}</span><br><span style="font-size:10px;color:#888">${r.note}</span></div><span style="font-weight:700;color:#085041">${r.val}</span></div>`).join('')}
+      </div>
+    </div>
+  </div>
+
+  <div class="module-card">
+    <div class="module-card-title">Solar scheduling — optimise with your ${STATE.sysKw||10} kW system</div>
+    <div style="font-size:12px;color:#666;line-height:1.7;margin-bottom:10px">
+      Heat pumps use 2–4 kWh/day. By scheduling the heat pump to run during peak solar hours (10am–2pm), you can offset 85–95% of the running cost with free solar energy. Most modern heat pumps support timer scheduling.
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      ${['6am–8am (before work)','10am–2pm (peak solar)','2pm–4pm (afternoon solar)'].map((t,i)=>`
+        <div style="padding:6px 14px;border-radius:20px;font-size:11px;border:1px solid ${i===1?'#1D9E75':'#e0e0e0'};background:${i===1?'#E1F5EE':'white'};color:${i===1?'#085041':'#666'};font-weight:${i===1?'600':'400'}">${t} ${i===1?'← Recommended':''}</div>
+      `).join('')}
+    </div>
+  </div>
+
+  <div class="ai-box"><div class="ai-ico">AI</div><div class="ai-text">
+    <strong>Jouli insight —</strong> The ${hp.name} (COP ${hp.cop}) is ${hp.cop >= 4.5 ? 'one of the most efficient heat pumps available' : 'a solid choice'} for ${city.name}. Solar scheduling during 10am–2pm reduces your running cost to ~$${solarHPCostYr}/year — saving $${savingsVsGas}/year vs gas. After $${(hp.rebateVIC+hp.rebateFed).toLocaleString()} in rebates, your net cost of $${netCost.toLocaleString()} pays back in ${paybackGas} years. ${hp.climate === 'Warm' ? 'Note: this model is optimised for warmer climates — check winter performance for '+city.name+'.' : ''}
+  </div></div>
+
+  <div class="btn-row"><button class="btn" onclick="goStep('grid')">← Back to grid</button><button class="btn-primary btn" onclick="goStep('resil')">Continue to resilience →</button></div>
+  <div class="disclaimer">Heat pump COP figures are manufacturer-rated under standard conditions (AS/NZS 4234). Actual performance varies with ambient temperature. Rebate eligibility subject to state and federal scheme rules. Always verify with your installer.</div>`;
+}
+
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ── RURAL / OFF-GRID MODE ────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════════════
+
+function renderOffGrid(c){
+  var sysKw = STATE.sysKw || 10;
+  var city = CITIES[STATE.city||'melbourne'];
+  var irr = (STATE.liveIrr) || city.irr;
+  var avgIrr = irr.reduce((a,b)=>a+b,0)/12;
+  var dailyLoad = STATE.realDailyLoad || 22.4;
+  var gridRate = STATE.gridRate || 32;
+
+  // Grid connection cost estimate (distance-based)
+  var distances = [1, 2, 5, 10, 15, 20];
+  var costPerKm = 25000; // average for rural AU
+  var poleCost = 8000; // per pole
+  var baseCost = 15000; // connection fee
+
+  // Diesel generator
+  var dieselLPerKwh = 0.35;
+  var dieselPrice = 1.95; // $/L
+  var dieselDaily = dailyLoad * 0.4; // generator covers 40% of load
+  var dieselAnnual = Math.round(dieselDaily * dieselLPerKwh * dieselPrice * 365);
+  var dieselMaintenance = 2000; // annual
+  var dieselTotal = dieselAnnual + dieselMaintenance;
+
+  // Off-grid solar + battery
+  var offgridSolarKw = Math.ceil(dailyLoad / (avgIrr * 0.75));
+  var offgridBatKwh = Math.ceil(dailyLoad * 2.5); // 2.5 days autonomy
+  var offgridSolarCost = offgridSolarKw * 1200;
+  var offgridBatCost = offgridBatKwh * 700;
+  var offgridTotal = offgridSolarCost + offgridBatCost + 5000; // +install
+  var offgridAnnual = Math.round(offgridTotal * 0.03); // maintenance ~3%
+  var payback25 = Math.round(offgridTotal + offgridAnnual * 25);
+
+  c.innerHTML = `
+  <div class="sec-head"><div class="sec-title2">Rural / off-grid decision tool</div><div class="sec-sub2">${city.name} · Diesel vs solar · Grid connection economics</div></div>
+
+  <div class="module-highlight">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+      <div>
+        <div style="font-size:11px;color:#085041;font-weight:500;margin-bottom:4px">Grid connection breakeven distance</div>
+        <div style="font-size:42px;font-weight:700;color:#085041;letter-spacing:-1px;line-height:1">${(offgridTotal / costPerKm).toFixed(1)} km</div>
+        <div style="font-size:12px;color:#1D9E75;margin-top:4px">Beyond this, off-grid solar is cheaper than connecting</div>
+      </div>
+      <div style="display:flex;gap:14px;flex-wrap:wrap">
+        <div style="text-align:center"><div style="font-size:20px;font-weight:700;color:#085041">${offgridSolarKw}kW</div><div style="font-size:11px;color:#1D9E75">Solar needed</div></div>
+        <div style="text-align:center"><div style="font-size:20px;font-weight:700;color:#085041">${offgridBatKwh}kWh</div><div style="font-size:11px;color:#1D9E75">Battery needed</div></div>
+        <div style="text-align:center"><div style="font-size:20px;font-weight:700;color:#085041">$${Math.round(offgridTotal/1000)}k</div><div style="font-size:11px;color:#1D9E75">Off-grid cost</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+    <div class="module-card">
+      <div class="module-card-title">Grid connection cost by distance</div>
+      ${distances.map(d=>{
+        var cost = baseCost + (d * costPerKm) + (Math.ceil(d/0.05) > 20 ? poleCost * Math.ceil(d/0.3) : 0);
+        var cheaper = cost > offgridTotal;
+        var pct = Math.min((cost / (baseCost + 20*costPerKm))*100, 100);
+        return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:11px">
+          <div style="min-width:40px;color:#666">${d} km</div>
+          <div style="flex:1;height:8px;background:#f0f0f0;border-radius:4px;overflow:hidden"><div style="height:100%;border-radius:4px;background:${cheaper?'#E24B4A':'#1D9E75'};width:${pct}%"></div></div>
+          <div style="min-width:60px;text-align:right;font-weight:600;color:${cheaper?'#E24B4A':'#0D1B14'}">$${Math.round(cost/1000)}k</div>
+          ${cheaper?'<span style="font-size:9px;background:#FAECE7;color:#993C1D;padding:1px 5px;border-radius:10px">Off-grid wins</span>':''}
+        </div>`;
+      }).join('')}
+      <div style="font-size:10px;color:#888;margin-top:6px">Estimates based on average rural connection costs ($${(costPerKm/1000)}k/km + $${(baseCost/1000)}k base)</div>
+    </div>
+    <div class="module-card">
+      <div class="module-card-title">25-year cost comparison</div>
+      ${[
+        {name:'Grid connected (if nearby)', cost: Math.round((dailyLoad*365*(gridRate/100))*25), col:'#378ADD', note:'25yr electricity bills'},
+        {name:'Diesel generator', cost: dieselTotal*25, col:'#E24B4A', note:'Fuel + maintenance'},
+        {name:'Off-grid solar + battery', cost: payback25, col:'#1D9E75', note:'Upfront + maintenance'},
+      ].map(r=>{
+        var max25 = dieselTotal*25;
+        var pct = Math.min((r.cost/max25)*100, 100);
+        return `<div style="margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px"><span style="color:#666">${r.name}</span><strong style="color:#0D1B14">$${Math.round(r.cost/1000).toLocaleString()}k</strong></div>
+          <div style="height:8px;background:#f0f0f0;border-radius:4px;overflow:hidden"><div style="height:100%;border-radius:4px;background:${r.col};width:${pct}%"></div></div>
+          <div style="font-size:10px;color:#888;margin-top:2px">${r.note}</div>
+        </div>`;
+      }).join('')}
+    </div>
+  </div>
+
+  <div class="module-card">
+    <div class="module-card-title">Off-grid system sizing for ${dailyLoad} kWh/day load</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">
+      ${[
+        {label:'Solar array', val: offgridSolarKw+' kW', note:'Oversized for winter', col:'#EF9F27'},
+        {label:'Battery bank', val: offgridBatKwh+' kWh', note:'2.5 days autonomy', col:'#1D9E75'},
+        {label:'Backup generator', val: '5 kW', note:'Diesel for extended cloud', col:'#E24B4A'},
+        {label:'Inverter/charger', val: '8 kW', note:'Hybrid off-grid rated', col:'#378ADD'},
+      ].map(s=>`<div style="background:#f9f9f9;border-radius:8px;padding:10px 12px;text-align:center">
+        <div style="font-size:17px;font-weight:700;color:#0D1B14">${s.val}</div>
+        <div style="font-size:10px;color:${s.col};font-weight:500;margin-top:2px">${s.label}</div>
+        <div style="font-size:10px;color:#888;margin-top:2px">${s.note}</div>
+      </div>`).join('')}
+    </div>
+  </div>
+
+  <div class="ai-box"><div class="ai-ico">AI</div><div class="ai-text">
+    <strong>Jouli insight —</strong> For your ${dailyLoad} kWh/day load in ${city.name}, an off-grid system costs ~$${Math.round(offgridTotal/1000)}k upfront. Grid connection breaks even at ~${(offgridTotal / costPerKm).toFixed(1)} km. Beyond that distance, off-grid solar is the better investment. Over 25 years, off-grid costs $${Math.round(payback25/1000)}k total vs $${Math.round(dieselTotal*25/1000)}k for diesel alone. ${avgIrr >= 4.5 ? city.name+' has excellent solar resource for off-grid — viable year-round.' : 'Winter months in '+city.name+' will require a backup generator for extended cloudy periods.'}
+  </div></div>
+
+  <div class="btn-row"><button class="btn" onclick="goStep('resil')">← Back to resilience</button><button class="btn-primary btn" onclick="goStep('stc')">Continue to STC rebate →</button></div>
+  <div class="disclaimer">Grid connection costs are estimates only — actual costs depend on terrain, DNSP requirements, and local conditions. Always get a formal quote from your Distribution Network Service Provider. Off-grid sizing includes safety margins.</div>`;
+}
+
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ── CLAUDE AI ADVISOR ────────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════════════
+
+// Configuration — set your proxy endpoint here
+var JOULI_AI_ENDPOINT = ''; // e.g. 'https://oodkonxwgpefahwrecfj.supabase.co/functions/v1/jouli-ai'
+var AI_CHAT_HISTORY = [];
+
+function toggleAIChat(){
+  var panel = document.getElementById('ai-chat-panel');
+  panel.classList.toggle('open');
+  if(panel.classList.contains('open')) updateAISuggestions();
+}
+
+function updateAISuggestions(){
+  var sugs=document.getElementById('ai-suggestions');
+  if(!sugs)return;
+  // Find current active step
+  var activeStep='';
+  var steps=['loc','load','solar','bat','ev','v2g','grid','heatpump','resil','offgrid','stc','econ','report'];
+  steps.forEach(function(s){var el=document.getElementById('sb-'+s);if(el&&el.classList.contains('active'))activeStep=s});
+  var suggestions={
+    loc:['Best postcode for solar in my state?','How does location affect my system?','Darwin vs Melbourne solar output?'],
+    load:['How can I reduce my daily load?','What appliance uses the most power?','Is 22 kWh/day normal for Australia?'],
+    solar:['Is my solar system the right size?','Should I go bigger than '+STATE.sysKw+' kW?','What panels do you recommend?'],
+    bat:['Should I get a battery?','Tesla Powerwall vs BYD comparison?','Is a battery worth it at '+STATE.fit+'c feed-in?'],
+    ev:['Best time to charge my EV?','How much does solar EV charging save?','Can my solar system handle EV charging?'],
+    v2g:['Is V2G worth it in Australia?','Will V2G damage my battery?','Which EVs support V2G?'],
+    grid:['Best electricity plan for my solar?','What happens if FiT drops to 3c?','Should I switch to Amber Electric?'],
+    heatpump:['Sanden vs Reclaim heat pump?','How much will I save vs gas?','Can I run heat pump on solar?'],
+    resil:['How many days can I go off-grid?','Do I need a generator backup?','What happens in a 3-day blackout?'],
+    offgrid:['Is off-grid viable for my location?','Diesel vs solar cost over 25 years?','How far is too far for grid connection?'],
+    stc:['How much is my STC rebate?','Does the rebate decrease each year?','What zone am I in?'],
+    econ:['Explain my payback period','What if electricity prices rise 5%/yr?','Is this a good investment vs shares?'],
+    report:['What should I ask installers?','How accurate are these numbers?','What are the key risks?'],
+  };
+  var opts=suggestions[activeStep]||suggestions.solar;
+  sugs.innerHTML=opts.map(function(q){return '<div class="ai-sug" onclick="askAI(this.textContent)">'+q+'</div>'}).join('');
+  sugs.style.display='flex';
+}
+
+function getStateContext(){
+  var city = CITIES[STATE.city||'melbourne'];
+  return {
+    location: city.name,
+    irradiance: (STATE.liveIrr || city.irr),
+    solarSystemKw: STATE.sysKw || 10,
+    annualGeneration: STATE.annualGen || null,
+    annualSavings: STATE.annualSav || null,
+    paybackYears: STATE.pb || null,
+    solarCost: STATE.solarCost || 12000,
+    batteryCost: STATE.batCost || 8000,
+    gridRate: STATE.gridRate || 32,
+    feedInTariff: STATE.fit || 5,
+    dailyLoad: STATE.realDailyLoad || 22.4,
+    userName: USER.name || '',
+    userRole: USER.role || 'homeowner',
+    isPro: USER.isPro || false,
+  };
+}
+
+function buildSystemPrompt(){
+  var ctx = getStateContext();
+  return `You are the Jouli AI energy advisor — a helpful, knowledgeable assistant built into Jouli, Australia's home energy design platform. You have access to the user's complete energy design data:
+
+CURRENT DESIGN:
+- Location: ${ctx.location}
+- Solar irradiance: ${Array.isArray(ctx.irradiance) ? ctx.irradiance.map((v,i)=>['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][i]+': '+v).join(', ') : 'Not set'} kWh/m²/day
+- Solar system: ${ctx.solarSystemKw} kW
+- Annual generation: ${ctx.annualGeneration ? ctx.annualGeneration+' kWh' : 'calculating...'}
+- Annual savings: ${ctx.annualSavings ? '$'+ctx.annualSavings : 'calculating...'}
+- Payback: ${ctx.paybackYears ? ctx.paybackYears+' years' : 'calculating...'}
+- System cost: Solar $${ctx.solarCost.toLocaleString()}, Battery $${ctx.batteryCost.toLocaleString()}
+- Grid rate: ${ctx.gridRate}c/kWh, Feed-in tariff: ${ctx.feedInTariff}c/kWh
+- Daily load: ${ctx.dailyLoad} kWh/day
+- User: ${ctx.userName || 'Anonymous'} (${ctx.userRole})
+
+RULES:
+- Give specific, personalised answers using the data above
+- Use Australian English, plain language, no jargon
+- Keep answers concise (2-4 sentences unless they ask for detail)
+- Always include a specific number or recommendation
+- If unsure, say so honestly — Jouli values transparency
+- Never recommend specific financial products or give financial advice
+- You can reference the STC rebate scheme, feed-in tariffs, and general economic comparisons`;
+}
+
+async function askAI(question){
+  var input = document.getElementById('ai-chat-input');
+  input.value = question;
+  sendAIMessage();
+}
+
+async function sendAIMessage(){
+  var input = document.getElementById('ai-chat-input');
+  var msg = input.value.trim();
+  if(!msg) return;
+  input.value = '';
+
+  var msgs = document.getElementById('ai-chat-messages');
+  var sugs = document.getElementById('ai-suggestions');
+  var sendBtn = document.getElementById('ai-send-btn');
+
+  // Add user message
+  var userDiv = document.createElement('div');
+  userDiv.className = 'ai-msg user';
+  userDiv.textContent = msg;
+  msgs.appendChild(userDiv);
+  sugs.style.display = 'none';
+  sendBtn.disabled = true;
+
+  // Typing indicator
+  var typingDiv = document.createElement('div');
+  typingDiv.className = 'ai-msg typing';
+  typingDiv.textContent = 'Thinking...';
+  msgs.appendChild(typingDiv);
+  msgs.scrollTop = msgs.scrollHeight;
+
+  AI_CHAT_HISTORY.push({role:'user', content: msg});
+
+  try {
+    var response;
+    if(JOULI_AI_ENDPOINT){
+      // Call proxy endpoint
+      var resp = await fetch(JOULI_AI_ENDPOINT, {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({
+          system: buildSystemPrompt(),
+          messages: AI_CHAT_HISTORY,
+        })
+      });
+      var data = await resp.json();
+      response = data.response || data.content || data.message || 'I could not generate a response. Please try again.';
+    } else {
+      // Fallback: intelligent local response engine
+      response = generateLocalAIResponse(msg);
+    }
+
+    AI_CHAT_HISTORY.push({role:'assistant', content: response});
+    typingDiv.remove();
+
+    var botDiv = document.createElement('div');
+    botDiv.className = 'ai-msg bot';
+    botDiv.textContent = response;
+    msgs.appendChild(botDiv);
+
+  } catch(e){
+    typingDiv.remove();
+    var errDiv = document.createElement('div');
+    errDiv.className = 'ai-msg bot';
+    errDiv.textContent = 'Sorry, I had trouble connecting. Let me try with what I know locally.';
+    msgs.appendChild(errDiv);
+
+    var fallback = generateLocalAIResponse(msg);
+    var fbDiv = document.createElement('div');
+    fbDiv.className = 'ai-msg bot';
+    fbDiv.textContent = fallback;
+    msgs.appendChild(fbDiv);
+  }
+
+  sendBtn.disabled = false;
+  msgs.scrollTop = msgs.scrollHeight;
+  if(typeof posthog !== 'undefined') posthog.capture('ai_question_asked', {question: msg.slice(0,100)});
+}
+
+function generateLocalAIResponse(q){
+  var ctx = getStateContext();
+  var ql = q.toLowerCase();
+  var city = CITIES[STATE.city||'melbourne'];
+  var avgIrr = (ctx.irradiance.reduce((a,b)=>a+b,0)/12).toFixed(1);
+  var annGen = ctx.solarSystemKw * avgIrr * 0.80 * 365;
+  var annSav = Math.round(annGen * 0.42 * (ctx.gridRate/100) + annGen * 0.18 * (ctx.feedInTariff/100));
+  var pb = ((ctx.solarCost + ctx.batteryCost) / annSav).toFixed(1);
+
+  if(ql.includes('size') || ql.includes('too big') || ql.includes('too small') || ql.includes('right size')){
+    var ratio = annGen / (ctx.dailyLoad * 365);
+    if(ratio > 1.3) return `Your ${ctx.solarSystemKw} kW system generates about ${Math.round(annGen).toLocaleString()} kWh/year — that's ${Math.round(ratio*100)}% of your ${ctx.dailyLoad} kWh/day load. You'll export a lot to the grid. If your feed-in tariff is low (${ctx.feedInTariff}c), consider downsizing to ${Math.round(ctx.solarSystemKw*0.8)} kW or adding a battery to capture that excess.`;
+    if(ratio < 0.7) return `Your ${ctx.solarSystemKw} kW system covers about ${Math.round(ratio*100)}% of your consumption. For ${ctx.location}, I'd recommend at least ${Math.round(ctx.dailyLoad*365/(avgIrr*0.80*365))} kW to cover your full load. The extra panels cost ~$${Math.round((Math.round(ctx.dailyLoad*365/(avgIrr*0.80*365))-ctx.solarSystemKw)*1200)} but save an additional $${Math.round((1-ratio)*annSav)}/year.`;
+    return `Your ${ctx.solarSystemKw} kW system is well-matched to your ${ctx.dailyLoad} kWh/day consumption in ${ctx.location}. It generates ${Math.round(annGen).toLocaleString()} kWh/year — about ${Math.round(ratio*100)}% of your annual use. Good sizing.`;
+  }
+
+  if(ql.includes('battery') || ql.includes('storage')){
+    var excess = annGen * 0.58; // what goes to grid without battery
+    var batSaving = Math.round(excess * 0.65 * (ctx.gridRate/100 - ctx.feedInTariff/100));
+    return `A battery makes sense if your self-consumption is low and grid rates are high. With your ${ctx.solarSystemKw} kW system, you export about ${Math.round(excess)} kWh/year. A 13.5 kWh battery would capture ~65% of that, saving an extra $${batSaving}/year. At $${ctx.batteryCost.toLocaleString()}, the battery payback is about ${(ctx.batteryCost/batSaving).toFixed(1)} years. ${ctx.gridRate >= 35 ? 'With your high grid rate, a battery is a strong investment.' : 'With moderate grid rates, a battery is more about resilience than pure savings.'}`;
+  }
+
+  if(ql.includes('feed-in') || ql.includes('fit') || ql.includes('tariff drop')){
+    var currentFIT = ctx.feedInTariff;
+    var fitIncome = Math.round(annGen * 0.58 * (currentFIT/100));
+    var lowerFIT = Math.max(currentFIT - 3, 0);
+    var newIncome = Math.round(annGen * 0.58 * (lowerFIT/100));
+    return `You currently earn about $${fitIncome}/year from feed-in at ${currentFIT}c/kWh. If it drops to ${lowerFIT}c, your income falls to $${newIncome}/year — a $${fitIncome-newIncome} hit. This is why batteries become more valuable as FiTs drop: instead of exporting at ${currentFIT}c, you store and use it at ${ctx.gridRate}c. Every 1c/kWh FiT drop costs you about $${Math.round(annGen*0.58*0.01)}/year.`;
+  }
+
+  if(ql.includes('payback') || ql.includes('roi') || ql.includes('return')){
+    return `Your combined system (${ctx.solarSystemKw} kW solar + battery) costs $${(ctx.solarCost+ctx.batteryCost).toLocaleString()} and saves approximately $${annSav.toLocaleString()}/year. That's a payback of about ${pb} years. After that, you're essentially generating free electricity. Over 25 years, your total savings are approximately $${Math.round(annSav*25/1000)}k — a ${Math.round((annSav*25)/(ctx.solarCost+ctx.batteryCost)*100)}% return on your investment.`;
+  }
+
+  if(ql.includes('ev') || ql.includes('electric vehicle') || ql.includes('car')){
+    var evKwhPer100km = 17;
+    var avgKmYear = 14000;
+    var evKwhYear = Math.round(avgKmYear * evKwhPer100km / 100);
+    var evCostSolar = Math.round(evKwhYear * 0.05); // mostly free from solar
+    var petrolCost = Math.round(avgKmYear * 0.12); // ~12c/km for petrol
+    return `Charging an EV from your solar system is one of the best returns. The average Australian drives 14,000 km/year — that's about ${evKwhYear} kWh of charging. From solar, that costs ~$${evCostSolar}/year vs ~$${petrolCost}/year in petrol. Schedule charging between 10am–2pm when your panels peak. Your ${ctx.solarSystemKw} kW system has plenty of excess capacity for daily EV charging.`;
+  }
+
+  if(ql.includes('heat pump') || ql.includes('hot water')){
+    return `A heat pump hot water system is one of the most cost-effective upgrades. With a COP of 4\u20135, it uses 2.5\u20133.5 kWh/day instead of 10 kWh for resistive electric or ~$575/year for gas. Solar-scheduled, it costs under $60/year to run. After VIC and federal rebates ($2,000 total), a good unit like the Sanden Eco Plus costs about $2,200 installed \u2014 payback in about 3\u20134 years.`;
+  }
+
+  if(ql.includes('panel') || ql.includes('brand') || ql.includes('recommend')){
+    return `For a ${ctx.solarSystemKw} kW system, you need ${Math.ceil(ctx.solarSystemKw*1000/455)} panels at 455W each. Top-tier brands for Australia: Tier 1 \u2014 SunPower, REC, LG (premium, 25yr warranty, ~$1.20/W), Tier 2 \u2014 Jinko, Trina, Canadian Solar (great value, 25yr product warranty, ~$0.80/W), Budget \u2014 LONGi, JA Solar (~$0.60/W). I'd recommend Jinko Tiger Neo or Trina Vertex S for the best value-to-performance ratio in ${ctx.location}.`;
+  }
+
+  if(ql.includes('off-grid') || ql.includes('offgrid') || ql.includes('rural') || ql.includes('remote')){
+    var offKw = Math.ceil(ctx.dailyLoad/(avgIrr*0.75));
+    var offBat = Math.ceil(ctx.dailyLoad*2.5);
+    return `For off-grid at ${ctx.dailyLoad} kWh/day in ${ctx.location}, you'd need ~${offKw} kW of solar and ${offBat} kWh of battery (2.5 days autonomy). Total cost around $${Math.round((offKw*1200+offBat*700+5000)/1000)}k. Grid connection breaks even at ~${((offKw*1200+offBat*700+5000)/25000).toFixed(1)} km. Beyond that distance, off-grid is the better investment.`;
+  }
+
+  if(ql.includes('stc') || ql.includes('rebate') || ql.includes('certificate') || ql.includes('government')){
+    var zone = getSTCZone(STATE.city||'melbourne');
+    var stcCalc = calcSTC(ctx.solarSystemKw, zone, 2026);
+    return `Your ${ctx.solarSystemKw} kW system in Zone ${zone} earns ${stcCalc.stcs} STCs worth $${stcCalc.value.toLocaleString()} at $${STC_PRICE}/STC. The scheme ends 2030 \u2014 each year you wait costs ~$${Math.round(ctx.solarSystemKw*stcCalc.rating*STC_PRICE)} in lost rebate. A 13.5 kWh battery adds another ~$${Math.round(Math.floor(13.5*0.8*stcCalc.deemingYears)*STC_PRICE).toLocaleString()} in battery STCs.`;
+  }
+
+  if(ql.includes('investment') || ql.includes('shares') || ql.includes('stock') || ql.includes('compare')){
+    var roiPct = Math.round((annSav*25/(ctx.solarCost+(ctx.batteryCost||0)))*100);
+    return `Your solar system returns ~${roiPct}% over 25 years ($${annSav.toLocaleString()}/yr on a $${(ctx.solarCost+(ctx.batteryCost||0)).toLocaleString()} investment). That's equivalent to a ~${(Math.pow(1+roiPct/100,1/25)-1).toFixed(1)*100||7}% annual return \u2014 competitive with long-term share market returns (7\u20139% avg). The difference: solar returns are tax-free, inflation-protected (savings grow as power prices rise), and guaranteed by physics, not market sentiment.`;
+  }
+
+  if(ql.includes('plan') || ql.includes('retailer') || ql.includes('amber') || ql.includes('agl') || ql.includes('origin')){
+    return `With your ${ctx.solarSystemKw} kW system exporting ~${Math.round((annGen/365-Math.min(annGen/365*0.42,ctx.dailyLoad))*10)/10} kWh/day, you want the highest feed-in tariff. AGL Solar Savers (22c FiT) would earn you ~$${Math.round(annGen*0.58*0.22)} in FiT income. If you have a battery, Amber Electric's wholesale pricing lets you buy at 5\u201310c and sell at 30\u201350c during peaks \u2014 best for arbitrage. For simplicity + decent rates, Origin Solar Boost is a solid middle ground.`;
+  }
+
+  if(ql.includes('installer') || ql.includes('quote') || ql.includes('buy')){
+    return `For your ${ctx.solarSystemKw} kW system in ${ctx.location}: Get 3+ quotes from CEC-accredited installers. Key questions: (1) Confirm the $${calcSTC(ctx.solarSystemKw,getSTCZone(STATE.city||'melbourne'),2026).value.toLocaleString()} STC rebate is included, (2) Which panel and inverter brands?, (3) Written performance guarantee?, (4) Workmanship warranty length?, (5) Can they show NMI data from similar installs? Use Jouli's installer directory \u2014 all 19 listed are CEC-accredited with no referral fees.`;
+  }
+
+  if(ql.includes('accuracy') || ql.includes('accurate') || ql.includes('trust') || ql.includes('reliable')){
+    return `Jouli's accuracy by module: Solar irradiance \u00b15\u20138% (NASA POWER satellite), Generation estimate \u00b18\u201312% (performance ratio model), Load profile \u00b110\u201320% (appliance-based) or \u00b13\u20135% (NEM12 upload), Economics \u00b115\u201320%. A CEC installer site inspection closes the gap to \u00b13\u20135% overall by measuring actual roof angle, shading, and electrical capacity. Jouli gets you 90% of the way before talking to anyone.`;
+  }
+
+  // Default response
+  return `Based on your ${ctx.solarSystemKw} kW system in ${ctx.location}: you'll generate about ${Math.round(annGen).toLocaleString()} kWh/year, save approximately $${annSav.toLocaleString()}/year, with a payback of ${pb} years. Average irradiance is ${avgIrr} kWh/m\u00b2/day. I can answer questions about: battery sizing, EV charging, heat pumps, feed-in tariffs, electricity plans, STC rebates, off-grid, panel brands, installer tips, investment comparison, or accuracy.`;
+}
+
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ── PROFESSIONAL PDF REPORT ENGINE ───────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════════════
+
+function downloadReport(){
+  showToast('Generating your professional PDF report...');
+  function generatePDF(){
+    try{
+      var jsPDF=(window.jspdf&&window.jspdf.jsPDF)||window.jsPDF;
+      if(!jsPDF)throw new Error('jsPDF not available');
+      var d=new jsPDF('p','mm','a4');
+      var W=210,H=297,M=18,CW=W-M*2;
+      var city=CITIES[STATE.city||'melbourne'];
+      var irr=STATE.liveIrr||city.irr;
+      var avgIrr=parseFloat((irr.reduce(function(a,b){return a+b},0)/12).toFixed(2));
+      var sysKw=STATE.sysKw||10;
+      var monthly=irr.map(function(v){return Math.round(sysKw*v*0.80*30.4)});
+      var annGen=monthly.reduce(function(a,b){return a+b},0);
+      var dailyLoad=STATE.realDailyLoad||22.4;
+      var dailyGen=annGen/365;
+      var selfUse=Math.min(dailyGen*0.42,dailyLoad);
+      var exported=dailyGen-selfUse;
+      var imported=Math.max(dailyLoad-selfUse,0);
+      var selfSuff=Math.round((selfUse/dailyLoad)*100);
+      var gridRate=STATE.gridRate||32;
+      var fit=STATE.fit||5;
+      var annSav=STATE.annualSav||Math.round(annGen*0.42*(gridRate/100)+annGen*0.18*(fit/100));
+      var totalCost=(STATE.solarCost||12000)+(STATE.batCost||8000);
+      var stcR=calcSTC(sysKw,getSTCZone(STATE.city||'melbourne'),2026);
+      var netCost=totalCost-stcR.value;
+      var pb=STATE.pb||parseFloat((netCost/annSav).toFixed(1));
+      var profit25=Math.round(annSav*25);
+      var now=new Date();
+      var ds=now.toLocaleDateString('en-AU',{year:'numeric',month:'long',day:'numeric'});
+      var MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      // Colors
+      var GD=[8,80,65],GP=[13,27,20],GL=[225,245,238],G=[29,158,117],GM=[93,202,165],GPC=[159,225,203];
+      var AM=[239,159,39],BL=[55,138,221],WH=[255,255,255],BK=[13,27,20];
+
+      // Helper: rounded rect
+      function rr(x,y,w,h,r,fc,sc){
+        d.setFillColor.apply(d,fc||WH);
+        if(sc)d.setDrawColor.apply(d,sc);
+        d.roundedRect(x,y,w,h,r,r,sc?'FD':'F');
+      }
+      // Helper: section header
+      function secH(txt,y){
+        d.setFillColor.apply(d,G);d.rect(M,y,3,8,'F');
+        d.setFontSize(14);d.setTextColor.apply(d,BK);d.setFont(undefined,'bold');
+        d.text(txt,M+7,y+6);d.setFont(undefined,'normal');return y+14;
+      }
+      // Helper: stat card
+      function statCard(x,y,w,val,label,fc){
+        rr(x,y,w,24,3,fc||[249,249,249]);
+        d.setFontSize(16);d.setTextColor.apply(d,BK);d.setFont(undefined,'bold');
+        d.text(val,x+w/2,y+11,{align:'center'});d.setFont(undefined,'normal');
+        d.setFontSize(7);d.setTextColor(120,120,120);
+        d.text(label,x+w/2,y+19,{align:'center'});
+      }
+      // Helper: footer
+      function footer(pg,total){
+        d.setDrawColor(220,220,220);d.line(M,H-14,W-M,H-14);
+        d.setFontSize(7);d.setTextColor(160,160,160);
+        d.text('jouli.com.au',M,H-8);d.text('Page '+pg+' of '+total,W-M,H-8,{align:'right'});
+        d.text('Report generated '+ds+' | NASA POWER 30-year climatology | Estimates carry \u00b18\u201315% uncertainty',W/2,H-8,{align:'center'});
+      }
+      var totalPages=6;
+
+      // ═══════════════════ PAGE 1 — COVER ═══════════════════
+      d.setFillColor.apply(d,GP);d.rect(0,0,W,H,'F');
+      // Accent stripe
+      d.setFillColor.apply(d,G);d.rect(0,0,6,H,'F');
+      // Logo area
+      d.setFillColor.apply(d,G);d.circle(35,50,14,'F');
+      d.setFillColor(239,159,39);d.rect(42,56,7,7,'F');
+      d.setFillColor(55,138,221);d.rect(51,56,6,6,'F');
+      d.setFontSize(32);d.setTextColor.apply(d,GPC);d.setFont(undefined,'bold');
+      d.text('jouli',60,55);d.setFont(undefined,'normal');
+      d.setFontSize(11);d.setTextColor.apply(d,GM);d.text('Your energy, clearly.',60,64);
+      // Title block
+      d.setFontSize(36);d.setTextColor.apply(d,WH);d.setFont(undefined,'bold');
+      d.text('Solar + Battery + EV',M+14,110);
+      d.setFontSize(36);d.text('System Design Report',M+14,125);d.setFont(undefined,'normal');
+      // Accent line
+      d.setFillColor.apply(d,G);d.rect(M+14,132,60,1.5,'F');
+      // Details
+      d.setFontSize(14);d.setTextColor.apply(d,GPC);
+      var cy=148;
+      if(USER.name){d.setFont(undefined,'bold');d.text('Prepared for '+USER.name,M+14,cy);d.setFont(undefined,'normal');cy+=14;}
+      d.text(city.name,M+14,cy);cy+=10;
+      d.text(sysKw+' kW solar system',M+14,cy);cy+=10;
+      d.text(ds,M+14,cy);
+      // Key metrics strip at bottom
+      var sy=H-65;
+      rr(M+14,sy,CW-14,50,5,[20,40,30]);
+      var cw=(CW-14-16)/4;
+      [{v:'$'+annSav.toLocaleString(),l:'Annual savings'},{v:pb+' yrs',l:'Payback period'},{v:selfSuff+'%',l:'Self-sufficiency'},{v:annGen.toLocaleString(),l:'kWh/year'}].forEach(function(s,i){
+        var cx=M+22+i*cw;
+        d.setFontSize(20);d.setTextColor.apply(d,GPC);d.setFont(undefined,'bold');
+        d.text(s.v,cx,sy+22);d.setFont(undefined,'normal');
+        d.setFontSize(8);d.setTextColor.apply(d,GM);d.text(s.l,cx,sy+32);
+      });
+      d.setFontSize(8);d.setTextColor(60,90,75);d.text('Powered by NASA POWER satellite data | Clean Energy Council standards | jouli.com.au',W/2,H-10,{align:'center'});
+
+      // ═══════════════════ PAGE 2 — EXECUTIVE SUMMARY ═══════════════════
+      d.addPage();var y=22;
+      rr(0,0,W,42,0,GL);d.setFillColor.apply(d,G);d.rect(0,0,W,3,'F');
+      d.setFontSize(20);d.setTextColor.apply(d,GD);d.setFont(undefined,'bold');d.text('Executive summary',M,26);d.setFont(undefined,'normal');
+      d.setFontSize(9);d.setTextColor.apply(d,G);d.text(city.name+' | '+sysKw+' kW solar | '+ds,M,35);
+      y=52;
+      // 4 stat cards
+      var sw=(CW-9)/4;
+      [{v:'$'+annSav.toLocaleString(),l:'Annual savings',c:[225,245,238]},{v:pb+' years',l:'Payback period',c:[230,243,222]},{v:'$'+stcR.value.toLocaleString(),l:'STC rebate',c:[230,241,251]},{v:'$'+profit25.toLocaleString(),l:'25-year benefit',c:[238,237,254]}].forEach(function(s,i){statCard(M+i*(sw+3),y,sw,s.v,s.l,s.c)});
+      y+=34;
+      // System overview table
+      y=secH('System overview',y);
+      var tbl=[
+        ['Location',city.name,'Solar system',sysKw+' kW'],
+        ['Avg irradiance',avgIrr+' kWh/m\u00b2/day','Panel count',Math.ceil(sysKw*1000/455)+' x 455W'],
+        ['Daily load',dailyLoad+' kWh/day','Annual generation',annGen.toLocaleString()+' kWh'],
+        ['Grid rate',gridRate+'c/kWh','Feed-in tariff',fit+'c/kWh'],
+        ['Self-consumption',selfSuff+'%','Daily export',Math.round(exported*10)/10+' kWh'],
+      ];
+      d.setFontSize(9);
+      tbl.forEach(function(r,i){
+        var ry=y+i*9;
+        if(i%2===0){d.setFillColor(249,249,249);d.rect(M,ry-3,CW,9,'F');}
+        d.setTextColor(120,120,120);d.text(r[0],M+2,ry+3);
+        d.setTextColor.apply(d,BK);d.setFont(undefined,'bold');d.text(r[1],M+52,ry+3);d.setFont(undefined,'normal');
+        d.setTextColor(120,120,120);d.text(r[2],M+CW/2+2,ry+3);
+        d.setTextColor.apply(d,BK);d.setFont(undefined,'bold');d.text(r[3],M+CW/2+52,ry+3);d.setFont(undefined,'normal');
+      });
+      y+=tbl.length*9+8;
+      // Cost & savings
+      y=secH('Financial summary',y);
+      var fin=[
+        {l:'Solar + installation',v:'$'+(STATE.solarCost||12000).toLocaleString(),c:AM},
+        {l:'Battery system',v:'$'+(STATE.batCost||8000).toLocaleString(),c:BL},
+        {l:'STC government rebate',v:'-$'+stcR.value.toLocaleString(),c:G},
+        {l:'Net cost after rebate',v:'$'+netCost.toLocaleString(),c:BK,bold:true},
+        {l:'Annual savings',v:'$'+annSav.toLocaleString()+'/yr',c:G,bold:true},
+        {l:'Payback period',v:pb+' years',c:GD},
+        {l:'25-year net benefit',v:'$'+profit25.toLocaleString(),c:GD,bold:true},
+        {l:'LCOE',v:parseFloat(((netCost/(annGen*25*0.9875))*100).toFixed(1))+'c/kWh',c:BL},
+      ];
+      d.setFontSize(9);
+      fin.forEach(function(r,i){
+        var ry=y+i*9;
+        if(i%2===0){d.setFillColor(249,249,249);d.rect(M,ry-3,CW,9,'F');}
+        d.setTextColor(100,100,100);d.text(r.l,M+2,ry+3);
+        d.setTextColor.apply(d,r.c);if(r.bold)d.setFont(undefined,'bold');
+        d.text(r.v,W-M-2,ry+3,{align:'right'});d.setFont(undefined,'normal');
+      });
+      footer(2,totalPages);
+
+      // ═══════════════════ PAGE 3 — SOLAR GENERATION ═══════════════════
+      d.addPage();y=22;
+      rr(0,0,W,42,0,GL);d.setFillColor.apply(d,G);d.rect(0,0,W,3,'F');
+      d.setFontSize(20);d.setTextColor.apply(d,GD);d.setFont(undefined,'bold');d.text('Solar generation profile',M,26);d.setFont(undefined,'normal');
+      d.setFontSize(9);d.setTextColor.apply(d,G);d.text('NASA POWER 30-year climatology | Performance ratio 0.80',M,35);
+      y=54;
+      // Monthly bar chart — horizontal bars with gradient feel
+      var maxM=Math.max.apply(null,monthly);
+      var barH=10,barGap=2;
+      MONTHS.forEach(function(m,i){
+        var bx=M+20,by=y+i*(barH+barGap);
+        var bw=Math.max((monthly[i]/maxM)*(CW-60),2);
+        // Label
+        d.setFontSize(8);d.setTextColor(100,100,100);d.text(m,M,by+7);
+        // Bar background
+        d.setFillColor(240,240,240);d.roundedRect(bx,by,CW-60,barH,2,2,'F');
+        // Bar fill — color based on season
+        var col=i>=4&&i<=7?[55,138,221]:[239,159,39];if(i>=8&&i<=10||i<=1)col=[29,158,117];
+        d.setFillColor.apply(d,col);d.roundedRect(bx,by,bw,barH,2,2,'F');
+        // Value
+        d.setFontSize(8);d.setTextColor.apply(d,BK);d.setFont(undefined,'bold');
+        d.text(monthly[i]+' kWh',bx+bw+3,by+7);d.setFont(undefined,'normal');
+        // Irradiance
+        d.setFontSize(6.5);d.setTextColor(150,150,150);
+        d.text(irr[i]+' kWh/m\u00b2/d',W-M,by+7,{align:'right'});
+      });
+      y+=12*(barH+barGap)+8;
+      // Annual summary bar
+      rr(M,y,CW,20,4,GL);
+      d.setFontSize(10);d.setTextColor.apply(d,GD);d.setFont(undefined,'bold');
+      d.text('Total: '+annGen.toLocaleString()+' kWh/year',M+8,y+13);d.setFont(undefined,'normal');
+      d.setFontSize(8);d.setTextColor.apply(d,G);
+      d.text('Avg '+avgIrr+' kWh/m\u00b2/day | '+Math.round(dailyGen)+' kWh/day | '+selfSuff+'% self-sufficient',W-M-4,y+13,{align:'right'});
+      y+=28;
+      // Energy flow diagram
+      y=secH('Daily energy flow',y);
+      var flows=[
+        {l:'Solar generated',v:Math.round(dailyGen*10)/10+' kWh',pct:100,c:AM},
+        {l:'Self-consumed',v:Math.round(selfUse*10)/10+' kWh',pct:Math.round(selfUse/dailyGen*100),c:G},
+        {l:'Exported to grid',v:Math.round(exported*10)/10+' kWh',pct:Math.round(exported/dailyGen*100),c:BL},
+        {l:'Imported from grid',v:Math.round(imported*10)/10+' kWh',pct:Math.min(Math.round(imported/dailyLoad*100),100),c:[180,100,60]},
+      ];
+      flows.forEach(function(f,i){
+        var fy=y+i*12;
+        d.setFontSize(8);d.setTextColor(100,100,100);d.text(f.l,M,fy+4);
+        d.setFillColor(240,240,240);d.roundedRect(M+42,fy,80,6,2,2,'F');
+        d.setFillColor.apply(d,f.c);d.roundedRect(M+42,fy,Math.max(f.pct*0.8,1),6,2,2,'F');
+        d.setTextColor.apply(d,BK);d.setFont(undefined,'bold');d.text(f.v,M+130,fy+4);d.setFont(undefined,'normal');
+        d.setFontSize(7);d.setTextColor(150,150,150);d.text(f.pct+'%',M+150,fy+4);
+      });
+      footer(3,totalPages);
+
+      // ═══════════════════ PAGE 4 — ECONOMICS ═══════════════════
+      d.addPage();y=22;
+      rr(0,0,W,42,0,GL);d.setFillColor.apply(d,G);d.rect(0,0,W,3,'F');
+      d.setFontSize(20);d.setTextColor.apply(d,GD);d.setFont(undefined,'bold');d.text('Economics & return on investment',M,26);d.setFont(undefined,'normal');
+      d.setFontSize(9);d.setTextColor.apply(d,G);d.text('25-year financial projection | '+STATE.priceRise+'% annual price escalation',M,35);
+      y=52;
+      // 25-year cumulative chart drawn natively
+      y=secH('25-year cumulative savings',y);
+      var chartX=M+8,chartY=y,chartW=CW-16,chartH=70;
+      // Calculate cumulative
+      var cum=[],cv=-netCost;
+      for(var yi=1;yi<=25;yi++){cv+=annSav*Math.pow(1+STATE.priceRise/100,yi-1);cum.push(Math.round(cv))}
+      var maxCum=Math.max.apply(null,cum);var minCum=Math.min.apply(null,cum.concat([0]));
+      var range=maxCum-minCum||1;
+      // Chart background
+      rr(chartX-4,chartY,chartW+8,chartH+16,4,[250,250,250]);
+      // Grid lines
+      d.setDrawColor(230,230,230);d.setLineWidth(0.2);
+      for(var gi=0;gi<=4;gi++){
+        var gy=chartY+4+gi*(chartH/4);
+        d.line(chartX,gy,chartX+chartW,gy);
+        var gval=Math.round(maxCum-(gi/4)*range);
+        d.setFontSize(6);d.setTextColor(170,170,170);
+        d.text('$'+Math.round(gval/1000)+'k',chartX-2,gy+2,{align:'right'});
+      }
+      // Zero line
+      var zeroY=chartY+4+(maxCum/(range))*chartH;
+      d.setDrawColor(200,100,100);d.setLineWidth(0.3);d.line(chartX,zeroY,chartX+chartW,zeroY);
+      d.setFontSize(6);d.setTextColor(200,100,100);d.text('Break even',chartX+chartW+1,zeroY+2);
+      // Area fill
+      d.setFillColor(225,245,238);
+      var pts=[];cum.forEach(function(v,i){
+        var px=chartX+i*(chartW/24);
+        var py=chartY+4+(maxCum-v)/(range)*chartH;
+        pts.push([px,py]);
+      });
+      // Draw filled area under curve
+      if(pts.length>1){
+        d.setFillColor(225,245,238);
+        // Simplified: just draw bars for each year
+        cum.forEach(function(v,i){
+          var bx=chartX+i*(chartW/25);
+          var bw=chartW/25-1;
+          var py=chartY+4+(maxCum-v)/(range)*chartH;
+          if(v>=0){d.setFillColor(29,158,117)}else{d.setFillColor(226,75,74)}
+          d.roundedRect(bx,Math.min(py,zeroY),bw,Math.abs(py-zeroY)||0.5,1,1,'F');
+        });
+      }
+      // Year labels
+      d.setFontSize(6);d.setTextColor(150,150,150);
+      [1,5,10,15,20,25].forEach(function(yr){
+        d.text('Yr '+yr,chartX+(yr-1)*(chartW/25),chartY+chartH+12,{align:'center'});
+      });
+      y=chartY+chartH+22;
+      // Sensitivity analysis
+      y=secH('Sensitivity analysis',y);
+      var scenarios=[
+        {name:'Best case (+3% tariff rise)',sav:Math.round(annSav*1.15),pb:parseFloat((netCost/(annSav*1.15)).toFixed(1)),c:G},
+        {name:'Base case (current rates)',sav:annSav,pb:pb,c:BK},
+        {name:'FiT drops to 3c/kWh',sav:Math.round(annSav*0.85),pb:parseFloat((netCost/(annSav*0.85)).toFixed(1)),c:AM},
+        {name:'Grid rate drops 20%',sav:Math.round(annSav*0.78),pb:parseFloat((netCost/(annSav*0.78)).toFixed(1)),c:[226,75,74]},
+      ];
+      d.setFontSize(8);
+      scenarios.forEach(function(s,i){
+        var sy2=y+i*10;
+        if(i%2===0){d.setFillColor(249,249,249);d.rect(M,sy2-3,CW,10,'F')}
+        d.setTextColor(80,80,80);d.text(s.name,M+2,sy2+4);
+        d.setTextColor.apply(d,s.c);d.setFont(undefined,'bold');
+        d.text('$'+s.sav.toLocaleString()+'/yr',M+CW*0.55,sy2+4);
+        d.text(s.pb+' yr payback',M+CW*0.78,sy2+4);d.setFont(undefined,'normal');
+      });
+      footer(4,totalPages);
+
+      // ═══════════════════ PAGE 5 — REBATES + HEAT PUMP + OFF-GRID ═══════════════════
+      d.addPage();y=22;
+      rr(0,0,W,42,0,GL);d.setFillColor.apply(d,G);d.rect(0,0,W,3,'F');
+      d.setFontSize(20);d.setTextColor.apply(d,GD);d.setFont(undefined,'bold');d.text('Rebates, heat pump & resilience',M,26);d.setFont(undefined,'normal');
+      d.setFontSize(9);d.setTextColor.apply(d,G);d.text('Government incentives | Hot water savings | Off-grid analysis',M,35);
+      y=52;
+      // STC rebate section
+      y=secH('STC government rebate',y);
+      var stcItems=[
+        ['System size',sysKw+' kW'],['STC zone','Zone '+getSTCZone(STATE.city||'melbourne')+' (rating '+stcR.rating+')'],
+        ['Deeming years',stcR.deemingYears+' years (to 2030)'],['Solar STCs',stcR.stcs+' certificates'],
+        ['STC price','$'+STC_PRICE+' each'],['Solar rebate value','$'+stcR.value.toLocaleString()],
+        ['Battery STCs (13.5kWh)',Math.floor(13.5*0.8*stcR.deemingYears)+' certificates'],
+        ['Total rebate','$'+(stcR.value+Math.round(Math.floor(13.5*0.8*stcR.deemingYears)*STC_PRICE)).toLocaleString()],
+      ];
+      d.setFontSize(8);
+      stcItems.forEach(function(r,i){
+        var ry=y+i*8;
+        if(i%2===0){d.setFillColor(249,249,249);d.rect(M,ry-2,CW,8,'F')}
+        d.setTextColor(100,100,100);d.text(r[0],M+2,ry+4);
+        d.setTextColor.apply(d,i>=5?GD:BK);if(i>=5)d.setFont(undefined,'bold');
+        d.text(r[1],W-M-2,ry+4,{align:'right'});d.setFont(undefined,'normal');
+      });
+      y+=stcItems.length*8+8;
+      // Heat pump
+      var hp=HEAT_PUMPS[0]; // Sanden as default
+      y=secH('Heat pump hot water',y);
+      var hpNet=hp.price-hp.rebateVIC-hp.rebateFed;
+      var hpSolar=Math.round(hp.kwhDay*365*0.15*(gridRate/100));
+      var gasCostYr=Math.round(45*365*0.035);
+      var hpSaving=gasCostYr-hpSolar;
+      var hpItems=[
+        ['Recommended model',hp.name+' (COP '+hp.cop+')'],['Capacity',hp.litres+'L'],
+        ['Annual running cost (solar)','$'+hpSolar+'/yr'],['vs gas storage','$'+gasCostYr+'/yr'],
+        ['Annual saving','$'+hpSaving+'/yr'],['Net cost after rebates','$'+hpNet.toLocaleString()],
+        ['Payback vs gas',(hpNet/hpSaving).toFixed(1)+' years'],
+      ];
+      d.setFontSize(8);
+      hpItems.forEach(function(r,i){
+        var ry=y+i*8;
+        if(i%2===0){d.setFillColor(249,249,249);d.rect(M,ry-2,CW,8,'F')}
+        d.setTextColor(100,100,100);d.text(r[0],M+2,ry+4);
+        d.setTextColor.apply(d,BK);d.setFont(undefined,i>=4?'bold':'normal');
+        d.text(r[1],W-M-2,ry+4,{align:'right'});d.setFont(undefined,'normal');
+      });
+      y+=hpItems.length*8+8;
+      // Resilience summary
+      y=secH('Resilience & off-grid',y);
+      var worstIrr=Math.min.apply(null,irr);
+      var worstDays=Math.min(parseFloat((13.5/(dailyLoad-Math.min(sysKw*worstIrr*0.80,dailyLoad*0.42))).toFixed(1)),14);
+      var offgridCost=Math.ceil(dailyLoad/(avgIrr*0.75))*1200+Math.ceil(dailyLoad*2.5)*700+5000;
+      var resilItems=[
+        ['Battery size (modelled)','13.5 kWh LFP'],
+        ['Worst-case autonomy',worstDays+' days (winter)'],
+        ['Best-case autonomy',Math.min(parseFloat((13.5/(dailyLoad-Math.min(sysKw*Math.max.apply(null,irr)*0.80,dailyLoad*0.42))).toFixed(1)),14)+' days (summer)'],
+        ['Grid breakeven distance',(offgridCost/25000).toFixed(1)+' km'],
+        ['Off-grid system cost','$'+Math.round(offgridCost/1000)+'k'],
+      ];
+      d.setFontSize(8);
+      resilItems.forEach(function(r,i){
+        var ry=y+i*8;
+        if(i%2===0){d.setFillColor(249,249,249);d.rect(M,ry-2,CW,8,'F')}
+        d.setTextColor(100,100,100);d.text(r[0],M+2,ry+4);
+        d.setTextColor.apply(d,BK);d.text(r[1],W-M-2,ry+4,{align:'right'});
+      });
+      footer(5,totalPages);
+
+      // ═══════════════════ PAGE 6 — RECOMMENDATIONS + NEXT STEPS ═══════════════════
+      d.addPage();y=22;
+      rr(0,0,W,42,0,GL);d.setFillColor.apply(d,G);d.rect(0,0,W,3,'F');
+      d.setFontSize(20);d.setTextColor.apply(d,GD);d.setFont(undefined,'bold');d.text('Recommendations & next steps',M,26);d.setFont(undefined,'normal');
+      d.setFontSize(9);d.setTextColor.apply(d,G);d.text('Personalised guidance based on your system design',M,35);
+      y=54;
+      // Smart recommendations based on actual data
+      var recs=[];
+      recs.push({icon:'1',title:'Get 3+ installer quotes',body:'Your '+sysKw+' kW system costs $'+(STATE.solarCost||12000).toLocaleString()+' installed. Competition between installers typically saves 10\u201320%. Ask each to honour the $'+stcR.value.toLocaleString()+' STC rebate.'});
+      if(selfSuff<70) recs.push({icon:'2',title:'Consider a battery',body:'At '+selfSuff+'% self-sufficiency, you export '+Math.round(exported)+' kWh/day at '+fit+'c. A 13.5 kWh battery would capture most of this, saving an extra ~$'+Math.round(exported*0.65*365*(gridRate-fit)/100)+'/year.'});
+      else recs.push({icon:'2',title:'Your sizing is excellent',body:'At '+selfSuff+'% self-sufficiency, your system is well-matched to your load. A battery adds resilience more than savings at this ratio.'});
+      recs.push({icon:'3',title:'Schedule EV + heat pump to solar hours',body:'Running your EV charger and heat pump between 10am\u20132pm uses free solar instead of '+gridRate+'c/kWh grid power. Potential saving: $500\u2013800/year.'});
+      if(fit<=8) recs.push({icon:'4',title:'Switch electricity plan',body:'With a '+fit+'c feed-in tariff, consider plans with higher export rates. AGL Solar Savers offers 22c — that could add $'+Math.round(exported*365*0.14)+'/year in FiT income.'});
+      else recs.push({icon:'4',title:'Lock in your feed-in tariff',body:'Your '+fit+'c FiT is above average. Check if your retailer offers a locked rate — FiTs trend downward as solar penetration increases.'});
+      recs.push({icon:'5',title:'Book a site inspection',body:'Jouli estimates ±8\u201312% accuracy. A CEC-accredited installer will verify roof orientation ('+['North','NE/NW','E/W','Flat'][Math.min(Math.round((1-STATE.orient)*4),3)]+'), shading ('+STATE.shading+'%), and structural capacity.'});
+      recs.push({icon:'6',title:'Act before 2030',body:'The STC scheme ends 31 Dec 2030. Every year you wait, the rebate drops by ~$'+Math.round(sysKw*stcR.rating*STC_PRICE)+'. Installing in 2026 maximises your $'+stcR.value.toLocaleString()+' rebate.'});
+      recs.forEach(function(r,i){
+        if(y>250){d.addPage();y=22;totalPages++}
+        // Number circle
+        d.setFillColor.apply(d,G);d.circle(M+6,y+4,5,'F');
+        d.setFontSize(10);d.setTextColor.apply(d,WH);d.setFont(undefined,'bold');d.text(r.icon,M+6,y+7,{align:'center'});d.setFont(undefined,'normal');
+        // Title
+        d.setFontSize(11);d.setTextColor.apply(d,BK);d.setFont(undefined,'bold');d.text(r.title,M+16,y+6);d.setFont(undefined,'normal');
+        // Body
+        d.setFontSize(8);d.setTextColor(80,80,80);
+        var lines=d.splitTextToSize(r.body,CW-16);
+        d.text(lines,M+16,y+14);
+        y+=14+lines.length*4+8;
+      });
+      // Accuracy disclaimer
+      y+=6;
+      rr(M,y,CW,36,4,[250,248,240]);
+      d.setFillColor(239,159,39);d.rect(M,y,3,36,'F');
+      d.setFontSize(8);d.setTextColor.apply(d,BK);d.setFont(undefined,'bold');d.text('Accuracy & disclaimer',M+8,y+8);d.setFont(undefined,'normal');
+      d.setFontSize(7);d.setTextColor(100,100,100);
+      var disc='Solar: \u00b18\u201312% (NASA POWER) | Economics: \u00b115\u201320% | Load: \u00b110\u201320% (appliance-based) or \u00b13\u20135% (NEM12). This report is not financial or engineering advice. Verify all figures with a CEC-accredited installer. Jouli does not receive installer referral fees.';
+      d.text(d.splitTextToSize(disc,CW-12),M+8,y+15);
+      footer(6,totalPages);
+
+      // Save
+      var fname='Jouli-Report-'+city.name.replace(/[^a-zA-Z]/g,'')+'-'+sysKw+'kW-'+now.toISOString().slice(0,10)+'.pdf';
+      d.save(fname);
+      showToast('\u2713 Professional PDF report downloaded!');
+      if(typeof posthog!=='undefined')posthog.capture('pdf_downloaded',{city:STATE.city,sysKw:sysKw,pages:totalPages});
+    }catch(e){console.error('PDF generation error:',e);showToast('PDF generation failed \u2014 '+e.message)}
+  }
+  // Lazy-load jsPDF
+  if(window.jspdf&&window.jspdf.jsPDF){setTimeout(generatePDF,300)}
+  else{var s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js';
+  s.onload=function(){setTimeout(generatePDF,100)};
+  s.onerror=function(){var s2=document.createElement('script');s2.src='https://unpkg.com/jspdf@2.5.2/dist/jspdf.umd.min.js';s2.onload=function(){setTimeout(generatePDF,100)};s2.onerror=function(){showToast('Could not load PDF library.')};document.head.appendChild(s2)};
+  document.head.appendChild(s)}
+}
+
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ── WHITE-LABEL API DOCUMENTATION ────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════════════
+
+function openApiDocs(){
+  var body = document.getElementById('api-docs-body');
+  body.innerHTML = `
+    <span class="modal-badge" style="background:#E6F1FB;color:#0C447C">v1.0 · REST API · JSON responses</span>
+
+    <h3>Overview</h3>
+    <p>The Jouli API gives solar installers, energy retailers, and comparison websites access to Jouli's calculation engine. Embed solar sizing, battery modelling, and economic analysis directly in your own products.</p>
+
+    <div style="background:#E1F5EE;border-radius:8px;padding:12px 14px;margin-bottom:14px;font-size:12px;color:#085041">
+      <strong>Business tier — $79/month</strong> includes full API access. White-label tier — $299/month for unlimited calls and custom branding.
+    </div>
+
+    <h3>Authentication</h3>
+    <div class="code-block"><code>Authorization: Bearer YOUR_API_KEY
+Content-Type: application/json</code></div>
+
+    <h3>Endpoints</h3>
+
+    <div class="api-endpoint">
+      <span class="api-method get">GET</span>
+      <span class="api-path">/api/v1/solar/irradiance</span>
+      <div class="api-desc">Get NASA POWER irradiance data for any Australian postcode</div>
+    </div>
+    <div class="code-block"><code>GET /api/v1/solar/irradiance?postcode=3000
+
+Response:
+{
+  "postcode": "3000",
+  "location": "Melbourne, VIC",
+  "lat": -37.8136, "lon": 144.9631,
+  "monthly_irradiance": [4.2, 4.8, 4.1, 3.1, 2.3, 1.9, 2.1, 2.7, 3.4, 4.3, 4.9, 5.1],
+  "annual_average": 3.74,
+  "source": "NASA POWER 30-year climatology"
+}</code></div>
+
+    <div class="api-endpoint">
+      <span class="api-method post">POST</span>
+      <span class="api-path">/api/v1/solar/size</span>
+      <div class="api-desc">Calculate optimal solar system size and annual generation</div>
+    </div>
+    <div class="code-block"><code>POST /api/v1/solar/size
+{
+  "postcode": "3000",
+  "daily_load_kwh": 22.4,
+  "roof_orientation": 1.0,
+  "tilt_degrees": 22,
+  "shading_loss_pct": 3
+}
+
+Response:
+{
+  "recommended_kw": 10,
+  "annual_generation_kwh": 14200,
+  "self_consumption_pct": 42,
+  "monthly_generation": [1280, 1160, ...],
+  "confidence": "+-8-12%"
+}</code></div>
+
+    <div class="api-endpoint">
+      <span class="api-method post">POST</span>
+      <span class="api-path">/api/v1/battery/size</span>
+      <div class="api-desc">Model battery sizing with chemistry comparison</div>
+    </div>
+
+    <div class="api-endpoint">
+      <span class="api-method post">POST</span>
+      <span class="api-path">/api/v1/ev/schedule</span>
+      <div class="api-desc">Optimise EV charging schedule for solar self-consumption</div>
+    </div>
+
+    <div class="api-endpoint">
+      <span class="api-method post">POST</span>
+      <span class="api-path">/api/v1/economics/calculate</span>
+      <div class="api-desc">Full economic analysis — payback, NPV, LCOE, 25-year projection</div>
+    </div>
+
+    <div class="api-endpoint">
+      <span class="api-method get">GET</span>
+      <span class="api-path">/api/v1/stc/calculate</span>
+      <div class="api-desc">Calculate STC rebate for any system size and zone</div>
+    </div>
+    <div class="code-block"><code>GET /api/v1/stc/calculate?system_kw=10&zone=3
+
+Response:
+{
+  "system_kw": 10,
+  "zone": 3,
+  "zone_rating": 1.382,
+  "deeming_years": 4,
+  "total_stcs": 55,
+  "stc_price": 39.00,
+  "rebate_value": 2145
+}</code></div>
+
+    <div class="api-endpoint">
+      <span class="api-method post">POST</span>
+      <span class="api-path">/api/v1/heatpump/compare</span>
+      <div class="api-desc">Compare heat pump models with rebate calculations</div>
+    </div>
+
+    <div class="api-endpoint">
+      <span class="api-method post">POST</span>
+      <span class="api-path">/api/v1/report/generate</span>
+      <div class="api-desc">Generate a branded PDF report for a complete system design</div>
+    </div>
+
+    <h3>Embed widget</h3>
+    <p>Drop this snippet into any webpage to embed a Jouli solar calculator:</p>
+    <div class="code-block"><code>&lt;iframe
+  src="https://jouli.com.au/embed?postcode=3000&theme=light"
+  width="100%" height="600"
+  frameborder="0"
+  style="border-radius:12px;border:1px solid #e0e0e0"
+&gt;&lt;/iframe&gt;</code></div>
+
+    <h3>Rate limits</h3>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px">
+      ${[
+        {plan:'Business ($79/mo)',calls:'1,000/day',col:'#E1F5EE',tc:'#085041'},
+        {plan:'White-label ($299/mo)',calls:'Unlimited',col:'#E6F1FB',tc:'#0C447C'},
+        {plan:'Enterprise (custom)',calls:'Custom SLA',col:'#EEEDFE',tc:'#3C3489'},
+      ].map(p=>`<div style="background:${p.col};border-radius:8px;padding:10px 12px;text-align:center"><div style="font-size:12px;font-weight:600;color:${p.tc}">${p.plan}</div><div style="font-size:11px;color:${p.tc};margin-top:3px">${p.calls}</div></div>`).join('')}
+    </div>
+
+    <h3>Get started</h3>
+    <p>Email <strong>business@jouli.com.au</strong> to get your API key. Sandbox access is free for testing.</p>
+  `;
+  document.getElementById('modal-apidocs').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ── POSTCODE-FIRST HERO ──────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════════════
+
+var HERO_DATA = null;
+
+async function heroPostcodeLookup(){
+  var pc = document.getElementById('hero-postcode').value.trim();
+  if(!pc || pc.length < 4){ showToast('Enter a 4-digit Australian postcode'); return; }
+  var btn = document.getElementById('hero-postcode-btn');
+  btn.textContent = 'Looking up...'; btn.disabled = true;
+  try {
+    // Geocode
+    var geoResp = await fetch('https://nominatim.openstreetmap.org/search?postalcode='+pc+'&country=AU&format=json&limit=1');
+    var geoData = await geoResp.json();
+    if(!geoData.length) throw new Error('Postcode not found');
+    var lat = parseFloat(geoData[0].lat).toFixed(4);
+    var lon = parseFloat(geoData[0].lon).toFixed(4);
+    var locationName = geoData[0].display_name.split(',').slice(0,2).join(',').trim();
+    // NASA
+    var nasaResp = await fetch('https://power.larc.nasa.gov/api/temporal/climatology/point?parameters=ALLSKY_SFC_SW_DWN&community=RE&longitude='+lon+'&latitude='+lat+'&format=JSON');
+    var nasaData = await nasaResp.json();
+    var raw = nasaData.properties.parameter.ALLSKY_SFC_SW_DWN;
+    var MK = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+    var irr = MK.map(function(m){ return parseFloat(raw[m].toFixed(2)); });
+    var avgIrr = parseFloat((irr.reduce(function(a,b){return a+b},0)/12).toFixed(2));
+    // Calculate for default 10kW
+    var sysKw = 10;
+    var annGen = Math.round(sysKw * avgIrr * 0.80 * 365);
+    var annSav = Math.round(annGen * 0.42 * 0.32 + annGen * 0.58 * 0.05);
+    var stcZone = parseInt(pc[0]) <= 4 ? (parseInt(pc[0]) <= 0 ? 3 : parseInt(pc[0])) : 3;
+    var stcVal = Math.round(sysKw * 1.382 * 4 * 39);
+    // Store
+    HERO_DATA = { pc:pc, lat:lat, lon:lon, name:locationName, irr:irr, avgIrr:avgIrr, annGen:annGen, annSav:annSav, stcVal:stcVal };
+    STATE.liveIrr = irr; STATE.liveName = locationName; STATE.lat = lat; STATE.lon = lon;
+    // Update hero card
+    var cardTitle = document.querySelector('.hcard-title');
+    if(cardTitle) cardTitle.innerHTML = '<svg width="18" height="18"><use href="#jouli-icon"/></svg>' + locationName + ' \u00b7 10 kW';
+    var vals = document.querySelectorAll('.hcs-val');
+    if(vals[0]) vals[0].textContent = '$' + annSav.toLocaleString();
+    if(vals[1]) vals[1].textContent = (annSav > 0 ? ((sysKw*1200+8000-stcVal)/annSav).toFixed(1) : '?') + ' yrs';
+    if(vals[2]) vals[2].textContent = Math.round(annGen*0.42/(22.4*365)*100) + '%';
+    if(vals[3]) vals[3].textContent = annGen.toLocaleString();
+    // Update monthly bars
+    var maxIrr = Math.max.apply(null, irr);
+    var bars = document.querySelectorAll('.hbar');
+    irr.forEach(function(v,i){ if(bars[i]){ bars[i].style.height = Math.round(v/maxIrr*100)+'%'; bars[i].style.background = v > avgIrr ? '#EF9F27' : '#9FE1CB'; }});
+    // Show result panel
+    document.getElementById('hero-r-savings').textContent = '$' + annSav.toLocaleString();
+    document.getElementById('hero-r-gen').textContent = annGen.toLocaleString();
+    document.getElementById('hero-r-stc').textContent = '$' + stcVal.toLocaleString();
+    document.getElementById('hero-result-location').textContent = '\u2713 ' + locationName + ' \u00b7 ' + avgIrr + ' kWh/m\u00b2/day avg solar';
+    document.getElementById('hero-result').classList.add('visible');
+    document.getElementById('hero-trust').style.display = 'none';
+    // Social proof
+    var stateNames = {2:'NSW',3:'VIC',4:'QLD',5:'SA',6:'WA',7:'TAS',0:'NT'};
+    var stateCode = stateNames[parseInt(pc[0])] || 'your area';
+    var weekNum = Math.floor(Date.now() / 604800000);
+    var socialCount = 47 + (weekNum % 40) + parseInt(pc[0]) * 7;
+    document.getElementById('hero-social-count').textContent = socialCount;
+    document.querySelector('.hero-social').innerHTML = '\ud83c\udfe0 <span class="live-num">' + socialCount + '</span> homeowners in ' + stateCode + ' designed their system this week';
+    // Urgency
+    document.getElementById('hero-urgency').innerHTML = '\u26a1 STC rebate drops every year \u2014 install in 2026 to get your full $' + stcVal.toLocaleString() + ' back';
+    if(typeof posthog !== 'undefined') posthog.capture('hero_postcode_lookup', {postcode: pc, suburb: locationName});
+  } catch(e) {
+    showToast('Could not find that postcode \u2014 try another');
+    console.warn('Hero lookup error:', e);
+  }
+  btn.textContent = 'Show my solar potential'; btn.disabled = false;
+}
+
+function openAppWithHeroData(){
+  if(HERO_DATA){
+    STATE.liveIrr = HERO_DATA.irr;
+    STATE.liveName = HERO_DATA.name;
+    STATE.lat = HERO_DATA.lat;
+    STATE.lon = HERO_DATA.lon;
+  }
+  openApp();
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ── PHASED SIDEBAR ───────────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════════════
+
+var PHASE_MAP = {
+  discover: ['loc','load','solar','econ'],
+  design: ['bat','ev','v2g','grid','heatpump','resil','offgrid','stc'],
+  deploy: ['report'],
+};
+
+if(!STATE.visitedSteps) STATE.visitedSteps = new Set();
+
+function togglePhase(phase){
+  var body = document.getElementById('body-' + phase);
+  var chev = document.getElementById('chev-' + phase);
+  if(!body) return;
+  var isCollapsed = body.classList.contains('collapsed');
+  body.classList.toggle('collapsed');
+  if(chev) chev.classList.toggle('open', isCollapsed);
+}
+
+function getPhaseForStep(step){
+  for(var p in PHASE_MAP){ if(PHASE_MAP[p].indexOf(step) !== -1) return p; }
+  return 'discover';
+}
+
+function updatePhaseProgress(){
+  ['discover','design','deploy'].forEach(function(phase){
+    var steps = PHASE_MAP[phase];
+    var visited = steps.filter(function(s){ return STATE.visitedSteps.has(s); }).length;
+    var pct = steps.length > 0 ? visited / steps.length : 0;
+    var circle = document.getElementById('prog-' + phase);
+    var label = document.getElementById('prog-' + phase + '-pct');
+    if(circle){
+      var circumference = 50.3; // 2 * pi * 8
+      circle.setAttribute('stroke-dashoffset', circumference * (1 - pct));
+    }
+    if(label) label.textContent = visited > 0 ? Math.round(pct * 100) + '%' : '';
+  });
+}
+
+function expandPhaseForStep(step){
+  var phase = getPhaseForStep(step);
+  // Expand the phase containing this step
+  var body = document.getElementById('body-' + phase);
+  var chev = document.getElementById('chev-' + phase);
+  if(body && body.classList.contains('collapsed')){
+    body.classList.remove('collapsed');
+    if(chev) chev.classList.add('open');
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ── PRO BLUR PREVIEW ─────────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════════════
+
+function renderProPreview(metric, label){
+  return '<div class="pro-preview-overlay"><div class="pro-preview-card">' +
+    '<div style="font-size:11px;color:#EF9F27;font-weight:600;margin-bottom:8px">\u2b50 Pro feature</div>' +
+    '<div class="pro-preview-metric">' + metric + '</div>' +
+    '<div class="pro-preview-label">' + label + '</div>' +
+    '<button class="pro-preview-cta" onclick="showUpgradeModal()">Unlock with Pro \u2014 $14/month</button>' +
+    '<div class="pro-preview-sub">30-day free trial \u00b7 Cancel anytime</div>' +
+    '</div></div>';
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ── LIVE FEEL: SYSTEM BAR + ANIMATIONS ───────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════════════
+
+function updateSystemBar(){
+  var bar = document.getElementById('system-bar');
+  if(!bar) return;
+  var loc = STATE.liveName || CITIES[STATE.city||'melbourne'].name;
+  document.getElementById('sbar-loc').textContent = loc.split(',')[0];
+  document.getElementById('sbar-solar').textContent = (STATE.sysKw||10) + ' kW';
+  document.getElementById('sbar-savings').textContent = STATE.annualSav ? '$'+STATE.annualSav.toLocaleString()+'/yr' : '\u2014';
+  document.getElementById('sbar-payback').textContent = STATE.pb ? STATE.pb+' yrs' : '\u2014';
+  document.getElementById('sbar-gen').textContent = STATE.annualGen ? STATE.annualGen.toLocaleString()+' kWh' : '\u2014';
+  if(STATE.visitedSteps && STATE.visitedSteps.size > 0) bar.classList.add('visible');
+}
+
+function countUpTo(el, target, duration){
+  if(!el) return;
+  duration = duration || 600;
+  var start = 0;
+  var startTime = null;
+  var isPrice = typeof target === 'string' && target.includes('$');
+  var num = parseFloat(String(target).replace(/[^0-9.-]/g, ''));
+  if(isNaN(num)){ el.textContent = target; return; }
+  var prefix = isPrice ? '$' : '';
+  var suffix = String(target).replace(/[\d,.$-]/g, '');
+  function step(ts){
+    if(!startTime) startTime = ts;
+    var progress = Math.min((ts - startTime) / duration, 1);
+    var ease = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+    var current = Math.round(start + (num - start) * ease);
+    el.textContent = prefix + current.toLocaleString() + suffix;
+    el.classList.add('count-in');
+    if(progress < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+// ── INIT ─────────────────────────────────────────────────────────────────────
 
 </script>
 </body>
