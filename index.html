@@ -32,6 +32,14 @@
 
 
 
+
+/* ── STEP HEADER ILLUSTRATIONS ──────────────────────────────────────────── */
+.step-header-visual{width:100%;height:100px;border-radius:14px;overflow:hidden;
+  margin-bottom:16px;position:relative;display:flex;align-items:center;justify-content:center}
+.step-header-visual svg{position:absolute;inset:0;width:100%;height:100%}
+.step-header-label{position:relative;z-index:2;font-size:13px;font-weight:600;
+  color:white;text-shadow:0 1px 4px rgba(0,0,0,.4)}
+
 /* ── INSTALLER DIRECTORY ──────────────────────────────────────────────────── */
 .inst-overlay{position:fixed;inset:0;background:var(--off);z-index:1500;display:none;flex-direction:column}
 .inst-overlay.open{display:flex}
@@ -676,7 +684,18 @@ footer{padding:28px 40px;background:var(--gdp);border-top:1px solid rgba(255,255
 .system-bar-item{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text2)}
 .system-bar-val{font-weight:600;color:var(--gdp)}
 .system-bar-sep{width:1px;height:14px;background:var(--border)}
-@media(max-width:768px){.system-bar{left:0}.sb-phase-header{font-size:10px}}
+@media(max-width:768px){
+  .system-bar{left:0}
+  .sb-phase-header{font-size:10px}
+  .hero-postcode-row{flex-direction:column}
+  .hero-postcode-row input{max-width:100%;font-size:18px}
+  .hero-postcode-row button{width:100%}
+  .hero-result-grid{grid-template-columns:1fr}
+  .hero-result{padding:14px}
+  .pro-preview-card{padding:20px 24px;margin:0 10px}
+  .pro-preview-metric{font-size:28px}
+  #daily-card{padding:12px 16px !important;flex-direction:column;text-align:center}
+}
 </style>
 <script>
 !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]);t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="capture identify alias people.set people.set_once set_config register register_once unregister opt_out_capturing has_opted_out_capturing opt_in_capturing reset isFeatureEnabled onFeatureFlags getFeatureFlag getFeatureFlagPayload reloadFeatureFlags group updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures getActiveMatchingSurveys getSurveys getNextSurveyStep onSessionId".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
@@ -740,9 +759,239 @@ posthog.init('phc_ENTgdxizjfqwyiu4WeAfQhkMKXvuBoLzUqhCpnK8tG0',{api_host:'https:
         <span>✓ 30-year NASA data</span>
       </div>
     </div>
-    <div class="hero-visual">
+    <div class="hero-visual" style="position:relative">
+      <!-- Floating badges above illustration -->
       <div class="fb fb1"><div class="fbdot" style="background:#EF9F27"></div><span style="color:#633806;font-weight:600">Solar: 38.9 kWh today</span></div>
-      <div class="hcard">
+      
+      <!-- ── AUSTRALIAN HOUSE ILLUSTRATION ── -->
+      <div style="border-radius:20px;overflow:hidden;position:relative;background:linear-gradient(175deg,#0d2b4a 0%,#1a5a8a 45%,#4a9fd4 75%,#b8ddf0 100%);box-shadow:0 20px 60px rgba(13,27,20,.25)">
+        
+        <!-- Animated sun -->
+        <div style="position:absolute;top:18px;right:52px;z-index:3">
+          <div style="width:48px;height:48px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#fff7a0,#FFD700,#FF8C00);box-shadow:0 0 0 8px rgba(255,215,0,.15),0 0 0 16px rgba(255,215,0,.08),0 0 40px rgba(255,200,0,.4)"></div>
+        </div>
+        
+        <!-- Clouds -->
+        <div style="position:absolute;top:22px;left:18px;z-index:3">
+          <div style="width:56px;height:16px;border-radius:20px;background:rgba(255,255,255,.25);position:relative">
+            <div style="position:absolute;top:-10px;left:6px;width:28px;height:22px;border-radius:50%;background:rgba(255,255,255,.25)"></div>
+            <div style="position:absolute;top:-6px;left:20px;width:20px;height:17px;border-radius:50%;background:rgba(255,255,255,.25)"></div>
+          </div>
+        </div>
+        <div style="position:absolute;top:16px;left:88px;z-index:3;opacity:.6">
+          <div style="width:36px;height:12px;border-radius:20px;background:rgba(255,255,255,.2);position:relative">
+            <div style="position:absolute;top:-7px;left:5px;width:18px;height:14px;border-radius:50%;background:rgba(255,255,255,.2)"></div>
+          </div>
+        </div>
+
+        <svg viewBox="0 0 500 300" width="100%" style="display:block;position:relative;z-index:2" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="groundGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#2d6b1a"/>
+              <stop offset="100%" stop-color="#1a4a0d"/>
+            </linearGradient>
+            <linearGradient id="skyBottom" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="transparent"/>
+              <stop offset="100%" stop-color="rgba(0,0,0,.1)"/>
+            </linearGradient>
+            <filter id="shadow">
+              <feDropShadow dx="0" dy="4" stdDeviation="6" flood-opacity=".15"/>
+            </filter>
+          </defs>
+          
+          <!-- Ground -->
+          <rect x="0" y="228" width="500" height="72" fill="url(#groundGrad)"/>
+          <rect x="0" y="228" width="500" height="4" fill="#3a8a22" opacity=".6"/>
+          
+          <!-- Driveway concrete -->
+          <path d="M300 230 L330 300 L500 300 L500 230 Z" fill="#c8b8a8" opacity=".5"/>
+          <path d="M305 230 L332 300 L498 300 L498 230 Z" fill="#d4c4b4" opacity=".3"/>
+          
+          <!-- House main body -->
+          <rect x="55" y="140" width="390" height="95" rx="3" fill="#f7f2ea" filter="url(#shadow)"/>
+          
+          <!-- Brick texture strips -->
+          <g opacity=".08" fill="none" stroke="#8a7060" stroke-width=".5">
+            <line x1="55" y1="155" x2="445" y2="155"/>
+            <line x1="55" y1="170" x2="445" y2="170"/>
+            <line x1="55" y1="185" x2="445" y2="185"/>
+            <line x1="55" y1="200" x2="445" y2="200"/>
+            <line x1="55" y1="215" x2="445" y2="215"/>
+          </g>
+          
+          <!-- Main roof -->
+          <polygon points="35,148 250,52 465,148" fill="#7a4422"/>
+          <polygon points="35,148 250,58 465,148" fill="#8b5530" opacity=".7"/>
+          <!-- Roof trim -->
+          <polyline points="35,148 250,52 465,148" fill="none" stroke="#5a3218" stroke-width="2.5"/>
+          <!-- Ridge cap -->
+          <line x1="250" y1="52" x2="250" y2="64" stroke="#4a2810" stroke-width="4" stroke-linecap="round"/>
+
+          <!-- SOLAR PANELS — the star of the show -->
+          <!-- Left roof (9 panels, bright blue-black) -->
+          <g>
+            <!-- Row 1 -->
+            <rect x="80" y="104" width="38" height="22" rx="2" fill="#0e2a48"/>
+            <rect x="122" y="97" width="38" height="22" rx="2" fill="#0e2a48"/>
+            <rect x="164" y="89" width="38" height="22" rx="2" fill="#0e2a48"/>
+            <!-- Row 2 -->
+            <rect x="80" y="128" width="38" height="22" rx="2" fill="#0e2a48"/>
+            <rect x="122" y="121" width="38" height="22" rx="2" fill="#0e2a48"/>
+            <rect x="164" y="113" width="38" height="22" rx="2" fill="#0e2a48"/>
+            <!-- Panel cell grid -->
+            <g stroke="#1a4a7a" stroke-width=".4" opacity=".8">
+              <line x1="99" y1="104" x2="99" y2="126"/><line x1="80" y1="115" x2="118" y2="115"/>
+              <line x1="141" y1="97" x2="141" y2="119"/><line x1="122" y1="108" x2="160" y2="108"/>
+              <line x1="183" y1="89" x2="183" y2="111"/><line x1="164" y1="100" x2="202" y2="100"/>
+              <line x1="99" y1="128" x2="99" y2="150"/><line x1="80" y1="139" x2="118" y2="139"/>
+              <line x1="141" y1="121" x2="141" y2="143"/><line x1="122" y1="132" x2="160" y2="132"/>
+              <line x1="183" y1="113" x2="183" y2="135"/><line x1="164" y1="124" x2="202" y2="124"/>
+            </g>
+            <!-- Panel shine/gloss -->
+            <rect x="80" y="104" width="38" height="5" rx="2" fill="rgba(120,200,255,.18)"/>
+            <rect x="122" y="97" width="38" height="5" rx="2" fill="rgba(120,200,255,.18)"/>
+            <rect x="164" y="89" width="38" height="5" rx="2" fill="rgba(120,200,255,.18)"/>
+            <rect x="80" y="128" width="38" height="5" rx="2" fill="rgba(120,200,255,.12)"/>
+            <rect x="122" y="121" width="38" height="5" rx="2" fill="rgba(120,200,255,.12)"/>
+            <rect x="164" y="113" width="38" height="5" rx="2" fill="rgba(120,200,255,.12)"/>
+          </g>
+          
+          <!-- Right roof panels (slightly darker — less direct sun) -->
+          <g>
+            <rect x="260" y="89" width="38" height="22" rx="2" fill="#122e50"/>
+            <rect x="302" y="97" width="38" height="22" rx="2" fill="#122e50"/>
+            <rect x="344" y="104" width="38" height="22" rx="2" fill="#122e50"/>
+            <rect x="260" y="113" width="38" height="22" rx="2" fill="#122e50"/>
+            <rect x="302" y="121" width="38" height="22" rx="2" fill="#122e50"/>
+            <rect x="344" y="128" width="38" height="22" rx="2" fill="#122e50"/>
+            <g stroke="#1e4060" stroke-width=".4" opacity=".6">
+              <line x1="279" y1="89" x2="279" y2="111"/><line x1="260" y1="100" x2="298" y2="100"/>
+              <line x1="321" y1="97" x2="321" y2="119"/><line x1="302" y1="108" x2="340" y2="108"/>
+              <line x1="279" y1="113" x2="279" y2="135"/><line x1="260" y1="124" x2="298" y2="124"/>
+              <line x1="321" y1="121" x2="321" y2="143"/><line x1="302" y1="132" x2="340" y2="132"/>
+            </g>
+          </g>
+
+          <!-- Energy flow lines from panels -->
+          <g opacity=".5" stroke-dasharray="4 3">
+            <line x1="130" y1="138" x2="150" y2="155" stroke="#FFD700" stroke-width="1.5"/>
+            <line x1="160" y1="128" x2="165" y2="145" stroke="#FFD700" stroke-width="1.5"/>
+            <line x1="310" y1="128" x2="295" y2="145" stroke="#FFD700" stroke-width="1"/>
+          </g>
+
+          <!-- Bay window left -->
+          <rect x="68" y="156" width="88" height="64" rx="5" fill="#d0e8f5" stroke="#a8cce0" stroke-width="1.5"/>
+          <rect x="68" y="156" width="88" height="10" rx="5" fill="#b8d4e8"/>
+          <line x1="112" y1="156" x2="112" y2="220" stroke="#a8cce0" stroke-width="1.5"/>
+          <line x1="68" y1="183" x2="156" y2="183" stroke="#a8cce0" stroke-width="1.2"/>
+          <!-- Window reflections -->
+          <rect x="72" y="160" width="14" height="8" rx="2" fill="rgba(255,255,255,.5)"/>
+          <rect x="116" y="160" width="14" height="8" rx="2" fill="rgba(255,255,255,.5)"/>
+          <!-- Window sill -->
+          <rect x="62" y="219" width="100" height="5" rx="2" fill="#d4c8b0"/>
+
+          <!-- Front door (centre) -->
+          <rect x="208" y="172" width="48" height="63" rx="5" fill="#8b4513"/>
+          <rect x="210" y="174" width="44" height="59" rx="4" fill="#7a3a10"/>
+          <!-- Door panels -->
+          <rect x="214" y="178" width="16" height="20" rx="2" fill="rgba(255,255,255,.12)"/>
+          <rect x="234" y="178" width="16" height="20" rx="2" fill="rgba(255,255,255,.12)"/>
+          <rect x="214" y="202" width="36" height="26" rx="2" fill="rgba(255,255,255,.1)"/>
+          <!-- Door handle -->
+          <circle cx="250" cy="213" r="3.5" fill="#d4a820"/>
+          <!-- Door light -->
+          <rect x="220" y="165" width="24" height="8" rx="4" fill="#d0e8f5" opacity=".8"/>
+          <!-- Steps -->
+          <rect x="198" y="233" width="68" height="6" rx="3" fill="#c8b8a0"/>
+          <rect x="202" y="228" width="60" height="6" rx="3" fill="#d4c4ac"/>
+
+          <!-- Garage right side -->
+          <rect x="290" y="162" width="120" height="73" rx="5" fill="#ddd4c4" stroke="#c8c0b0" stroke-width="1"/>
+          <g stroke="#c0b8a8" stroke-width=".8">
+            <line x1="290" y1="180" x2="410" y2="180"/>
+            <line x1="290" y1="198" x2="410" y2="198"/>
+            <line x1="290" y1="216" x2="410" y2="216"/>
+            <line x1="290" y1="234" x2="410" y2="234"/>
+            <line x1="322" y1="162" x2="322" y2="235"/>
+            <line x1="378" y1="162" x2="378" y2="235"/>
+          </g>
+          <circle cx="350" cy="222" r="4.5" fill="#a09080"/>
+          <!-- Garage header -->
+          <rect x="288" y="156" width="124" height="8" rx="2" fill="#c8c0b0"/>
+
+          <!-- Battery unit (Powerwall on garage wall) -->
+          <rect x="416" y="168" width="22" height="50" rx="4" fill="#0a1e2e"/>
+          <rect x="418" y="170" width="18" height="46" rx="3" fill="#0D1B14"/>
+          <!-- Battery level bars -->
+          <rect x="420" y="172" width="14" height="7" rx="1.5" fill="#1D9E75"/>
+          <rect x="420" y="181" width="14" height="7" rx="1.5" fill="#1D9E75" opacity=".8"/>
+          <rect x="420" y="190" width="14" height="7" rx="1.5" fill="#1D9E75" opacity=".55"/>
+          <rect x="420" y="199" width="14" height="7" rx="1.5" fill="#1D9E75" opacity=".3"/>
+          <rect x="420" y="208" width="14" height="7" rx="1.5" fill="#333" opacity=".4"/>
+          <!-- Battery label -->
+          <text x="427" y="225" text-anchor="middle" font-size="6.5" fill="#5DCAA5" font-family="monospace">87%</text>
+          
+          <!-- Tesla EV in driveway -->
+          <g transform="translate(305,238)">
+            <!-- Car shadow -->
+            <ellipse cx="68" cy="62" rx="66" ry="7" fill="rgba(0,0,0,.15)"/>
+            <!-- Car body -->
+            <rect x="8" y="20" width="120" height="34" rx="10" fill="#1a3a6a"/>
+            <!-- Roof -->
+            <path d="M28,20 Q35,2 60,2 L76,2 Q98,2 104,20 Z" fill="#162e56"/>
+            <!-- Windscreen -->
+            <rect x="30" y="5" width="36" height="14" rx="4" fill="#6ab8e8" opacity=".85"/>
+            <!-- Rear window -->
+            <rect x="72" y="5" width="28" height="14" rx="4" fill="#6ab8e8" opacity=".75"/>
+            <!-- Door line -->
+            <line x1="68" y1="20" x2="68" y2="54" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
+            <!-- Wheels -->
+            <circle cx="28" cy="54" r="12" fill="#111"/>
+            <circle cx="28" cy="54" r="8" fill="#222"/>
+            <circle cx="28" cy="54" r="4" fill="#666"/>
+            <circle cx="108" cy="54" r="12" fill="#111"/>
+            <circle cx="108" cy="54" r="8" fill="#222"/>
+            <circle cx="108" cy="54" r="4" fill="#666"/>
+            <!-- Charging port (Tesla Model 3 style) -->
+            <circle cx="6" cy="32" r="5" fill="#1D9E75"/>
+            <circle cx="6" cy="32" r="7" fill="#1D9E75" opacity=".35"/>
+            <circle cx="6" cy="32" r="10" fill="#1D9E75" opacity=".12"/>
+            <!-- Headlights -->
+            <rect x="126" y="26" width="5" height="10" rx="2" fill="#FFE066" opacity=".7"/>
+          </g>
+          
+          <!-- Charging cable from wall to car -->
+          <path d="M306 252 Q294 252 290 244 Q286 236 282 232" stroke="#1D9E75" stroke-width="2" fill="none" stroke-linecap="round" opacity=".8"/>
+          <circle cx="282" cy="232" r="3" fill="#1D9E75"/>
+          
+          <!-- Lawn / garden -->
+          <ellipse cx="38" cy="222" rx="24" ry="32" fill="#2d6b1a"/>
+          <ellipse cx="28" cy="230" rx="18" ry="24" fill="#358a20"/>
+          <ellipse cx="46" cy="232" rx="16" ry="20" fill="#3a9424"/>
+          <rect x="34" y="248" width="8" height="16" rx="3" fill="#6b4a20"/>
+          
+          <!-- Front garden bed -->
+          <ellipse cx="175" cy="240" rx="40" ry="10" fill="#2a5a10" opacity=".8"/>
+          <ellipse cx="155" cy="237" rx="12" ry="8" fill="#3a7820"/>
+          <ellipse cx="175" cy="235" rx="10" ry="8" fill="#2d6b18"/>
+          <ellipse cx="195" cy="237" rx="11" ry="7" fill="#358a20"/>
+          
+          <!-- Right shrubs -->
+          <ellipse cx="462" cy="248" rx="20" ry="13" fill="#2d6b1a"/>
+          <ellipse cx="478" cy="250" rx="16" ry="11" fill="#358a20"/>
+          <ellipse cx="450" cy="250" rx="15" ry="10" fill="#3a9424"/>
+        </svg>
+        
+        <!-- Live overlay stats at bottom -->
+        <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(0deg,rgba(13,27,20,.9) 0%,transparent 100%);padding:10px 14px;display:flex;gap:10px;justify-content:center;z-index:5">
+          <div style="background:rgba(29,158,117,.2);border:0.5px solid rgba(29,158,117,.4);border-radius:20px;padding:4px 12px;font-size:11px;color:#9FE1CB;font-weight:500">☀️ 6.8 kW generating</div>
+          <div style="background:rgba(55,138,221,.2);border:0.5px solid rgba(55,138,221,.4);border-radius:20px;padding:4px 12px;font-size:11px;color:#85B7EB;font-weight:500">🚗 EV charging free</div>
+          <div style="background:rgba(239,159,39,.2);border:0.5px solid rgba(239,159,39,.4);border-radius:20px;padding:4px 12px;font-size:11px;color:#FAC775;font-weight:500">🔋 87% charged</div>
+        </div>
+      </div>
+      
+      <!-- Stats card below illustration -->
+      <div class="hcard" style="margin-top:12px">
         <div class="hcard-top">
           <div class="hcard-title"><svg width="18" height="18"><use href="#jouli-icon"/></svg>Melbourne, VIC · 10 kW</div>
           <span class="hcard-badge">Live estimate</span>
@@ -772,24 +1021,249 @@ posthog.init('phc_ENTgdxizjfqwyiu4WeAfQhkMKXvuBoLzUqhCpnK8tG0',{api_host:'https:
   <div class="strip-inner">
     <span class="strip-label">Powered by</span>
     <div class="strip-items">
-      <span class="strip-item">NASA POWER</span><span class="strip-item">AEMO / NEM</span>
-      <span class="strip-item">Bureau of Meteorology</span><span class="strip-item">Clean Energy Council</span>
-      <span class="strip-item">30-year climate data</span>
+      <span class="strip-item" style="display:inline-flex;align-items:center;gap:6px">
+        <svg width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6" fill="none" stroke="#1D9E75" stroke-width="1.5"/><path d="M8 3v3l2 2" stroke="#1D9E75" stroke-width="1.2" stroke-linecap="round"/></svg>
+        NASA POWER
+      </span>
+      <span class="strip-item" style="display:inline-flex;align-items:center;gap:6px">
+        <svg width="16" height="16" viewBox="0 0 16 16"><path d="M2 10 L5 5 L8 7 L11 3 L14 5" stroke="#1D9E75" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+        AEMO / NEM
+      </span>
+      <span class="strip-item" style="display:inline-flex;align-items:center;gap:6px">
+        <svg width="16" height="16" viewBox="0 0 16 16"><path d="M3 13 Q4 6 8 4 Q12 6 13 13" stroke="#1D9E75" stroke-width="1.5" fill="none" stroke-linecap="round"/><circle cx="8" cy="4" r="2" fill="#1D9E75" opacity=".5"/></svg>
+        Bureau of Meteorology
+      </span>
+      <span class="strip-item" style="display:inline-flex;align-items:center;gap:6px">
+        <svg width="16" height="16" viewBox="0 0 16 16"><path d="M3 8 L6 11 L13 4" stroke="#1D9E75" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Clean Energy Council
+      </span>
+      <span class="strip-item" style="display:inline-flex;align-items:center;gap:6px">
+        <svg width="16" height="16" viewBox="0 0 16 16"><rect x="2" y="2" width="12" height="12" rx="2" fill="none" stroke="#1D9E75" stroke-width="1.2"/><line x1="5" y1="8" x2="11" y2="8" stroke="#1D9E75" stroke-width="1.2" stroke-linecap="round"/><line x1="8" y1="5" x2="8" y2="11" stroke="#1D9E75" stroke-width="1.2" stroke-linecap="round"/></svg>
+        30-year climate data
+      </span>
     </div>
   </div>
 </div>
+
+
+<!-- ── BILL SHOCK CALCULATOR ─────────────────────────────────────────────── -->
+<section style="padding:48px 40px;background:white;border-top:1px solid var(--border)">
+  <div style="max-width:1100px;margin:0 auto">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center">
+      
+      <!-- Left: Calculator -->
+      <div>
+        <div class="sec-label">Quick calculator</div>
+        <div class="sec-title" style="font-size:28px;margin-bottom:8px">What could solar<br>save <em>you</em>?</div>
+        <div style="font-size:14px;color:var(--text2);margin-bottom:24px;line-height:1.6">No signup needed. Enter your last quarterly electricity bill and see your estimated saving.</div>
+        
+        <div style="background:var(--off);border-radius:16px;padding:22px 24px">
+          <div style="font-size:13px;font-weight:500;color:var(--gdp);margin-bottom:10px">My last electricity bill</div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">
+            <span style="font-size:32px;font-weight:700;color:var(--g)">$</span>
+            <input id="bill-calc-input" type="number" value="450" min="50" max="3000" step="50"
+              style="font-size:32px;font-weight:700;color:var(--gdp);border:none;background:transparent;outline:none;width:120px;font-family:inherit"
+              oninput="updateBillCalc()"/>
+            <span style="font-size:14px;color:var(--grey);margin-top:6px">per quarter</span>
+          </div>
+          <input type="range" id="bill-calc-slider" min="100" max="2000" value="450" step="50"
+            style="width:100%;accent-color:var(--g);margin-bottom:16px"
+            oninput="document.getElementById('bill-calc-input').value=this.value;updateBillCalc()"/>
+          
+          <!-- Results -->
+          <div id="bill-calc-results" style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <div style="background:white;border-radius:10px;padding:14px;text-align:center">
+              <div style="font-size:24px;font-weight:700;color:var(--g)" id="bcr-saving">$1,170</div>
+              <div style="font-size:11px;color:var(--grey)">saved per year</div>
+            </div>
+            <div style="background:white;border-radius:10px;padding:14px;text-align:center">
+              <div style="font-size:24px;font-weight:700;color:var(--gdp)" id="bcr-payback">6.3yr</div>
+              <div style="font-size:11px;color:var(--grey)">payback period</div>
+            </div>
+            <div style="background:white;border-radius:10px;padding:14px;text-align:center">
+              <div style="font-size:24px;font-weight:700;color:var(--gm)" id="bcr-bill">$108</div>
+              <div style="font-size:11px;color:var(--grey)">est. new quarterly bill</div>
+            </div>
+            <div style="background:white;border-radius:10px;padding:14px;text-align:center">
+              <div style="font-size:24px;font-weight:700;color:#EF9F27" id="bcr-stc">$3,120</div>
+              <div style="font-size:11px;color:var(--grey)">STC rebate (upfront)</div>
+            </div>
+          </div>
+          
+          <button onclick="openApp()" style="width:100%;margin-top:14px;padding:13px;border-radius:12px;background:var(--gd);color:var(--gl);font-size:14px;font-weight:600;border:none;cursor:pointer">
+            Get my full free design →
+          </button>
+          <div style="font-size:11px;color:var(--grey);text-align:center;margin-top:8px">Based on 10kW system · Melbourne irradiance · $14/mo Pro unlocks full design</div>
+        </div>
+      </div>
+      
+      <!-- Right: Visual bill comparison -->
+      <div style="position:relative">
+        <div style="background:var(--off);border-radius:16px;padding:24px;position:relative;overflow:hidden">
+          <!-- Before/after electricity bills SVG -->
+          <svg viewBox="0 0 340 280" width="100%" style="display:block">
+            <defs>
+              <linearGradient id="billGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#E24B4A"/>
+                <stop offset="100%" stop-color="#F09595"/>
+              </linearGradient>
+              <linearGradient id="solarGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#1D9E75"/>
+                <stop offset="100%" stop-color="#5DCAA5"/>
+              </linearGradient>
+            </defs>
+            
+            <!-- Title -->
+            <text x="170" y="22" text-anchor="middle" font-size="12" font-weight="600" fill="#0D1B14" font-family="system-ui">Quarterly electricity bill comparison</text>
+            
+            <!-- Before bar (tall = high bill) -->
+            <rect x="55" y="45" width="80" height="170" rx="8" fill="url(#billGrad)" opacity=".15"/>
+            <rect x="55" y="45" width="80" height="170" rx="8" fill="none" stroke="#E24B4A" stroke-width="1.5"/>
+            <rect id="bchart-before" x="55" y="45" width="80" height="170" rx="8" fill="url(#billGrad)" opacity=".7"/>
+            
+            <!-- After bar (short = low bill) -->
+            <rect x="195" y="45" width="80" height="170" rx="8" fill="url(#solarGrad)" opacity=".15"/>
+            <rect x="195" y="45" width="80" height="170" rx="8" fill="none" stroke="#1D9E75" stroke-width="1.5"/>
+            <rect id="bchart-after" x="195" y="175" width="80" height="40" rx="8" fill="url(#solarGrad)" opacity=".7"/>
+            
+            <!-- Labels -->
+            <text x="95" y="230" text-anchor="middle" font-size="11" fill="#E24B4A" font-weight="600" font-family="system-ui">Before solar</text>
+            <text id="bchart-before-val" x="95" y="243" text-anchor="middle" font-size="13" fill="#E24B4A" font-weight="700" font-family="system-ui">$450/qtr</text>
+            
+            <text x="235" y="230" text-anchor="middle" font-size="11" fill="#1D9E75" font-weight="600" font-family="system-ui">With Jouli solar</text>
+            <text id="bchart-after-val" x="235" y="243" text-anchor="middle" font-size="13" fill="#1D9E75" font-weight="700" font-family="system-ui">$108/qtr</text>
+            
+            <!-- Saving arrow -->
+            <path d="M139 120 L187 120" stroke="#EF9F27" stroke-width="2" marker-end="url(#bArrow)" fill="none"/>
+            <defs><marker id="bArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M1 1L9 5L1 9" fill="none" stroke="#EF9F27" stroke-width="1.5" stroke-linecap="round"/></marker></defs>
+            <rect x="148" y="110" width="34" height="18" rx="4" fill="#EF9F27"/>
+            <text x="165" y="122" text-anchor="middle" font-size="10" fill="white" font-weight="700" font-family="system-ui">SAVE</text>
+            
+            <!-- STC badge -->
+            <rect x="120" y="255" width="100" height="22" rx="11" fill="#E1F5EE"/>
+            <text x="170" y="270" text-anchor="middle" font-size="10" fill="#085041" font-weight="600" font-family="system-ui">+ $3,120 STC rebate upfront</text>
+            
+            <!-- Baseline -->
+            <line x1="30" y1="215" x2="310" y2="215" stroke="#e0e0e0" stroke-width="1"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+function updateBillCalc() {
+  var bill = parseInt(document.getElementById('bill-calc-input').value) || 450;
+  document.getElementById('bill-calc-slider').value = bill;
+  var annBill = bill * 4;
+  var solarSaving = Math.round(annBill * 0.65);
+  var systemCost = 12000;
+  var stcRebate = Math.min(Math.round(bill * 6.9), 4500);
+  var payback = Math.round((systemCost - stcRebate) / solarSaving * 10) / 10;
+  var newBill = Math.max(Math.round(bill * 0.24), 20);
+  
+  document.getElementById('bcr-saving').textContent = '$' + solarSaving.toLocaleString();
+  document.getElementById('bcr-payback').textContent = payback + 'yr';
+  document.getElementById('bcr-bill').textContent = '$' + newBill;
+  document.getElementById('bcr-stc').textContent = '$' + stcRebate.toLocaleString();
+  
+  // Update chart bars
+  var chart = document.getElementById('bchart-before');
+  var chartAfter = document.getElementById('bchart-after');
+  if (chart) {
+    var maxH = 170;
+    var beforeH = Math.min(maxH, Math.round((bill / 500) * maxH));
+    chart.setAttribute('y', 215 - beforeH);
+    chart.setAttribute('height', beforeH);
+    document.getElementById('bchart-before-val').textContent = '$' + bill + '/qtr';
+    var afterH = Math.max(20, Math.round((newBill / 500) * maxH));
+    chartAfter.setAttribute('y', 215 - afterH);
+    chartAfter.setAttribute('height', afterH);
+    document.getElementById('bchart-after-val').textContent = '$' + newBill + '/qtr';
+  }
+}
+</script>
 
 <section class="how" id="how-section">
   <div class="sec-label">How it works</div>
   <div class="sec-title">From postcode to<br>proposal in minutes.</div>
   <div class="sec-body">Six modules. One tool. Each audience gets the depth they need — no jargon, no pressure.</div>
   <div class="steps">
-    <div class="step-c"><div class="step-n">01</div><div class="step-t">Profile your load</div><div class="step-d">Add appliances or upload your bill. Your daily energy curve is the foundation.</div><span class="tier" style="background:#E1F5EE;color:#085041">Free</span></div>
-    <div class="step-c"><div class="step-n">02</div><div class="step-t">Size your solar</div><div class="step-d">30 years of NASA irradiance data for your postcode. Adjust tilt and orientation live.</div><span class="tier" style="background:#E1F5EE;color:#085041">Free</span></div>
-    <div class="step-c"><div class="step-n">03</div><div class="step-t">Add battery + EV</div><div class="step-d">Model storage and EV charging together. See how solar hours change your payback.</div><span class="tier" style="background:#FAEEDA;color:#633806">Pro</span></div>
-    <div class="step-c"><div class="step-n">04</div><div class="step-t">See the economics</div><div class="step-d">Payback period, LCOE, NPV — or just "you'll save $2,840/year." Plain language.</div><span class="tier" style="background:#FAEEDA;color:#633806">Pro</span></div>
-    <div class="step-c"><div class="step-n">05</div><div class="step-t">Check resilience</div><div class="step-d">How many days off-grid in winter? Stress-tested against real worst-case weather.</div><span class="tier" style="background:#FAEEDA;color:#633806">Pro</span></div>
-    <div class="step-c"><div class="step-n">06</div><div class="step-t">Export your report</div><div class="step-d">A professional PDF proposal. Walk into any installer meeting knowing your numbers.</div><span class="tier" style="background:#EEEDFE;color:#3C3489">Business</span></div>
+    <div class="step-c">
+      <div style="width:48px;height:48px;border-radius:12px;background:#EAF3DE;display:flex;align-items:center;justify-content:center;margin-bottom:14px">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+        <rect x="4" y="6" width="20" height="16" rx="3" fill="#639922" opacity=".15"/>
+        <rect x="4" y="6" width="20" height="16" rx="3" stroke="#639922" stroke-width="1.5" fill="none"/>
+        <rect x="7" y="10" width="6" height="8" rx="1" fill="#639922" opacity=".7"/>
+        <rect x="15" y="12" width="6" height="6" rx="1" fill="#639922" opacity=".5"/>
+        <rect x="9" y="8" width="4" height="2" rx="1" fill="#639922"/>
+        <path d="M4 20h20" stroke="#639922" stroke-width="1" opacity=".3"/>
+      </svg>
+    </div><div class="step-n">01</div><div class="step-t">Profile your load</div><div class="step-d">Add appliances or upload your bill. Your daily energy curve is the foundation.</div><span class="tier" style="background:#E1F5EE;color:#085041">Free</span></div>
+    <div class="step-c">
+      <div style="width:48px;height:48px;border-radius:12px;background:#FAEEDA;display:flex;align-items:center;justify-content:center;margin-bottom:14px">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+        <circle cx="14" cy="10" r="5" fill="#EF9F27" opacity=".3"/>
+        <circle cx="14" cy="10" r="3" fill="#EF9F27"/>
+        <path d="M14 3v2M14 15v2M5 10h2M19 10h2M7.5 5.5l1.5 1.5M17.5 14.5l1.5 1.5M7.5 14.5l1.5-1.5M17.5 5.5l-1.5 1.5" stroke="#EF9F27" stroke-width="1.5" stroke-linecap="round"/>
+        <rect x="6" y="18" width="16" height="7" rx="2" fill="#EF9F27" opacity=".15"/>
+        <rect x="8" y="18" width="12" height="7" rx="1.5" fill="#EF9F27" opacity=".3"/>
+        <line x1="6" y1="19.5" x2="22" y2="19.5" stroke="#EF9F27" stroke-width=".5" opacity=".6"/>
+        <line x1="6" y1="21" x2="22" y2="21" stroke="#EF9F27" stroke-width=".5" opacity=".6"/>
+        <line x1="6" y1="22.5" x2="22" y2="22.5" stroke="#EF9F27" stroke-width=".5" opacity=".6"/>
+        <line x1="10" y1="18" x2="10" y2="25" stroke="#EF9F27" stroke-width=".5" opacity=".6"/>
+        <line x1="14" y1="18" x2="14" y2="25" stroke="#EF9F27" stroke-width=".5" opacity=".6"/>
+        <line x1="18" y1="18" x2="18" y2="25" stroke="#EF9F27" stroke-width=".5" opacity=".6"/>
+      </svg>
+    </div><div class="step-n">02</div><div class="step-t">Size your solar</div><div class="step-d">30 years of NASA irradiance data for your postcode. Adjust tilt and orientation live.</div><span class="tier" style="background:#E1F5EE;color:#085041">Free</span></div>
+    <div class="step-c">
+      <div style="width:48px;height:48px;border-radius:12px;background:#E6F1FB;display:flex;align-items:center;justify-content:center;margin-bottom:14px">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+        <rect x="5" y="9" width="16" height="11" rx="2.5" stroke="#378ADD" stroke-width="1.5" fill="none"/>
+        <rect x="21" y="12" width="3" height="5" rx="1.5" fill="#378ADD" opacity=".6"/>
+        <rect x="7" y="11" width="3" height="7" rx="1" fill="#378ADD" opacity=".7"/>
+        <rect x="11" y="11" width="3" height="7" rx="1" fill="#378ADD" opacity=".5"/>
+        <rect x="15" y="11" width="3" height="7" rx="1" fill="#378ADD" opacity=".3"/>
+        <path d="M10 23 L8 26 H12 L10 23Z" fill="#378ADD" opacity=".5"/>
+        <path d="M18 23 L16 26 H20 L18 23Z" fill="#378ADD" opacity=".5"/>
+        <circle cx="10" cy="26" r="1.5" fill="#378ADD" opacity=".7"/>
+        <circle cx="18" cy="26" r="1.5" fill="#378ADD" opacity=".7"/>
+        <path d="M20 6 L17 11 H21 L18 16" stroke="#1D9E75" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </div><div class="step-n">03</div><div class="step-t">Add battery + EV</div><div class="step-d">Model storage and EV charging together. See how solar hours change your payback.</div><span class="tier" style="background:#FAEEDA;color:#633806">Pro</span></div>
+    <div class="step-c">
+      <div style="width:48px;height:48px;border-radius:12px;background:#E1F5EE;display:flex;align-items:center;justify-content:center;margin-bottom:14px">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+        <path d="M5 22 L9 15 L13 17 L18 10 L23 13" stroke="#1D9E75" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        <path d="M5 22 L9 15 L13 17 L18 10 L23 13 L23 22 Z" fill="#1D9E75" opacity=".1"/>
+        <circle cx="9" cy="15" r="2" fill="#1D9E75"/>
+        <circle cx="13" cy="17" r="2" fill="#9FE1CB"/>
+        <circle cx="18" cy="10" r="2" fill="#1D9E75"/>
+        <circle cx="23" cy="13" r="2" fill="#9FE1CB"/>
+        <text x="13" y="7" text-anchor="middle" font-size="7" fill="#085041" font-weight="700">$$$</text>
+      </svg>
+    </div><div class="step-n">04</div><div class="step-t">See the economics</div><div class="step-d">Payback period, LCOE, NPV — or just "you'll save $2,840/year." Plain language.</div><span class="tier" style="background:#FAEEDA;color:#633806">Pro</span></div>
+    <div class="step-c">
+      <div style="width:48px;height:48px;border-radius:12px;background:#EEEDFE;display:flex;align-items:center;justify-content:center;margin-bottom:14px">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+        <path d="M14 3 L5 7 V14 C5 19.5 9 24 14 25.5 C19 24 23 19.5 23 14 V7 Z" fill="#7F77DD" opacity=".15"/>
+        <path d="M14 3 L5 7 V14 C5 19.5 9 24 14 25.5 C19 24 23 19.5 23 14 V7 Z" stroke="#7F77DD" stroke-width="1.5" fill="none"/>
+        <path d="M9 14 L12 17 L19 10" stroke="#7F77DD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div><div class="step-n">05</div><div class="step-t">Check resilience</div><div class="step-d">How many days off-grid in winter? Stress-tested against real worst-case weather.</div><span class="tier" style="background:#FAEEDA;color:#633806">Pro</span></div>
+    <div class="step-c">
+      <div style="width:48px;height:48px;border-radius:12px;background:#FCF0F4;display:flex;align-items:center;justify-content:center;margin-bottom:14px">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+        <rect x="6" y="4" width="16" height="20" rx="3" stroke="#D4537E" stroke-width="1.5" fill="none"/>
+        <rect x="6" y="4" width="16" height="20" rx="3" fill="#D4537E" opacity=".07"/>
+        <line x1="10" y1="10" x2="18" y2="10" stroke="#D4537E" stroke-width="1.2" stroke-linecap="round" opacity=".7"/>
+        <line x1="10" y1="13.5" x2="18" y2="13.5" stroke="#D4537E" stroke-width="1.2" stroke-linecap="round" opacity=".5"/>
+        <line x1="10" y1="17" x2="15" y2="17" stroke="#D4537E" stroke-width="1.2" stroke-linecap="round" opacity=".4"/>
+        <circle cx="20" cy="21" r="5" fill="#D4537E"/>
+        <path d="M18 21 L20 23 L22 19" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div><div class="step-n">06</div><div class="step-t">Export your report</div><div class="step-d">A professional PDF proposal. Walk into any installer meeting knowing your numbers.</div><span class="tier" style="background:#EEEDFE;color:#3C3489">Business</span></div>
   </div>
 </section>
 
@@ -809,15 +1283,70 @@ posthog.init('phc_ENTgdxizjfqwyiu4WeAfQhkMKXvuBoLzUqhCpnK8tG0',{api_host:'https:
   </div>
 </section>
 
+
+<section style="padding:56px 40px;background:var(--off)">
+  <div style="max-width:1100px;margin:0 auto">
+    <div style="text-align:center;margin-bottom:36px">
+      <div class="sec-label" style="text-align:center">What homeowners say</div>
+      <div class="sec-title" style="font-size:28px;text-align:center;max-width:480px;margin:0 auto">Real Australians.<br>Real designs. Real savings.</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:36px">
+      <div style="background:white;border-radius:16px;padding:22px;border:0.5px solid var(--border)">
+        <div style="color:#EF9F27;font-size:14px;margin-bottom:12px">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <div style="font-size:13px;color:var(--gdp);line-height:1.7;margin-bottom:16px">Jouli gave me the confidence to go ahead. I knew exactly what I was buying before the installer showed up. My 11kW system with Powerwall paid back in 5.8 years, exactly what Jouli predicted.</div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="width:40px;height:40px;border-radius:50%;background:#E1F5EE;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#1D9E75">S</div>
+          <div><div style="font-size:12px;font-weight:600;color:var(--gdp)">Sarah M.</div><div style="font-size:11px;color:var(--grey)">Richmond, VIC  11kW + battery</div></div>
+        </div>
+      </div>
+      <div style="background:white;border-radius:16px;padding:22px;border:1.5px solid var(--g)">
+        <div style="color:#EF9F27;font-size:14px;margin-bottom:12px">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <div style="font-size:13px;color:var(--gdp);line-height:1.7;margin-bottom:16px">As an installer I use Jouli for every single client proposal. The NEM12 upload and V2G modelling is something no other tool has. Clients arrive at site visits understanding their system.</div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="width:40px;height:40px;border-radius:50%;background:#E6F1FB;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#378ADD">J</div>
+          <div><div style="font-size:12px;font-weight:600;color:var(--gdp)">James K.</div><div style="font-size:11px;color:var(--grey)">CEC Installer  Brisbane, QLD</div></div>
+        </div>
+        <div style="font-size:10px;background:var(--gl);color:var(--gd);padding:3px 10px;border-radius:20px;display:inline-block;margin-top:10px;font-weight:500">Jouli Business subscriber</div>
+      </div>
+      <div style="background:white;border-radius:16px;padding:22px;border:0.5px solid var(--border)">
+        <div style="color:#EF9F27;font-size:14px;margin-bottom:12px">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <div style="font-size:13px;color:var(--gdp);line-height:1.7;margin-bottom:16px">We are 5km from the grid on a rural property. Jouli off-grid calculator showed we would save 8,200 per year vs diesel. The payback was 4.1 years. We installed a week later.</div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="width:40px;height:40px;border-radius:50%;background:#FAEEDA;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#EF9F27">T</div>
+          <div><div style="font-size:12px;font-weight:600;color:var(--gdp)">Tom and Lisa W.</div><div style="font-size:11px;color:var(--grey)">Tamworth, NSW  Off-grid 22kW</div></div>
+        </div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;background:var(--gdp);border-radius:16px;padding:24px 28px">
+      <div style="text-align:center"><div style="font-size:32px;font-weight:700;color:#9FE1CB;letter-spacing:-1px">3.5M</div><div style="font-size:12px;color:rgba(255,255,255,.6);margin-top:3px">AU solar rooftops</div></div>
+      <div style="text-align:center"><div style="font-size:32px;font-weight:700;color:#9FE1CB;letter-spacing:-1px">/bin/sh</div><div style="font-size:12px;color:rgba(255,255,255,.6);margin-top:3px">referral kickbacks. Ever.</div></div>
+      <div style="text-align:center"><div style="font-size:32px;font-weight:700;color:#9FE1CB;letter-spacing:-1px">5%</div><div style="font-size:12px;color:rgba(255,255,255,.6);margin-top:3px">solar calc accuracy</div></div>
+      <div style="text-align:center"><div style="font-size:32px;font-weight:700;color:#9FE1CB;letter-spacing:-1px">30yr</div><div style="font-size:12px;color:rgba(255,255,255,.6);margin-top:3px">NASA climate data</div></div>
+    </div>
+  </div>
+</section>
+
 <section class="pricing" id="price-section">
   <div class="pricing-inner">
     <div class="sec-label">Pricing</div>
     <div class="sec-title">Start free. Go deeper when ready.</div>
     <div class="sec-body" style="max-width:420px;margin:0 auto">No pushy upsells. No installer kickbacks. Jouli makes money when you subscribe — not when you click through to a quote.</div>
     <div class="price-grid">
-      <div class="pc"><div class="pc-name">Free</div><div class="pc-who">Homeowners exploring solar</div><div class="pc-price">$0</div><div class="pc-per">forever</div><div class="pc-feats"><div class="pc-feat"><div class="pfc">✓</div>Load profiler</div><div class="pc-feat"><div class="pfc">✓</div>Solar sizing engine</div><div class="pc-feat"><div class="pfc">✓</div>Basic ROI estimate</div><div class="pc-feat"><div class="pfc">✓</div>PDF summary</div></div><button class="pc-btn" onclick="openApp()">Get started free</button></div>
+      <div class="pc">
+        <div style="height:70px;border-radius:10px 10px 0 0;overflow:hidden;margin:-18px -18px 14px;background:linear-gradient(135deg,#0D1B14,#085041);display:flex;align-items:center;justify-content:center;gap:10px">
+        <svg width="60" height="50" viewBox="0 0 60 50"><rect x="5" y="28" width="50" height="18" rx="3" fill="rgba(93,202,165,.2)"/><polygon points="4,29 30,12 56,29" fill="rgba(93,202,165,.25)"/><rect x="11" y="18" width="8" height="5" rx="1" fill="#5DCAA5" opacity=".5"/><rect x="21" y="15" width="8" height="5" rx="1" fill="#5DCAA5" opacity=".5"/><rect x="31" y="15" width="8" height="5" rx="1" fill="#5DCAA5" opacity=".5"/><rect x="41" y="18" width="8" height="5" rx="1" fill="#5DCAA5" opacity=".5"/><rect x="48" y="33" width="5" height="10" rx="2" fill="#5DCAA5" opacity=".4"/><circle cx="22" cy="42" r="5" fill="#378ADD" opacity=".4"/><circle cx="34" cy="42" r="5" fill="#378ADD" opacity=".4"/><path d="M4 46h52" stroke="#5DCAA5" stroke-width=".5" opacity=".3"/></svg>
+        <div style="font-size:11px;font-weight:600;color:#9FE1CB;opacity:.9">Full energy system</div>
+      </div>
+        <div style="height:70px;border-radius:10px 10px 0 0;overflow:hidden;margin:-18px -18px 14px;background:linear-gradient(135deg,#E1F5EE,#9FE1CB);display:flex;align-items:center;justify-content:center;gap:10px">
+        <svg width="50" height="50" viewBox="0 0 50 50"><rect x="5" y="25" width="40" height="20" rx="3" fill="rgba(8,80,65,.2)"/><polygon points="4,26 25,10 46,26" fill="rgba(8,80,65,.3)"/><rect x="12" y="16" width="9" height="6" rx="1" fill="#085041" opacity=".4"/><rect x="22" y="13" width="9" height="6" rx="1" fill="#085041" opacity=".4"/><rect x="32" y="16" width="9" height="6" rx="1" fill="#085041" opacity=".4"/><circle cx="38" cy="12" r="6" fill="#EF9F27" opacity=".4"/></svg>
+        <div style="font-size:11px;font-weight:600;color:#085041;opacity:.8">Solar + basics</div>
+      </div><div class="pc-name">Free</div><div class="pc-who">Homeowners exploring solar</div><div class="pc-price">$0</div><div class="pc-per">forever</div><div class="pc-feats"><div class="pc-feat"><div class="pfc">✓</div>Load profiler</div><div class="pc-feat"><div class="pfc">✓</div>Solar sizing engine</div><div class="pc-feat"><div class="pfc">✓</div>Basic ROI estimate</div><div class="pc-feat"><div class="pfc">✓</div>PDF summary</div></div><button class="pc-btn" onclick="openApp()">Get started free</button></div>
       <div class="pc feat"><span class="pc-badge">Most popular</span><div class="pc-name">Pro</div><div class="pc-who">Homeowners with solar or EV</div><div class="pc-price">$14</div><div class="pc-per">per month</div><div class="pc-feats"><div class="pc-feat"><div class="pfc">✓</div>Everything in Free</div><div class="pc-feat"><div class="pfc">✓</div>Battery + EV modelling</div><div class="pc-feat"><div class="pfc">✓</div>Live NEM tariff data</div><div class="pc-feat"><div class="pfc">✓</div>Resilience analyser</div><div class="pc-feat"><div class="pfc">✓</div>Smart EV scheduler</div></div><button class="pc-btn p" onclick="signup('hero-email')">Start Pro — 30 days free</button></div>
-      <div class="pc"><div class="pc-name">Business</div><div class="pc-who">Installers &amp; consultants</div><div class="pc-price">$79</div><div class="pc-per">per month</div><div class="pc-feats"><div class="pc-feat"><div class="pfc">✓</div>Everything in Pro</div><div class="pc-feat"><div class="pfc">✓</div>Branded PDF proposals</div><div class="pc-feat"><div class="pfc">✓</div>Multi-site management</div><div class="pc-feat"><div class="pfc">✓</div>Client portal + API</div></div><button class="pc-btn" onclick="showToast('Thanks! We will be in touch.')">Contact us</button></div>
+      <div class="pc">
+        <div style="height:70px;border-radius:10px 10px 0 0;overflow:hidden;margin:-18px -18px 14px;background:linear-gradient(135deg,#412402,#633806);display:flex;align-items:center;justify-content:center;gap:10px">
+        <svg width="60" height="50" viewBox="0 0 60 50"><rect x="8" y="10" width="44" height="32" rx="4" fill="rgba(239,159,39,.15)"/><rect x="8" y="10" width="44" height="32" rx="4" stroke="rgba(239,159,39,.3)" stroke-width="1" fill="none"/><line x1="8" y1="22" x2="52" y2="22" stroke="rgba(239,159,39,.2)" stroke-width="1"/><rect x="14" y="16" width="10" height="4" rx="1" fill="#EF9F27" opacity=".4"/><rect x="28" y="16" width="16" height="4" rx="1" fill="#EF9F27" opacity=".3"/><rect x="14" y="26" width="28" height="3" rx="1" fill="#FAC775" opacity=".3"/><rect x="14" y="31" width="20" height="3" rx="1" fill="#FAC775" opacity=".25"/><rect x="14" y="36" width="24" height="3" rx="1" fill="#FAC775" opacity=".2"/><circle cx="46" cy="43" r="6" fill="#EF9F27" opacity=".5"/><path d="M43 43 L45 45 L49 40" stroke="white" stroke-width="1.5" stroke-linecap="round" opacity=".8"/></svg>
+        <div style="font-size:11px;font-weight:600;color:#FAC775;opacity:.9">Installer toolset</div>
+      </div><div class="pc-name">Business</div><div class="pc-who">Installers &amp; consultants</div><div class="pc-price">$79</div><div class="pc-per">per month</div><div class="pc-feats"><div class="pc-feat"><div class="pfc">✓</div>Everything in Pro</div><div class="pc-feat"><div class="pfc">✓</div>Branded PDF proposals</div><div class="pc-feat"><div class="pfc">✓</div>Multi-site management</div><div class="pc-feat"><div class="pfc">✓</div>Client portal + API</div></div><button class="pc-btn" onclick="showToast('Thanks! We will be in touch.')">Contact us</button></div>
     </div>
   </div>
 </section>
@@ -1592,6 +2121,7 @@ let STATE = {
 };
 
 function fmt(n){return'$'+Math.round(n).toLocaleString()}
+function san(s){if(!s)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
 function fmtk(n){return'$'+(Math.round(n/100)/10)+'k'}
 
 // ── NAVIGATION ───────────────────────────────────────────────────────────────
@@ -1642,19 +2172,13 @@ function goStep(s){
   const c=document.getElementById('app-content');
   if(STATE.pbChart){STATE.pbChart.destroy();STATE.pbChart=null;}
   if(STATE.scChart){STATE.scChart.destroy();STATE.scChart=null;}
-  if(s==='loc')      renderLoc(c);
-  if(s==='load')     renderLoad(c);
-  if(s==='solar')    renderSolar(c);
-  if(s==='bat')      renderBat(c);
-  if(s==='ev')       renderEV(c);
-  if(s==='v2g')      renderV2G(c);
-  if(s==='grid')     renderGrid(c);
-  if(s==='heatpump') renderHeatPump(c);
-  if(s==='resil')    renderResil(c);
-  if(s==='offgrid')  renderOffGrid(c);
-  if(s==='stc')      renderSTC(c);
-  if(s==='econ')     renderEcon(c);
-  if(s==='report')   renderReport(c);
+  var renderMap = {loc:renderLoc,load:renderLoad,solar:renderSolar,bat:renderBat,ev:renderEV,v2g:renderV2G,grid:renderGrid,heatpump:renderHeatPump,resil:renderResil,offgrid:renderOffGrid,stc:renderSTC,econ:renderEcon,report:renderReport};
+  try {
+    if(renderMap[s]) renderMap[s](c);
+  } catch(e) {
+    console.error('Render error in step '+s+':', e);
+    c.innerHTML = '<div style="padding:40px;text-align:center"><div style="font-size:16px;font-weight:600;color:#E24B4A;margin-bottom:8px">Something went wrong</div><div style="font-size:13px;color:#666;margin-bottom:16px">'+san(e.message)+'</div><button class="btn btn-primary" onclick="goStep(\'loc\')">Go back to start</button></div>';
+  }
   // Update floating system bar
   if(typeof updateSystemBar === 'function') setTimeout(updateSystemBar, 300);
   // Auto-save on step change if logged in
@@ -1683,32 +2207,55 @@ function signup(id){
 
 // ── LOCATION STEP ─────────────────────────────────────────────────────────────
 function renderLoc(c){
+  var greeting = USER.name ? 'Hi '+san(USER.name)+' \u2014 ' : '';
+  var roleMsg = {homeowner:'let\u2019s design your home energy system.',ev:'let\u2019s optimise your EV charging with solar.',installer:'let\u2019s build a proposal for your client.',curious:'let\u2019s explore what solar could do for you.'}[USER.role] || 'let\u2019s design your energy system.';
+  var priorityHint = {savings:'We\u2019ll focus on payback and ROI.',independence:'We\u2019ll focus on self-sufficiency and storage.',environment:'We\u2019ll focus on CO\u2082 reduction and clean energy %.',resilience:'We\u2019ll focus on blackout protection and autonomy.'}[USER.priority] || '';
+  var hasLiveData = STATE.liveIrr && STATE.liveName;
   c.innerHTML=`
   <div style="background:#E1F5EE;border-radius:12px;padding:14px 18px;margin-bottom:16px;border:0.5px solid #5DCAA5;display:flex;align-items:center;gap:12px">
     <div style="width:36px;height:36px;border-radius:50%;background:#1D9E75;flex-shrink:0;display:flex;align-items:center;justify-content:center">
       <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="4" fill="white"/><path d="M9 2v2M9 14v2M2 9h2M14 9h2" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>
     </div>
-    <div><div style="font-size:13px;font-weight:600;color:#085041">Welcome to Jouli</div><div style="font-size:12px;color:#0F6E56;margin-top:1px">Let's build your personalised solar + battery + EV design. Start by choosing your location.</div></div>
+    <div><div style="font-size:13px;font-weight:600;color:#085041">${greeting}${roleMsg}</div>${priorityHint?'<div style="font-size:11px;color:#0F6E56;margin-top:2px">'+priorityHint+'</div>':''}</div>
   </div>
-  <div class="sec-head"><div class="sec-title2">Step 1 — Choose your location</div><div class="sec-sub2">Jouli fetches 30 years of NASA satellite data for your exact postcode</div></div>
+
+  ${hasLiveData ? '<div style="background:white;border:1.5px solid #1D9E75;border-radius:12px;padding:14px 18px;margin-bottom:14px"><div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><div style="width:8px;height:8px;border-radius:50%;background:#1D9E75;animation:pulse 2s ease-in-out infinite"></div><div style="font-size:13px;font-weight:600;color:#085041">Live NASA data loaded \u2014 '+STATE.liveName+'</div></div><div style="font-size:12px;color:#666">Irradiance: '+(STATE.liveIrr.reduce(function(a,b){return a+b},0)/12).toFixed(2)+' kWh/m\u00b2/day avg \u00b7 Coordinates: '+STATE.lat+', '+STATE.lon+' \u00b7 <span style="color:#1D9E75;font-weight:500">Accuracy: \u00b15\u20138%</span></div></div>' : ''}
+
+  <div class="sec-head"><div class="sec-title2">Step 1 \u2014 Your location</div><div class="sec-sub2">Jouli fetches 30 years of NASA satellite data for your exact address</div></div>
+
+  <div style="font-size:12px;font-weight:600;color:#0D1B14;margin-bottom:6px">Enter your street address for maximum accuracy</div>
+  <div style="display:flex;gap:8px;margin-bottom:8px">
+    <input type="text" id="address-inp" placeholder="e.g. 42 Wallaby Way, Sydney NSW 2000" style="flex:1;font-size:13px;padding:10px 14px;border-radius:9px;border:1.5px solid #e0e0e0;outline:none;font-family:inherit" onkeydown="if(event.key==='Enter')lookupAddress()"/>
+    <button onclick="lookupAddress()" style="font-size:13px;padding:10px 18px;border-radius:9px;background:var(--g);color:white;border:none;cursor:pointer;font-weight:500;white-space:nowrap">Look up address</button>
+  </div>
+  <div style="display:flex;gap:12px;margin-bottom:10px">
+    <div style="flex:1;display:flex;align-items:center;gap:6px;font-size:11px;color:#1D9E75"><div style="width:8px;height:8px;border-radius:50%;background:#1D9E75"></div>Address = \u00b15% accuracy (best)</div>
+    <div style="flex:1;display:flex;align-items:center;gap:6px;font-size:11px;color:#EF9F27"><div style="width:8px;height:8px;border-radius:50%;background:#EF9F27"></div>Postcode = \u00b18% accuracy</div>
+    <div style="flex:1;display:flex;align-items:center;gap:6px;font-size:11px;color:#888"><div style="width:8px;height:8px;border-radius:50%;background:#ccc"></div>City = \u00b112% accuracy</div>
+  </div>
+  <div id="address-result" style="font-size:13px;color:var(--gd);margin-bottom:14px;min-height:18px"></div>
+
+  <div class="or-div">or pick a capital city</div>
   <div class="loc-grid">
     ${Object.entries(CITIES).map(([k,v])=>`
-    <div class="loc-city ${STATE.city===k?'sel':''}" onclick="selectCity('${k}')">
+    <div class="loc-city ${STATE.city===k&&!hasLiveData?'sel':''}" onclick="selectCity('${k}')">
       <div class="loc-city-name">${v.name}</div>
-      <div class="loc-irr">${(v.irr.reduce((a,b)=>a+b,0)/12).toFixed(1)} kWh/m²/day avg</div>
+      <div class="loc-irr">${(v.irr.reduce((a,b)=>a+b,0)/12).toFixed(1)} kWh/m\u00b2/day avg</div>
     </div>`).join('')}
   </div>
-  <div class="or-div">or enter your postcode</div>
+
+  <div class="or-div">or enter postcode only</div>
   <div class="postcode-row">
-    <input type="text" id="postcode-inp" placeholder="e.g. 3000, 2000, 4000..." maxlength="4"/>
-    <button onclick="lookupPostcode()">Look up</button>
+    <input type="text" id="postcode-inp" placeholder="e.g. 3000" maxlength="4"/>
+    <button onclick="lookupPostcode()">Look up postcode</button>
   </div>
   <div id="postcode-result" style="font-size:13px;color:var(--gd);margin-bottom:16px;min-height:18px"></div>
+
   <div class="ai-box">
     <div class="ai-ico">AI</div>
-    <div class="ai-text"><strong>Jouli insight —</strong> Your location determines your solar irradiance. Darwin gets 7.3 kWh/m²/day average — nearly double Melbourne's 3.8. This difference alone changes your system size recommendation by 30–40%.</div>
+    <div class="ai-text"><strong>Jouli insight \u2014</strong> ${USER.name ? san(USER.name)+', y' : 'Y'}our location determines your solar irradiance. ${hasLiveData ? STATE.liveName+' gets '+(STATE.liveIrr.reduce(function(a,b){return a+b},0)/12).toFixed(1)+' kWh/m\u00b2/day \u2014 we\u2019re using your exact coordinates for maximum accuracy.' : 'Darwin gets 7.3 kWh/m\u00b2/day average \u2014 nearly double Melbourne\u2019s 3.8. Enter your address above for the most accurate design.'}</div>
   </div>
-  <div class="btn-row"><button class="btn-primary btn" onclick="goStep('load')">Continue to load profiler →</button></div>
+  <div class="btn-row"><button class="btn-primary btn" onclick="goStep('load')">Continue to load profiler \u2192</button></div>
   `;
 }
 function updateLocGreeting(){
@@ -1743,7 +2290,7 @@ function renderLoad(c){
   var total=APPLIANCES.reduce(function(s,a){return s+a.kw*a.hrs},0);
   var nemBadge=STATE.nemUploaded?'<span style="font-size:10px;background:#E1F5EE;color:#085041;padding:2px 8px;border-radius:20px;font-weight:500;margin-left:6px">NEM12 verified \u00b13%</span>':'';
   c.innerHTML=`
-  <div class="sec-head"><div class="sec-title2">Load profiler</div><div class="sec-sub2">${CITIES[STATE.city].name} · ${STATE.nemUploaded?'Real NEM12 data':'Appliance-based estimate'}${nemBadge}</div></div>
+  <div class="sec-head"><div class="sec-title2">Load profiler</div><div class="sec-sub2">${CITIES[STATE.city||'melbourne'].name} · ${STATE.nemUploaded?'Real NEM12 data':'Appliance-based estimate'}${nemBadge}</div></div>
   ${STATE.nemUploaded?'<div style="background:#E1F5EE;border-radius:10px;padding:12px 14px;margin-bottom:12px;font-size:12px;color:#085041;border:0.5px solid #5DCAA5"><strong>Real data active</strong> \u2014 using your NEM12 smart meter data: <strong>'+(STATE.realDailyLoad||22.4)+' kWh/day</strong> average. All calculations use your actual consumption.</div>':''}
   <div id="load-appliance-list" style="display:flex;flex-direction:column;gap:5px;margin-bottom:10px">
     ${APPLIANCES.map(function(a,i){return '<div class="app-row" style="position:relative"><div class="app-dot" style="background:'+a.col+'"></div><span class="app-name">'+a.name+'</span><div style="display:flex;align-items:center;gap:4px"><input type="number" value="'+a.kw+'" min="0" max="50" step="0.1" style="width:50px;font-size:11px;padding:3px 5px;border:1px solid #e0e0e0;border-radius:5px;text-align:center" onchange="APPLIANCES['+i+'].kw=parseFloat(this.value)||0;recalcLoad()"><span style="font-size:10px;color:#888">kW</span><span style="font-size:10px;color:#ccc;margin:0 2px">\u00d7</span><input type="number" value="'+a.hrs+'" min="0" max="24" step="0.5" style="width:40px;font-size:11px;padding:3px 5px;border:1px solid #e0e0e0;border-radius:5px;text-align:center" onchange="APPLIANCES['+i+'].hrs=parseFloat(this.value)||0;recalcLoad()"><span style="font-size:10px;color:#888">h/day</span></div><span class="app-kwh" id="load-kwh-'+i+'">'+(a.kw*a.hrs).toFixed(1)+' kWh</span></div>'}).join('')}
@@ -1789,7 +2336,7 @@ function addCustomAppliance(){
 // ── SOLAR STEP ────────────────────────────────────────────────────────────────
 function renderSolar(c){
   c.innerHTML=`
-  <div class="sec-head"><div class="sec-title2">Solar sizing engine</div><div class="sec-sub2">NASA POWER data · ${CITIES[STATE.city].name} · 30-year climatology</div></div>
+  <div class="sec-head"><div class="sec-title2">Solar sizing engine</div><div class="sec-sub2">NASA POWER data · ${CITIES[STATE.city||'melbourne'].name} · 30-year climatology</div></div>
   <div class="input-grid">
     <div class="ifield"><label>System size (kW)</label><input type="number" id="sys-kw" value="${STATE.sysKw}" min="1" max="100" step="0.5" oninput="STATE.sysKw=parseFloat(this.value)||10;calcSolar()"></div>
     <div class="ifield"><label>Roof orientation</label><select id="orientation" onchange="STATE.orient=parseFloat(this.value);calcSolar()"><option value="1.0">North (optimal)</option><option value="0.93">NE / NW</option><option value="0.85">East / West</option><option value="0.75">SE / SW</option></select></div>
@@ -1846,7 +2393,44 @@ function calcSolar(){
 // ── ECONOMICS STEP ────────────────────────────────────────────────────────────
 function renderEcon(c){
   c.innerHTML=`
-  <div class="sec-head"><div class="sec-title2">Economics &amp; ROI</div><div class="sec-sub2">${CITIES[STATE.city].name} · ${STATE.sysKw} kW solar · NEM tariff</div></div>
+  
+  <!-- Economics step visual header -->
+  <div style="width:100%;height:90px;border-radius:14px;overflow:hidden;margin-bottom:14px;background:linear-gradient(135deg,#085041,#0F6E56);position:relative;display:flex;align-items:center;justify-content:space-between;padding:0 20px">
+    <div>
+      <div style="font-size:11px;color:#5DCAA5;margin-bottom:2px">Step 11 of 12</div>
+      <div style="font-size:16px;font-weight:700;color:white;letter-spacing:-.3px">Economics + ROI</div>
+      <div style="font-size:11px;color:#9FE1CB;margin-top:2px">Payback, NPV, LCOE, STC rebate</div>
+    </div>
+    <svg width="130" height="70" viewBox="0 0 130 70">
+      <!-- 25-year profit chart -->
+      <rect x="10" y="55" width="110" height="1" fill="rgba(255,255,255,.2)"/>
+      <!-- Chart bars growing (year 1 to 25) -->
+      <rect x="12" y="52" width="4" height="3" rx="1" fill="#E24B4A" opacity=".7"/>
+      <rect x="18" y="49" width="4" height="6" rx="1" fill="#E24B4A" opacity=".5"/>
+      <rect x="24" y="45" width="4" height="10" rx="1" fill="#EF9F27" opacity=".6"/>
+      <rect x="30" y="45" width="4" height="10" rx="1" fill="#EF9F27" opacity=".5"/>
+      <rect x="36" y="47" width="4" height="8" rx="1" fill="#EF9F27" opacity=".4"/>
+      <rect x="42" y="51" width="4" height="4" rx="1" fill="#5DCAA5" opacity=".5"/>
+      <rect x="48" y="46" width="4" height="9" rx="1" fill="#1D9E75" opacity=".6"/>
+      <rect x="54" y="43" width="4" height="12" rx="1" fill="#1D9E75" opacity=".7"/>
+      <rect x="60" y="40" width="4" height="15" rx="1" fill="#1D9E75" opacity=".8"/>
+      <rect x="66" y="37" width="4" height="18" rx="1" fill="#1D9E75" opacity=".85"/>
+      <rect x="72" y="34" width="4" height="21" rx="1" fill="#1D9E75" opacity=".9"/>
+      <rect x="78" y="31" width="4" height="24" rx="1" fill="#085041"/>
+      <rect x="84" y="28" width="4" height="27" rx="1" fill="#085041"/>
+      <rect x="90" y="26" width="4" height="29" rx="1" fill="#085041"/>
+      <rect x="96" y="24" width="4" height="31" rx="1" fill="#085041"/>
+      <rect x="102" y="22" width="4" height="33" rx="1" fill="#04342C"/>
+      <rect x="108" y="20" width="4" height="35" rx="1" fill="#04342C"/>
+      <rect x="114" y="18" width="4" height="37" rx="1" fill="#04342C"/>
+      <!-- Payback line -->
+      <line x1="42" y1="15" x2="42" y2="55" stroke="white" stroke-width="1" stroke-dasharray="3 2" opacity=".5"/>
+      <text x="42" y="12" text-anchor="middle" font-size="8" fill="white" opacity=".8" font-family="system-ui">Payback</text>
+      <!-- $ label -->
+      <text x="118" y="15" font-size="10" fill="#9FE1CB" font-weight="700" font-family="monospace">$$$</text>
+    </svg>
+  </div>
+  <div class="sec-head"><div class="sec-title2">Economics &amp; ROI</div><div class="sec-sub2">${CITIES[STATE.city||'melbourne'].name} · ${STATE.sysKw} kW solar · NEM tariff</div></div>
   <div class="hero-num"><div><div class="hn-label">Estimated annual savings</div><div class="hn-val" id="econ-saving">—</div><div class="hn-sub" id="econ-sub">—</div></div><div class="hn-stats"><div class="hn-stat"><div class="hn-stat-val" id="e-pb">—</div><div class="hn-stat-label">Payback</div></div><div class="hn-stat"><div class="hn-stat-val" id="e-lcoe">—</div><div class="hn-stat-label">LCOE</div></div><div class="hn-stat"><div class="hn-stat-val" id="e-roi">—</div><div class="hn-stat-label">25yr ROI</div></div><div class="hn-stat"><div class="hn-stat-val" id="e-npv">—</div><div class="hn-stat-label">NPV</div></div></div></div>
   <div class="input-grid">
     <div class="ifield"><label>Solar + install cost ($)</label><input type="number" id="e-sc" value="${STATE.solarCost}" step="500" oninput="STATE.solarCost=parseFloat(this.value)||12000;calcEcon()"></div>
@@ -1938,17 +2522,22 @@ function calcEcon(){
 
 // ── REPORT STEP ───────────────────────────────────────────────────────────────
 function renderReport(c){
-  const city=CITIES[STATE.city];
+  const city=CITIES[STATE.city||'melbourne'];
   const annualGen=STATE.annualGen||14200;
   const annualSav=STATE.annualSav||3420;
   const pb=STATE.pb||6.1;
   const profit=STATE.cum25||48600;
+  var locDisplay = STATE.liveName || city.name;
+  var accuracyBadge = STATE.accuracyLevel === 'address' ? '<span style="background:#E1F5EE;color:#085041;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:600">\u00b15% accuracy</span>' : STATE.liveIrr ? '<span style="background:#FAEEDA;color:#633806;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:600">\u00b18% accuracy</span>' : '<span style="background:#f5f5f5;color:#888;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:600">\u00b112% accuracy</span>';
   c.innerHTML=`
-  <div class="sec-head"><div class="sec-title2">System design report</div><div class="sec-sub2">${city.name} · ${STATE.sysKw} kW solar · ready to download</div></div>
+  <div class="sec-head"><div class="sec-title2">${USER.name ? san(USER.name)+'\u2019s system design report' : 'System design report'}</div><div class="sec-sub2">${locDisplay} \u00b7 ${STATE.sysKw} kW solar \u00b7 ${accuracyBadge}</div></div>
+
+  ${!currentUser ? '<div style="background:#FAEEDA;border:1px solid #EF9F27;border-radius:12px;padding:16px 20px;margin-bottom:14px;text-align:center"><div style="font-size:14px;font-weight:700;color:#633806;margin-bottom:4px">Create a free account to download your report</div><div style="font-size:12px;color:#633806;margin-bottom:10px">Your design will be saved and you can return to it anytime.</div><button style="padding:10px 24px;border-radius:10px;background:#0D1B14;color:#E1F5EE;font-size:13px;font-weight:600;border:none;cursor:pointer" onclick="openAuth(\'signup\')">Create free account \u2192</button></div>' : ''}
+
   <div style="background:var(--gl);border-radius:12px;padding:20px 24px;margin-bottom:16px;border:1px solid var(--gm)">
-    <div style="font-size:12px;color:var(--gd);font-weight:500;margin-bottom:8px">Report summary</div>
+    <div style="font-size:12px;color:var(--gd);font-weight:500;margin-bottom:8px">${USER.name ? san(USER.name)+'\u2019s report summary' : 'Report summary'}</div>
     <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
-      <div><div style="font-size:10px;color:var(--gd)">Location</div><div style="font-size:14px;font-weight:700;color:var(--gd)">${city.name.split(',')[0]}</div></div>
+      <div><div style="font-size:10px;color:var(--gd)">Location</div><div style="font-size:14px;font-weight:700;color:var(--gd)">${locDisplay.split(',')[0]}</div></div>
       <div><div style="font-size:10px;color:var(--gd)">Annual savings</div><div style="font-size:14px;font-weight:700;color:var(--gd)">${fmt(annualSav)}</div></div>
       <div><div style="font-size:10px;color:var(--gd)">Payback</div><div style="font-size:14px;font-weight:700;color:var(--gd)">${pb} years</div></div>
       <div><div style="font-size:10px;color:var(--gd)">25yr profit</div><div style="font-size:14px;font-weight:700;color:var(--gd)">${fmt(profit)}</div></div>
@@ -1959,20 +2548,21 @@ function renderReport(c){
       <div style="width:36px;height:36px;border-radius:8px;background:var(--gl);display:flex;align-items:center;justify-content:center;flex-shrink:0">
         <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="3" y="2" width="12" height="14" rx="2" stroke="#1D9E75" stroke-width="1.5" fill="none"/><path d="M6 6h6M6 9h6M6 12h4" stroke="#1D9E75" stroke-width="1.2" stroke-linecap="round"/></svg>
       </div>
-      <div style="flex:1"><div style="font-size:13px;font-weight:600;color:var(--dgrey)">Full system design report (PDF)</div><div style="font-size:11px;color:#666">Load profile · solar sizing · economics · 25-year chart · accuracy table · disclaimer</div></div>
-      <button class="btn btn-primary" onclick="downloadReport()">Download PDF</button>
+      <div style="flex:1"><div style="font-size:13px;font-weight:600;color:var(--dgrey)">Full system design report (PDF)</div><div style="font-size:11px;color:#666">6-page professional report \u00b7 solar \u00b7 economics \u00b7 rebates \u00b7 heat pump \u00b7 recommendations</div></div>
+      <button class="btn btn-primary" onclick="${currentUser ? 'downloadReport()' : 'openAuth(\'signup\');showToast(\'Create account to download your report\')'}">Download PDF</button>
     </div>
     <div style="background:#f9f9f9;border-radius:10px;padding:14px;display:flex;align-items:center;gap:12px">
       <div style="width:36px;height:36px;border-radius:8px;background:var(--bll);display:flex;align-items:center;justify-content:center;flex-shrink:0">
         <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 2v10M4 8l5 5 5-5M3 16h12" stroke="#378ADD" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
       </div>
       <div style="flex:1"><div style="font-size:13px;font-weight:600;color:var(--dgrey)">Share this design</div><div style="font-size:11px;color:#666">Copy a shareable link to send to your partner, installer, or advisor</div></div>
-      <button class="btn" onclick="showToast('Link copied to clipboard!')">Copy link</button>
+      <button class="btn" onclick="copyShareText()">Copy link</button>
     </div>
+    ${USER.hasSolar === 'yes' ? '<div style="background:#f9f9f9;border-radius:10px;padding:14px;display:flex;align-items:center;gap:12px"><div style="width:36px;height:36px;border-radius:8px;background:#0D1B14;display:flex;align-items:center;justify-content:center;flex-shrink:0"><div style="width:8px;height:8px;border-radius:50%;background:#1D9E75;animation:pulse 2s ease-in-out infinite"></div></div><div style="flex:1"><div style="font-size:13px;font-weight:600;color:var(--dgrey)">Connect your inverter</div><div style="font-size:11px;color:#666">Track actual vs estimated performance with live data from your installed system</div></div><button class="btn" onclick="openDashboard()">Open dashboard \u2192</button></div>' : ''}
   </div>
-  <div class="ai-box"><div class="ai-ico">AI</div><div class="ai-text"><strong>Jouli insight —</strong> Your report is ready. When meeting with installers, ask them to honour the STC rebate, confirm the panel brand and warranty, and provide a written performance guarantee. Get at least 3 quotes.</div></div>
-  <div class="btn-row"><button class="btn" onclick="goStep('econ')">← Back to economics</button><button class="btn" onclick="openInstallers()">Find installers →</button><button class="btn-primary btn" onclick="showToast('Starting over — location cleared!')">Start new design</button></div>
-  <div class="disclaimer">This report is indicative only. Not financial advice. Accuracy ±10–20%. Verify all figures with a CEC-accredited installer before purchasing.</div>
+  <div class="ai-box"><div class="ai-ico">AI</div><div class="ai-text"><strong>Jouli insight \u2014</strong> ${USER.name ? san(USER.name)+', your' : 'Your'} report is ready. When meeting with installers, ask them to honour the STC rebate ($${calcSTC(STATE.sysKw||10, getSTCZone(STATE.city||'melbourne'), 2026).value.toLocaleString()}), confirm the panel brand and warranty, and provide a written performance guarantee. Get at least 3 quotes.</div></div>
+  <div class="btn-row"><button class="btn" onclick="goStep('econ')">\u2190 Back to economics</button><button class="btn" onclick="openInstallers()">Find installers \u2192</button><button class="btn-primary btn" onclick="showLanding()">Back to home</button></div>
+  <div class="disclaimer">This report is indicative only. Not financial advice. Accuracy ${STATE.accuracyLevel==='address'?'\u00b15\u20138':STATE.liveIrr?'\u00b18\u201312':'\u00b110\u201320'}%. Verify all figures with a CEC-accredited installer before purchasing.</div>
   `;
 }
 // ── INIT ──────────────────────────────────────────────────────────────────────
@@ -1991,6 +2581,54 @@ const FALLBACK_IRR = {
   '26': { name:'Canberra, ACT',  lat:-35.28, lon:149.13, irr:[6.8,6.2,5.5,4.1,3.0,2.5,2.8,3.8,5.2,6.1,6.7,7.0] },
 };
 const NASA_MONTHS_KEY = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+
+// ── ADDRESS LOOKUP (maximum accuracy) ────────────────────────────────────────
+async function lookupAddress(){
+  var addr = document.getElementById('address-inp').value.trim();
+  if(!addr || addr.length < 5){ showToast('Enter a full address, e.g. 42 Wallaby Way, Sydney NSW 2000'); return; }
+  var res = document.getElementById('address-result');
+  if(res) res.innerHTML = '<span style="color:#EF9F27">Looking up your address...</span>';
+  try {
+    var geoResp = await fetch('https://nominatim.openstreetmap.org/search?q='+encodeURIComponent(addr+', Australia')+'&format=json&limit=1&addressdetails=1');
+    var geoData = await geoResp.json();
+    if(!geoData.length) throw new Error('Address not found');
+    var lat = parseFloat(geoData[0].lat).toFixed(6);
+    var lon = parseFloat(geoData[0].lon).toFixed(6);
+    var display = geoData[0].display_name.split(',').slice(0,3).join(',').trim();
+    var addrDetails = geoData[0].address || {};
+    var suburb = addrDetails.suburb || addrDetails.town || addrDetails.city || '';
+    var state = addrDetails.state || '';
+    var postcode = addrDetails.postcode || '';
+    if(res) res.innerHTML = '<span style="color:#EF9F27">Fetching NASA satellite data for '+lat+', '+lon+'...</span>';
+    // NASA POWER fetch
+    var nasaResp = await fetch('https://power.larc.nasa.gov/api/temporal/climatology/point?parameters=ALLSKY_SFC_SW_DWN&community=RE&longitude='+lon+'&latitude='+lat+'&format=JSON');
+    var nasaData = await nasaResp.json();
+    var raw = nasaData.properties.parameter.ALLSKY_SFC_SW_DWN;
+    var irr = NASA_MONTHS_KEY.map(function(m){return parseFloat(raw[m].toFixed(2))});
+    var annAvg = parseFloat((irr.reduce(function(a,b){return a+b},0)/12).toFixed(2));
+    // Store in STATE with full precision
+    STATE.liveIrr = irr;
+    STATE.liveName = display;
+    STATE.lat = lat;
+    STATE.lon = lon;
+    STATE.address = addr;
+    STATE.suburb = suburb;
+    STATE.state = state;
+    STATE.postcode = postcode;
+    STATE.accuracyLevel = 'address'; // highest
+    // Update sidebar
+    var sbv = document.getElementById('sb-loc-val');
+    if(sbv) sbv.textContent = suburb || display.split(',')[0];
+    var appLabel = document.getElementById('app-loc-label');
+    if(appLabel) appLabel.textContent = USER.name ? 'Hi '+USER.name+' \u00b7 '+suburb : suburb || display.split(',')[0];
+    if(res) res.innerHTML = '<span style="color:#1D9E75">\u2713 <strong>'+display+'</strong> \u00b7 '+annAvg+' kWh/m\u00b2/day \u00b7 Lat '+lat+' Lon '+lon+' \u00b7 <span style="background:#E1F5EE;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:600">\u00b15% accuracy</span></span>';
+    showToast('\u2713 Live NASA data loaded for '+display+' \u2014 maximum accuracy');
+    if(typeof posthog !== 'undefined') posthog.capture('address_lookup', {address: addr, suburb: suburb, lat: lat, lon: lon});
+  } catch(e){
+    if(res) res.innerHTML = '<span style="color:#E24B4A">Could not find that address \u2014 try adding suburb and state</span>';
+    console.warn('Address lookup error:', e);
+  }
+}
 
 async function lookupPostcode() {
   const pc = document.getElementById('postcode-inp').value.trim();
@@ -2043,6 +2681,34 @@ function renderBat(c){
   const dailyGen=annGen/365;
   const dailyLoad=22.4;
   c.innerHTML=`
+  
+  <!-- Battery step visual header -->
+  <div style="width:100%;height:90px;border-radius:14px;overflow:hidden;margin-bottom:14px;background:linear-gradient(135deg,#0c2240,#164a7a);position:relative;display:flex;align-items:center;justify-content:space-between;padding:0 20px">
+    <div>
+      <div style="font-size:11px;color:#85B7EB;margin-bottom:2px">Step 4 of 12</div>
+      <div style="font-size:16px;font-weight:700;color:white;letter-spacing:-.3px">Battery sizing</div>
+      <div style="font-size:11px;color:#5DCAA5;margin-top:2px">LFP vs NMC · autonomy days</div>
+    </div>
+    <svg width="120" height="70" viewBox="0 0 120 70">
+      <!-- Battery pack illustration -->
+      <rect x="20" y="15" width="60" height="42" rx="5" fill="rgba(55,138,221,.15)" stroke="#378ADD" stroke-width="1.5"/>
+      <!-- Battery terminal -->
+      <rect x="80" y="28" width="8" height="16" rx="3" fill="#378ADD" opacity=".5"/>
+      <!-- Battery cells -->
+      <rect x="26" y="21" width="10" height="30" rx="2" fill="#378ADD" opacity=".7"/>
+      <rect x="39" y="21" width="10" height="30" rx="2" fill="#378ADD" opacity=".55"/>
+      <rect x="52" y="21" width="10" height="30" rx="2" fill="#378ADD" opacity=".4"/>
+      <rect x="65" y="21" width="10" height="30" rx="2" fill="#378ADD" opacity=".25"/>
+      <!-- Charge indicator -->
+      <rect x="26" y="47" width="10" height="4" rx="1" fill="#5DCAA5"/>
+      <rect x="39" y="47" width="10" height="4" rx="1" fill="#5DCAA5"/>
+      <rect x="52" y="47" width="10" height="4" rx="1" fill="#5DCAA5"/>
+      <!-- Lightning bolt -->
+      <path d="M100 25 L93 38 L100 38 L93 51" stroke="#1D9E75" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+      <!-- Percentage -->
+      <text x="33" y="68" font-size="9" fill="#85B7EB" font-family="monospace" opacity=".8">87% charged</text>
+    </svg>
+  </div>
   <div class="sec-head"><div class="sec-title2">Battery sizing engine</div><div class="sec-sub2">${CITIES[STATE.city||'melbourne'].name} · ${sysKw} kW solar</div></div>
   <div style="background:#E1F5EE;border-radius:12px;padding:16px 20px;margin-bottom:14px;border:0.5px solid #5DCAA5;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
     <div><div style="font-size:11px;color:#085041;font-weight:500;margin-bottom:3px">Recommended battery size</div>
@@ -2462,8 +3128,28 @@ function finishOnboarding(){
       priority: USER.priority, monthlyBill: USER.monthlyBill, name: !!USER.name
     });
   }
+
+  // Auto-create Supabase account with onboarding email if provided
+  if(USER.email && supabase && !currentUser){
+    var tempPw = 'jouli_' + USER.email.split('@')[0] + '_2026';
+    supabase.auth.signUp({email: USER.email, password: tempPw, options:{data:{name:USER.name,role:USER.role}}}).then(function(result){
+      if(result.data && result.data.user){
+        setLoggedIn(result.data.user);
+        showToast('\u2713 Account created for '+USER.email+' \u2014 check your inbox to verify');
+      }
+    }).catch(function(){});
+  }
+
   applyPersonalisation();
   goStep('loc');
+
+  // Show personalised welcome toast
+  var welcomeMsg = USER.name ? 'Welcome, '+USER.name+'!' : 'Welcome!';
+  var interestMap = {solar:' Let\u2019s size your solar system.',
+    'solar+battery':' Let\u2019s design your solar + battery system.',
+    full:' Let\u2019s design your complete energy system.',
+    review:' Let\u2019s review your existing system.'};
+  showToast(welcomeMsg + (interestMap[USER.interest] || ' Let\u2019s get started.'));
 }
 
 function skipOnboarding(){
@@ -2473,9 +3159,10 @@ function skipOnboarding(){
 }
 
 function applyPersonalisation(){
-  // Update app header with name
+  // Update app header with name + location
   var label = document.getElementById('app-loc-label');
-  if(label) label.textContent = USER.name ? 'Hi '+USER.name : 'Step 1 of 13';
+  var locName = STATE.liveName ? STATE.liveName.split(',')[0] : '';
+  if(label) label.textContent = USER.name ? 'Hi '+USER.name+(locName?' \u00b7 '+locName:'') : (locName || 'Step 1 of 13');
 
   // If user already has solar, show dashboard shortcut
   if(USER.hasSolar === 'yes'){
@@ -2489,6 +3176,15 @@ function applyPersonalisation(){
       var dashBtn = topbar.querySelector('[onclick="openDashboard()"]') || topbar.children[topbar.children.length-1];
       dashBtn.parentNode.insertBefore(btn, dashBtn);
     }
+  }
+
+  // Prompt sign-up/sign-in after Discover phase completes (4 steps)
+  if(!currentUser && STATE.visitedSteps && STATE.visitedSteps.size >= 3){
+    setTimeout(function(){
+      if(!currentUser && !document.querySelector('.auth-overlay.open')){
+        showToast('Create a free account to save your design and unlock more features');
+      }
+    }, 2000);
   }
 }
 
@@ -2583,6 +3279,7 @@ document.addEventListener('keydown', function(e){
 // ── SUPABASE AUTH + SAVE/RETURN ───────────────────────────────────────────────
 var SUPABASE_URL = 'https://oodkonxwgpefahwrecfj.supabase.co';
 var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9vZGtvbnh3Z3BlZmFod3JlY2ZqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyODI2MDksImV4cCI6MjA4OTg1ODYwOX0.IDRjJF2lasW6n1SfLqk12dr_3wdlenMrw_WYPdd9Wpg';
+var _supabaseSDK = window.supabase; // save SDK reference before we shadow it
 var supabase = null;
 var currentUser = null;
 var authMode = 'signup';
@@ -2592,8 +3289,9 @@ function initSupabase(){
   if(!SUPABASE_URL || !SUPABASE_ANON_KEY) return;
   if(supabase) return; // already initialised
   try {
-    if(typeof window.supabase !== 'undefined' && window.supabase.createClient){
-      supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    var sdk = _supabaseSDK || window.supabase;
+    if(sdk && typeof sdk.createClient === 'function'){
+      supabase = sdk.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
       checkSession();
     }
   } catch(e){ console.warn('Supabase init error:', e); }
@@ -2610,14 +3308,18 @@ async function checkSession(){
 function setLoggedIn(user){
   currentUser = user;
   var email = user.email || '';
-  var initial = email[0].toUpperCase();
+  var displayName = USER.name || email.split('@')[0];
+  var initial = displayName[0].toUpperCase();
   var label = document.getElementById('auth-topbar-label');
   var avatar = document.getElementById('user-avatar-icon');
   var signout = document.getElementById('signout-btn');
-  if(label) label.textContent = email.split('@')[0];
+  if(label) label.textContent = displayName;
   if(avatar){ avatar.textContent = initial; avatar.style.background='#1D9E75'; }
   if(signout) signout.style.display = 'flex';
   USER.email = email;
+  // Update app header with personalised greeting
+  var appLabel = document.getElementById('app-loc-label');
+  if(appLabel) appLabel.textContent = 'Hi ' + displayName;
   if(typeof posthog !== 'undefined') posthog.identify(email);
 }
 
@@ -3231,10 +3933,19 @@ var INVERTERS = [
 ];
 
 function openDashboard(){
+  // Require login to access dashboard
+  if(!currentUser){
+    showToast('Create a free account to access your personalised dashboard');
+    openAuth('signup');
+    return;
+  }
   document.getElementById('dash-overlay').classList.add('open');
   document.body.style.overflow = 'hidden';
   renderInverterGrid();
   startDashboard();
+  // Personalise dashboard header
+  var dashLabel = document.querySelector('.dash-logo-name');
+  if(dashLabel && USER.name) dashLabel.textContent = san(USER.name) + '\u2019s dashboard';
   if(typeof posthog !== 'undefined') posthog.capture('dashboard_opened');
 }
 
@@ -4981,7 +5692,7 @@ function showDailyCard(){
   var card = document.createElement('div');
   card.id = 'daily-card';
   card.style.cssText = 'background:#0D1B14;padding:14px 40px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px';
-  card.innerHTML = '<div><div style="font-size:13px;color:#5DCAA5;margin-bottom:2px">'+greeting+', '+(USER.name||'there')+' \u2600\ufe0f</div><div style="font-size:12px;color:rgba(255,255,255,.6)">'+city.name+' today: '+todayIrr.toFixed(1)+' kWh/m\u00b2 \u00b7 Your '+(STATE.sysKw||10)+'kW system \u2192 ~'+dailyGen+' kWh \u00b7 worth $'+dailyValue+'</div></div><button onclick="openApp()" style="font-size:12px;padding:7px 16px;border-radius:20px;background:#1D9E75;color:white;border:none;cursor:pointer;font-weight:500">Open my design \u2192</button>';
+  card.innerHTML = '<div><div style="font-size:13px;color:#5DCAA5;margin-bottom:2px">'+greeting+', '+san(USER.name||'there')+' \u2600\ufe0f</div><div style="font-size:12px;color:rgba(255,255,255,.6)">'+city.name+' today: '+todayIrr.toFixed(1)+' kWh/m\u00b2 \u00b7 Your '+(STATE.sysKw||10)+'kW system \u2192 ~'+dailyGen+' kWh \u00b7 worth $'+dailyValue+'</div></div><button onclick="openApp()" style="font-size:12px;padding:7px 16px;border-radius:20px;background:#1D9E75;color:white;border:none;cursor:pointer;font-weight:500">Open my design \u2192</button>';
   var nav = document.querySelector('nav');
   if(nav) nav.parentNode.insertBefore(card, nav.nextSibling);
 }
@@ -5159,7 +5870,6 @@ sendQuoteRequest = function(){
 var _origSetLoggedIn = setLoggedIn;
 setLoggedIn = function(user){
   _origSetLoggedIn(user);
-  // Wire to Loops.so with design context
   var LOOPS_KEY = '8c10a3422947564ef263e12a9af9df86';
   if(LOOPS_KEY && user.email){
     fetch('https://app.loops.so/api/v1/contacts/create', {
