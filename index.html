@@ -954,9 +954,13 @@ posthog.init('phc_ENTgdxizjfqwyiu4WeAfQhkMKXvuBoLzUqhCpnK8tG0',{api_host:'https:
       <h1>Your energy,<br><em>clearly.</em></h1>
       <p class="hero-body">Enter your postcode to see your solar potential in 10 seconds — real NASA satellite data, not estimates.</p>
       <div class="hero-postcode-row">
-        <input type="text" id="hero-postcode" placeholder="Enter your postcode" maxlength="4" oninput="this.value=this.value.replace(/\D/g,'')" onkeydown="if(event.key==='Enter')heroPostcodeLookup()"/>
+        <input type="text" id="hero-postcode" placeholder="Enter your postcode" maxlength="4"
+          oninput="this.value=this.value.replace(/\D/g,'');document.getElementById('hero-postcode-error').textContent='';this.style.borderColor=''"
+          onblur="if(this.value&&(this.value.length!==4||this.value<200)){document.getElementById('hero-postcode-error').textContent='Enter a valid 4-digit Australian postcode';this.style.borderColor='#C0392B'}"
+          onkeydown="if(event.key==='Enter')heroPostcodeLookup()"/>
         <button onclick="heroPostcodeLookup()" id="hero-postcode-btn">Show my solar potential</button>
       </div>
+      <div id="hero-postcode-error" style="font-size:12px;color:#C0392B;margin-top:4px;min-height:16px"></div>
       <div class="hero-result" id="hero-result">
         <div style="font-size:13px;font-weight:600;color:var(--gdp);margin-bottom:10px" id="hero-result-location">Your location</div>
         <div class="hero-result-grid">
@@ -975,6 +979,11 @@ posthog.init('phc_ENTgdxizjfqwyiu4WeAfQhkMKXvuBoLzUqhCpnK8tG0',{api_host:'https:
       </div>
     </div>
     <div class="hero-visual" style="position:relative">
+      <!-- Example output label -->
+      <div style="display:inline-flex;align-items:center;gap:5px;background:#FEF5E7;color:#E67E22;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;margin-bottom:8px;letter-spacing:.02em">
+        <svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="4" stroke="#E67E22" stroke-width="1.5" fill="none"/><line x1="5" y1="3" x2="5" y2="5.5" stroke="#E67E22" stroke-width="1.5" stroke-linecap="round"/><circle cx="5" cy="7" r=".8" fill="#E67E22"/></svg>
+        Example output — updates with your postcode
+      </div>
       <!-- Floating badges above illustration -->
       <div class="fb fb1"><div class="fbdot" style="background:#EF9F27"></div><span style="color:#633806;font-weight:600">Solar: 38.9 kWh today</span></div>
       
@@ -2289,7 +2298,16 @@ posthog.init('phc_ENTgdxizjfqwyiu4WeAfQhkMKXvuBoLzUqhCpnK8tG0',{api_host:'https:
       <span class="modal-title">Jouli white-label API</span>
       <button class="modal-close" onclick="closeModal('apidocs')" aria-label="Close dialog">✕</button>
     </div>
-    <div class="modal-body" id="api-docs-body"></div>
+    <div class="modal-body" id="api-docs-body">
+      <span class="modal-badge" style="background:#E6F1FB;color:#0C447C">v1.0 · REST API · JSON responses</span>
+      <h3>Jouli API — for energy platforms and installers</h3>
+      <p>The Jouli API gives solar installers, energy retailers, and comparison websites access to Jouli's calculation engine — postcode irradiance, STC rebates, system sizing, and economic modelling for any Australian address.</p>
+      <div style="background:#E1F5EE;border-radius:8px;padding:12px 14px;margin-bottom:14px;font-size:13px;color:#085041">
+        <strong>Business tier — $79/month</strong> includes full API access. White-label tier — $299/month for unlimited calls and custom branding.
+      </div>
+      <h3>Get in touch</h3>
+      <p>API access is available to Business tier subscribers. Contact <a href="mailto:hello@jouli.com.au" style="color:#1D9E75">hello@jouli.com.au</a> to discuss your integration.</p>
+    </div>
   </div>
 </div>
 
@@ -2313,7 +2331,11 @@ function updateBillCalc() {
   var annBill = bill * 4;
   var solarSaving = Math.round(annBill * 0.65);
   var systemCost = 12000;
-  var stcRebate = Math.min(Math.round(bill * 6.9), 4500);
+  // H-05: dynamic STC — system size derived from bill, deeming years auto-calculated
+  var systemSizeKw = Math.max(6.6, Math.min(13.2, (bill * 4) / 300));
+  var stcDeemYrs = Math.max(1, (typeof STC_DEEMING_END !== 'undefined' ? STC_DEEMING_END : 2030) - new Date().getFullYear());
+  var stcSpot = typeof STC_PRICE !== 'undefined' ? STC_PRICE : 39;
+  var stcRebate = Math.min(Math.round(systemSizeKw * 1.382 * stcDeemYrs * stcSpot), 9500);
   // F-026: Prevent NaN/Infinity/negative payback
   var payback = solarSaving > 0 ? Math.round((systemCost - stcRebate) / solarSaving * 10) / 10 : 0;
   if(isNaN(payback) || !isFinite(payback) || payback < 0) payback = 0;
@@ -2337,6 +2359,17 @@ function updateBillCalc() {
     chartAfter.setAttribute('height', afterH);
     document.getElementById('bchart-after-val').textContent = '$' + newBill + '/qtr';
   }
+}
+
+// ── SYSTEM SUMMARY STRIP (H-06) ─────────────────────────────────────────────
+function updateSummaryStrip() {
+  function sv(id, val) { var e = document.getElementById(id); if(e) e.textContent = val; }
+  sv('sb-loc-val',    (typeof STATE !== 'undefined' && STATE.liveName) ? STATE.liveName.split(',')[0] : '\u2014');
+  sv('sb-load-val',   (typeof STATE !== 'undefined' && STATE.realDailyLoad) ? STATE.realDailyLoad + ' kWh' : '\u2014');
+  sv('sb-solar-val',  (typeof STATE !== 'undefined' && STATE.sysKw) ? STATE.sysKw + ' kW' : '\u2014');
+  sv('sb-bat-val',    (typeof STATE !== 'undefined' && STATE.batKwh) ? STATE.batKwh + ' kWh' : '\u2014');
+  sv('sb-gen-val',    (typeof HERO_DATA !== 'undefined' && HERO_DATA && HERO_DATA.annGen) ? HERO_DATA.annGen.toLocaleString() + ' kWh' : '\u2014');
+  sv('sb-saving-val', (typeof HERO_DATA !== 'undefined' && HERO_DATA && HERO_DATA.annSav) ? '$' + HERO_DATA.annSav.toLocaleString() + '/yr' : '\u2014');
 }
 
 // ── IP GEOLOCATION — pre-fill hero postcode ──────────────────────────────────
@@ -2422,8 +2455,25 @@ function openApp(){
   });
   document.getElementById('landing').className='view';
   document.getElementById('app').className='app-shell active';
-  document.getElementById('ob-overlay').classList.add('open');
-  document.body.style.overflow='hidden';
+  // H-04: skip onboarding if user already completed it
+  var savedOb = null;
+  try { savedOb = JSON.parse(localStorage.getItem('jouli_onboarding')); } catch(e) {}
+  if(savedOb && savedOb.role) {
+    USER.name = savedOb.name || '';
+    USER.email = savedOb.email || '';
+    USER.role = savedOb.role || 'homeowner';
+    USER.interest = savedOb.interest || 'solar';
+    USER.hasSolar = savedOb.hasSolar || false;
+    USER.priority = savedOb.priority || 'savings';
+    USER.monthlyBill = savedOb.monthlyBill || 200;
+    var estD = Math.round(USER.monthlyBill / ((STATE.gridRate||32)/100) / 30.4 * 10)/10;
+    if(estD > 5 && estD < 100) STATE.realDailyLoad = estD;
+    applyPersonalisation();
+    goStep('loc');
+  } else {
+    document.getElementById('ob-overlay').classList.add('open');
+    document.body.style.overflow='hidden';
+  }
   // Show AI chat button
   var aiBtn = document.getElementById('ai-chat-btn');
   if(aiBtn) aiBtn.style.display='flex';
@@ -3384,7 +3434,17 @@ function finishOnboarding(){
   // Note: Account creation now requires explicit sign-up via the auth modal.
   // We no longer auto-create accounts with generated passwords (security risk).
 
+  // H-04: persist onboarding to localStorage so modal is skipped on return visits
+  try {
+    localStorage.setItem('jouli_onboarding', JSON.stringify({
+      name: USER.name, email: USER.email, role: USER.role,
+      interest: USER.interest, hasSolar: USER.hasSolar,
+      priority: USER.priority, monthlyBill: USER.monthlyBill
+    }));
+  } catch(e) {}
+
   applyPersonalisation();
+  updateSummaryStrip();
   goStep('loc');
 
   // Show personalised welcome toast
@@ -5899,6 +5959,12 @@ async function heroPostcodeLookup(){
     // Store
     HERO_DATA = { pc:pc, lat:lat, lon:lon, name:locationName, irr:irr, avgIrr:avgIrr, annGen:annGen, annSav:annSav, stcVal:stcVal, stcZone:stcZone };
     STATE.liveIrr = irr; STATE.liveName = locationName; STATE.lat = lat; STATE.lon = lon;
+    // Clear any inline error, update sidebar summary (H-06, M-02)
+    var pcErr = document.getElementById('hero-postcode-error');
+    if(pcErr) pcErr.textContent = '';
+    var pcInp = document.getElementById('hero-postcode');
+    if(pcInp) pcInp.style.borderColor = '';
+    updateSummaryStrip();
     // Update hero card (FIX-07: use explicit IDs, not fragile querySelectorAll index)
     var hcardTitle = document.getElementById('hcard-location-title');
     if(hcardTitle) hcardTitle.textContent = san(locationName) + ' \u00b7 10 kW';
