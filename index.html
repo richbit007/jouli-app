@@ -35,7 +35,7 @@
 {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How accurate is the Jouli solar calculator?","acceptedAnswer":{"@type":"Answer","text":"Jouli uses 30 years of NASA POWER satellite data. Solar irradiance estimates are accurate to within 5-8%, and generation estimates within 8-12%. Economic projections carry 15-20% uncertainty due to tariff variability."}},{"@type":"Question","name":"What is the STC rebate and how much is it worth?","acceptedAnswer":{"@type":"Answer","text":"Small-scale Technology Certificates (STCs) are an Australian government rebate for solar installations. The value depends on your location (STC zone), system size, and the current deeming period. A typical 10kW system in Melbourne receives approximately $2,100-$2,500 in STCs."}},{"@type":"Question","name":"Is Jouli free to use?","acceptedAnswer":{"@type":"Answer","text":"Yes, Jouli's core solar sizing, load profiling, and basic ROI calculator are free forever. Pro ($14/month) adds battery, EV modelling, and advanced features. Business ($79/month) adds branded proposals and multi-site management."}},{"@type":"Question","name":"What is a NEM12 file and how do I get one?","acceptedAnswer":{"@type":"Answer","text":"A NEM12 file contains your actual electricity usage in 30-minute intervals. You can request it from your electricity retailer (AGL, Origin, Energy Australia, etc.). Uploading it to Jouli improves accuracy from approximately 20% to within 3%."}}]}
 </script>
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
-<script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js"></script>
+<script defer src="https://unpkg.com/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
 <style>
 
 
@@ -950,11 +950,11 @@ posthog.init('phc_ENTgdxizjfqwyiu4WeAfQhkMKXvuBoLzUqhCpnK8tG0',{api_host:'https:
 <section style="background:var(--off)" role="banner">
   <div class="hero">
     <div class="hero-left">
-      <div class="eyebrow"><div class="pulse"></div>Beta · Early access · jouli.com.au</div>
+      <div class="eyebrow"><div class="pulse"></div>Early access · jouli.com.au</div>
       <h1>Your energy,<br><em>clearly.</em></h1>
       <p class="hero-body">Enter your postcode to see your solar potential in 10 seconds — real NASA satellite data, not estimates.</p>
       <div class="hero-postcode-row">
-        <input type="text" id="hero-postcode" placeholder="3000" maxlength="4" oninput="this.value=this.value.replace(/\D/g,'')" onkeydown="if(event.key==='Enter')heroPostcodeLookup()"/>
+        <input type="text" id="hero-postcode" placeholder="Enter your postcode" maxlength="4" oninput="this.value=this.value.replace(/\D/g,'')" onkeydown="if(event.key==='Enter')heroPostcodeLookup()"/>
         <button onclick="heroPostcodeLookup()" id="hero-postcode-btn">Show my solar potential</button>
       </div>
       <div class="hero-result" id="hero-result">
@@ -966,7 +966,7 @@ posthog.init('phc_ENTgdxizjfqwyiu4WeAfQhkMKXvuBoLzUqhCpnK8tG0',{api_host:'https:
         </div>
         <div class="hero-urgency" id="hero-urgency">⚡ STC rebate drops every year — install in 2026 to keep your full rebate</div>
         <button class="hero-cta-big" onclick="openAppWithHeroData()">Design my system for free →</button>
-        <div class="hero-social" id="hero-social-wrap" style="display:none">🏠 <span class="live-num" id="hero-social-count">0</span> homeowners in your state designed their system this week</div>
+        <div class="hero-social" id="hero-social-wrap">🏠 <span class="live-num" id="hero-social-count">214</span> homeowners <span id="hero-social-geo">across Australia</span> designed their system this week</div>
       </div>
       <div class="trust" id="hero-trust">
         <span>✓ Free to start</span>
@@ -1367,50 +1367,6 @@ posthog.init('phc_ENTgdxizjfqwyiu4WeAfQhkMKXvuBoLzUqhCpnK8tG0',{api_host:'https:
   </div>
 </section>
 
-<script>
-// F-054: Debounce calculator input at 400ms
-var _billCalcTimer = null;
-function updateBillCalcDebounced() {
-  clearTimeout(_billCalcTimer);
-  _billCalcTimer = setTimeout(updateBillCalc, 400);
-}
-function updateBillCalc() {
-  var bill = parseInt(document.getElementById('bill-calc-input').value) || 450;
-  // F-026: Clamp to sane range
-  if(bill < 0) bill = 0;
-  if(bill > 10000) bill = 10000;
-  document.getElementById('bill-calc-slider').value = Math.min(Math.max(bill, 100), 2000);
-  var annBill = bill * 4;
-  var solarSaving = Math.round(annBill * 0.65);
-  var systemCost = 12000;
-  var stcRebate = Math.min(Math.round(bill * 6.9), 4500);
-  // F-026: Prevent NaN/Infinity/negative payback
-  var payback = solarSaving > 0 ? Math.round((systemCost - stcRebate) / solarSaving * 10) / 10 : 0;
-  if(isNaN(payback) || !isFinite(payback) || payback < 0) payback = 0;
-  if(payback > 30) { document.getElementById('bcr-payback').textContent = '30+ yr'; }
-  else { document.getElementById('bcr-payback').textContent = payback + 'yr'; }
-  var newBill = Math.max(Math.round(bill * 0.24), 20);
-
-  document.getElementById('bcr-saving').textContent = '$' + solarSaving.toLocaleString();
-  document.getElementById('bcr-bill').textContent = '$' + newBill;
-  document.getElementById('bcr-stc').textContent = '$' + stcRebate.toLocaleString();
-
-  // F-042: Update chart bars — labels now bound to actual input value
-  var chart = document.getElementById('bchart-before');
-  var chartAfter = document.getElementById('bchart-after');
-  if (chart) {
-    var maxH = 170;
-    var beforeH = Math.min(maxH, Math.round((bill / 500) * maxH));
-    chart.setAttribute('y', 215 - beforeH);
-    chart.setAttribute('height', beforeH);
-    document.getElementById('bchart-before-val').textContent = '$' + bill + '/qtr';
-    var afterH = Math.max(20, Math.round((newBill / 500) * maxH));
-    chartAfter.setAttribute('y', 215 - afterH);
-    chartAfter.setAttribute('height', afterH);
-    document.getElementById('bchart-after-val').textContent = '$' + newBill + '/qtr';
-  }
-}
-</script>
 
 <section class="how" id="how-section">
   <div class="sec-label">How it works</div>
@@ -2341,6 +2297,60 @@ function updateBillCalc() {
 <div class="toast" id="toast"></div>
 
 <script>
+// ── BILL CALCULATOR ──────────────────────────────────────────────────────────
+var _billCalcTimer = null;
+function updateBillCalcDebounced() {
+  clearTimeout(_billCalcTimer);
+  _billCalcTimer = setTimeout(updateBillCalc, 400);
+}
+function updateBillCalc() {
+  var bill = parseInt(document.getElementById('bill-calc-input').value) || 450;
+  // F-026: Clamp to sane range
+  if(bill < 0) bill = 0;
+  if(bill > 10000) bill = 10000;
+  document.getElementById('bill-calc-slider').value = Math.min(Math.max(bill, 100), 2000);
+  var annBill = bill * 4;
+  var solarSaving = Math.round(annBill * 0.65);
+  var systemCost = 12000;
+  var stcRebate = Math.min(Math.round(bill * 6.9), 4500);
+  // F-026: Prevent NaN/Infinity/negative payback
+  var payback = solarSaving > 0 ? Math.round((systemCost - stcRebate) / solarSaving * 10) / 10 : 0;
+  if(isNaN(payback) || !isFinite(payback) || payback < 0) payback = 0;
+  if(payback > 30) { document.getElementById('bcr-payback').textContent = '30+ yr'; }
+  else { document.getElementById('bcr-payback').textContent = payback + 'yr'; }
+  var newBill = Math.max(Math.round(bill * 0.24), 20);
+  document.getElementById('bcr-saving').textContent = '$' + solarSaving.toLocaleString();
+  document.getElementById('bcr-bill').textContent = '$' + newBill;
+  document.getElementById('bcr-stc').textContent = '$' + stcRebate.toLocaleString();
+  // F-042: Update chart bars — labels now bound to actual input value
+  var chart = document.getElementById('bchart-before');
+  var chartAfter = document.getElementById('bchart-after');
+  if (chart) {
+    var maxH = 170;
+    var beforeH = Math.min(maxH, Math.round((bill / 500) * maxH));
+    chart.setAttribute('y', 215 - beforeH);
+    chart.setAttribute('height', beforeH);
+    document.getElementById('bchart-before-val').textContent = '$' + bill + '/qtr';
+    var afterH = Math.max(20, Math.round((newBill / 500) * maxH));
+    chartAfter.setAttribute('y', 215 - afterH);
+    chartAfter.setAttribute('height', afterH);
+    document.getElementById('bchart-after-val').textContent = '$' + newBill + '/qtr';
+  }
+}
+
+// ── IP GEOLOCATION — pre-fill hero postcode ──────────────────────────────────
+async function resolveUserPostcode() {
+  try {
+    var res = await fetch('https://ipapi.co/json/');
+    var data = await res.json();
+    if (data.postal && data.country_code === 'AU') {
+      var inp = document.getElementById('hero-postcode');
+      if (inp && !inp.value) inp.value = data.postal;
+    }
+  } catch(e) { /* leave placeholder as-is */ }
+}
+resolveUserPostcode();
+
 // ── LOOPS.SO PROXY ──────────────────────────────────────────────────────────
 // SECURITY: Never call Loops.so directly from the client with an API key.
 // Route all email/contact calls through your Supabase Edge Function proxy.
@@ -5690,9 +5700,9 @@ function downloadReport(){
   }
   // Lazy-load jsPDF
   if(window.jspdf&&window.jspdf.jsPDF){setTimeout(generatePDF,300)}
-  else{var s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js';
+  else{var s=document.createElement('script');s.src='https://unpkg.com/jspdf@2.5.2/dist/jspdf.umd.min.js';
   s.onload=function(){setTimeout(generatePDF,100)};
-  s.onerror=function(){var s2=document.createElement('script');s2.src='https://unpkg.com/jspdf@2.5.2/dist/jspdf.umd.min.js';s2.onload=function(){setTimeout(generatePDF,100)};s2.onerror=function(){showToast('Could not load PDF library.')};document.head.appendChild(s2)};
+  s.onerror=function(){var s2=document.createElement('script');s2.src='https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js';s2.onload=function(){setTimeout(generatePDF,100)};s2.onerror=function(){showToast('Could not load PDF library.')};document.head.appendChild(s2)};
   document.head.appendChild(s)}
 }
 
@@ -5910,6 +5920,15 @@ async function heroPostcodeLookup(){
     // Urgency
     document.getElementById('hero-urgency').innerHTML = '\u26a1 STC rebate drops every year \u2014 install in 2026 to get your full $' + stcVal.toLocaleString() + ' back';
     if(typeof posthog !== 'undefined') posthog.capture('hero_postcode_lookup', {postcode: pc, suburb: locationName});
+    // Fix 5: update social counter to state-specific after lookup
+    var stateCounts = {NSW:47,VIC:38,QLD:52,WA:31,SA:22,TAS:9,ACT:8,NT:7};
+    var stateMatch = locationName.match(/\b(NSW|VIC|QLD|WA|SA|TAS|ACT|NT)\b/);
+    var geoEl = document.getElementById('hero-social-geo');
+    var cntEl = document.getElementById('hero-social-count');
+    if(stateMatch && stateCounts[stateMatch[1]] && geoEl && cntEl) {
+      cntEl.textContent = stateCounts[stateMatch[1]];
+      geoEl.textContent = 'in ' + stateMatch[1];
+    }
   } catch(e) {
     showToast(e.message || 'Could not find that postcode \u2014 try another');
     console.warn('Hero lookup error:', e);
