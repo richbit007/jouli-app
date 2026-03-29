@@ -941,7 +941,7 @@ posthog.init('phc_ENTgdxizjfqwyiu4WeAfQhkMKXvuBoLzUqhCpnK8tG0',{api_host:'https:
     <a href="#how-section" onclick="event.preventDefault();scrollToSection('how-section');document.querySelector('.nav-links').classList.remove('mobile-open')">How it works</a>
     <a href="#feat-section" onclick="event.preventDefault();scrollToSection('feat-section');document.querySelector('.nav-links').classList.remove('mobile-open')">Features</a>
     <a href="#price-section" onclick="event.preventDefault();scrollToSection('price-section');document.querySelector('.nav-links').classList.remove('mobile-open')">Pricing</a>
-    <a href="#" onclick="event.preventDefault();openInstallers();document.querySelector('.nav-links').classList.remove('mobile-open')">Find installers</a>
+    <a href="javascript:void(0)" onclick="openInstallers();document.querySelector('.nav-links').classList.remove('mobile-open')">Find installers</a>
   </div>
   <button class="nav-btn" onclick="openApp()" aria-label="Start using Jouli for free">Try Jouli free</button>
 </nav>
@@ -1208,14 +1208,14 @@ posthog.init('phc_ENTgdxizjfqwyiu4WeAfQhkMKXvuBoLzUqhCpnK8tG0',{api_host:'https:
       <!-- Stats card below illustration -->
       <div class="hcard" style="margin-top:12px">
         <div class="hcard-top">
-          <div class="hcard-title"><svg width="18" height="18"><use href="#jouli-icon"/></svg>Melbourne, VIC · 10 kW</div>
+          <div class="hcard-title"><svg width="18" height="18"><use href="#jouli-icon"/></svg><span id="hcard-location-title">Enter your postcode above</span></div>
           <span class="hcard-badge">Live estimate</span>
         </div>
         <div class="hcard-stats">
-          <div class="hcs"><div class="hcs-val">$2,840</div><div class="hcs-label">Est. annual savings</div></div>
-          <div class="hcs"><div class="hcs-val">6.2 yrs</div><div class="hcs-label">Payback period</div></div>
-          <div class="hcs"><div class="hcs-val">63%</div><div class="hcs-label">Self-sufficiency</div></div>
-          <div class="hcs"><div class="hcs-val">14,200</div><div class="hcs-label">kWh/year</div></div>
+          <div class="hcs"><div class="hcs-val" id="hcs-savings">&mdash;</div><div class="hcs-label">Est. annual savings</div></div>
+          <div class="hcs"><div class="hcs-val" id="hcs-payback">&mdash;</div><div class="hcs-label">Payback period</div></div>
+          <div class="hcs"><div class="hcs-val" id="hcs-self">&mdash;</div><div class="hcs-label">Self-sufficiency</div></div>
+          <div class="hcs"><div class="hcs-val" id="hcs-gen">&mdash;</div><div class="hcs-label">kWh/year</div></div>
         </div>
         <div class="hcard-bars">
           <div class="hbar" style="height:82%;background:#EF9F27"></div><div class="hbar" style="height:94%;background:#EF9F27"></div>
@@ -1535,10 +1535,10 @@ posthog.init('phc_ENTgdxizjfqwyiu4WeAfQhkMKXvuBoLzUqhCpnK8tG0',{api_host:'https:
 <footer role="contentinfo" aria-label="Site footer">
   <div class="foot-logo"><svg width="22" height="22" aria-hidden="true"><use href="#jouli-icon"/></svg><span class="foot-name">jouli</span></div>
   <div class="foot-links" role="navigation" aria-label="Legal links">
-    <a href="#" onclick="event.preventDefault();openModal('privacy')" role="link" tabindex="0">Privacy</a>
-    <a href="#" onclick="event.preventDefault();openModal('terms')" role="link" tabindex="0">Terms</a>
-    <a href="#" onclick="event.preventDefault();openModal('accuracy')" role="link" tabindex="0">Accuracy</a>
-    <a href="#" onclick="event.preventDefault();openModal('contact')" role="link" tabindex="0">Contact</a>
+    <a href="javascript:void(0)" onclick="openModal('privacy')" role="link" tabindex="0">Privacy</a>
+    <a href="javascript:void(0)" onclick="openModal('terms')" role="link" tabindex="0">Terms</a>
+    <a href="javascript:void(0)" onclick="openModal('accuracy')" role="link" tabindex="0">Accuracy</a>
+    <a href="javascript:void(0)" onclick="openModal('contact')" role="link" tabindex="0">Contact</a>
   </div>
   <div class="foot-tag">Jouli · Your energy, clearly. · Australia</div>
 </footer>
@@ -1869,7 +1869,7 @@ posthog.init('phc_ENTgdxizjfqwyiu4WeAfQhkMKXvuBoLzUqhCpnK8tG0',{api_host:'https:
     <!-- STEP 1: About you -->
     <div id="ob-step-1">
       <div class="ob-title">Let's personalise<br>your energy design.</div>
-      <div class="ob-sub">Takes 30 seconds. Or <a href="#" onclick="event.preventDefault();skipOnboarding()" style="color:#1D9E75;font-weight:600;text-decoration:underline">skip and start exploring</a>.</div>
+      <div class="ob-sub">Takes 30 seconds. Or <a href="javascript:void(0)" onclick="skipOnboarding()" style="color:#1D9E75;font-weight:600;text-decoration:underline">skip and start exploring</a>.</div>
       <div class="ob-field">
         <label class="ob-label" for="ob-name">Your name</label>
         <input class="ob-input" id="ob-name" placeholder="e.g. Sarah" style="box-sizing:border-box"/>
@@ -2304,7 +2304,8 @@ function updateBillCalcDebounced() {
   _billCalcTimer = setTimeout(updateBillCalc, 400);
 }
 function updateBillCalc() {
-  var bill = parseInt(document.getElementById('bill-calc-input').value) || 450;
+  var rawVal = document.getElementById('bill-calc-input').value;
+  var bill = (rawVal === '' || rawVal === null || rawVal === undefined) ? 450 : Math.max(0, parseInt(rawVal) || 0);
   // F-026: Clamp to sane range
   if(bill < 0) bill = 0;
   if(bill > 10000) bill = 10000;
@@ -5898,14 +5899,17 @@ async function heroPostcodeLookup(){
     // Store
     HERO_DATA = { pc:pc, lat:lat, lon:lon, name:locationName, irr:irr, avgIrr:avgIrr, annGen:annGen, annSav:annSav, stcVal:stcVal, stcZone:stcZone };
     STATE.liveIrr = irr; STATE.liveName = locationName; STATE.lat = lat; STATE.lon = lon;
-    // Update hero card
-    var cardTitle = document.querySelector('.hcard-title');
-    if(cardTitle) cardTitle.innerHTML = '<svg width="18" height="18" aria-hidden="true"><use href="#jouli-icon"/></svg>' + san(locationName) + ' \u00b7 10 kW';
-    var vals = document.querySelectorAll('.hcs-val');
-    if(vals[0]) vals[0].textContent = '$' + annSav.toLocaleString();
-    if(vals[1]) vals[1].textContent = (annSav > 0 ? ((sysKw*1200+8000-stcVal)/annSav).toFixed(1) : '?') + ' yrs';
-    if(vals[2]) vals[2].textContent = Math.round(annGen*0.42/(22.4*365)*100) + '%';
-    if(vals[3]) vals[3].textContent = annGen.toLocaleString();
+    // Update hero card (FIX-07: use explicit IDs, not fragile querySelectorAll index)
+    var hcardTitle = document.getElementById('hcard-location-title');
+    if(hcardTitle) hcardTitle.textContent = san(locationName) + ' \u00b7 10 kW';
+    var hcsSav = document.getElementById('hcs-savings');
+    var hcsPay = document.getElementById('hcs-payback');
+    var hcsSelf = document.getElementById('hcs-self');
+    var hcsGen = document.getElementById('hcs-gen');
+    if(hcsSav) hcsSav.textContent = '$' + annSav.toLocaleString();
+    if(hcsPay) hcsPay.textContent = (annSav > 0 ? ((sysKw*1200+8000-stcVal)/annSav).toFixed(1) : '?') + ' yrs';
+    if(hcsSelf) hcsSelf.textContent = Math.round(annGen*0.42/(22.4*365)*100) + '%';
+    if(hcsGen) hcsGen.textContent = annGen.toLocaleString();
     // Update monthly bars
     var maxIrr = Math.max.apply(null, irr);
     var bars = document.querySelectorAll('.hbar');
@@ -5920,14 +5924,17 @@ async function heroPostcodeLookup(){
     // Urgency
     document.getElementById('hero-urgency').innerHTML = '\u26a1 STC rebate drops every year \u2014 install in 2026 to get your full $' + stcVal.toLocaleString() + ' back';
     if(typeof posthog !== 'undefined') posthog.capture('hero_postcode_lookup', {postcode: pc, suburb: locationName});
-    // Fix 5: update social counter to state-specific after lookup
-    var stateCounts = {NSW:47,VIC:38,QLD:52,WA:31,SA:22,TAS:9,ACT:8,NT:7};
+    // FIX-08: update social counter to state-specific after lookup
+    var stateCounts = {VIC:68,NSW:54,QLD:41,WA:28,SA:15,TAS:8};
     var stateMatch = locationName.match(/\b(NSW|VIC|QLD|WA|SA|TAS|ACT|NT)\b/);
     var geoEl = document.getElementById('hero-social-geo');
     var cntEl = document.getElementById('hero-social-count');
     if(stateMatch && stateCounts[stateMatch[1]] && geoEl && cntEl) {
       cntEl.textContent = stateCounts[stateMatch[1]];
       geoEl.textContent = 'in ' + stateMatch[1];
+    } else if(geoEl && cntEl) {
+      cntEl.textContent = '214';
+      geoEl.textContent = 'across Australia';
     }
   } catch(e) {
     showToast(e.message || 'Could not find that postcode \u2014 try another');
