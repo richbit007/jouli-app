@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /dashboard/
+
+# Rate limit crawlers
+Crawl-delay: 2
+
+Sitemap: https://www.jouli.com.au/sitemap.xml
