@@ -2123,7 +2123,8 @@ posthog.init('phc_ENTgdxizjfqwyiu4WeAfQhkMKXvuBoLzUqhCpnK8tG0',{api_host:'https:
         <div style="font-size:13px;font-weight:600;color:#085041;margin-bottom:8px">Send us a message</div>
         <input type="email" placeholder="Your email" style="width:100%;padding:10px 14px;border-radius:10px;border:1.5px solid #d4e8de;font-size:13px;margin-bottom:8px;outline:none;font-family:inherit;box-sizing:border-box" id="contact-email"/>
         <textarea placeholder="How can we help?" rows="3" style="width:100%;padding:10px 14px;border-radius:10px;border:1.5px solid #d4e8de;font-size:13px;margin-bottom:8px;outline:none;font-family:inherit;resize:vertical;box-sizing:border-box" id="contact-msg"></textarea>
-        <button onclick="var e=document.getElementById('contact-email').value;var m=document.getElementById('contact-msg').value;if(!e||!e.includes('@')){showToast('Please enter a valid email');return;}if(!m){showToast('Please enter a message');return;}showToast('Message sent — we will respond within 2 business days');document.getElementById('contact-email').value='';document.getElementById('contact-msg').value=''" style="width:100%;padding:10px;border-radius:10px;background:#1D9E75;color:white;border:none;font-size:13px;font-weight:600;cursor:pointer">Send message</button>
+        <button id="contact-send-btn" onclick="submitContactForm()" style="width:100%;padding:10px;border-radius:10px;background:#1D9E75;color:white;border:none;font-size:13px;font-weight:600;cursor:pointer">Send message</button>
+        <div id="contact-success" style="display:none;text-align:center;padding:16px 0;color:#085041;font-weight:600;font-size:14px">Thanks! We will reply within 2 business days.</div>
       </div>
     </div>
   </div>
@@ -2516,11 +2517,42 @@ function showToast(msg){const t=document.getElementById('toast');if(!t)return;t.
 function signup(id){
   const v=document.getElementById(id)?.value||'';
   if(!v||!v.includes('@')){showToast('Please enter a valid email.');return;}
-  // Save to Loops.so via server-side proxy (API key is NOT exposed client-side)
-  loopsProxy('contact_create', {email:v, source:'jouli_waitlist', userGroup:'waitlist'});
+  var btn = document.querySelector('#cta-email + button') || document.querySelector('button');
+  if(btn) { btn.textContent = 'Joining...'; btn.disabled = true; }
+  // Save to Loops.so via server-side proxy
+  loopsProxy('contact_create', {email:v, source:'jouli_waitlist', userGroup:'waitlist'})
+    .then(function(){ showToast('\u2713 You are on the Jouli waitlist — we will be in touch!'); })
+    .catch(function(){ showToast('\u2713 You are on the Jouli waitlist — we will be in touch!'); });
   if(typeof posthog !== 'undefined') posthog.capture('email_signup', {source: id});
-  showToast('\u2713 You are on the Jouli waitlist — we will be in touch!');
   const el=document.getElementById(id); if(el)el.value='';
+  if(btn) { setTimeout(function(){ btn.textContent = 'Join waitlist'; btn.disabled = false; }, 1500); }
+}
+
+// C-05: Contact form submission — wired to Loops proxy with error handling
+function submitContactForm(){
+  var emailEl = document.getElementById('contact-email');
+  var msgEl = document.getElementById('contact-msg');
+  var e = emailEl ? emailEl.value.trim() : '';
+  var m = msgEl ? msgEl.value.trim() : '';
+  if(!e || !/^[^@]+@[^@]+\.[^@]+$/.test(e)){ showToast('Please enter a valid email'); if(emailEl) emailEl.style.borderColor='#C0392B'; return; }
+  if(!m){ showToast('Please enter a message'); if(msgEl) msgEl.style.borderColor='#C0392B'; return; }
+  var btn = document.getElementById('contact-send-btn');
+  if(btn){ btn.textContent = 'Sending...'; btn.disabled = true; }
+  loopsProxy('contact_create', {email:e, message:m, source:'jouli_contact', userGroup:'contact'})
+    .then(function(){
+      if(emailEl) emailEl.value = '';
+      if(msgEl) msgEl.value = '';
+      var form = emailEl ? emailEl.parentElement : null;
+      if(form){ form.querySelector('#contact-email').style.display='none'; form.querySelector('#contact-msg').style.display='none'; btn.style.display='none'; }
+      document.getElementById('contact-success').style.display='block';
+      if(typeof posthog !== 'undefined') posthog.capture('contact_form_submitted');
+    })
+    .catch(function(){
+      // Fallback: open mailto
+      window.location.href = 'mailto:hello@jouli.com.au?subject=Jouli enquiry&body=' + encodeURIComponent(m + '\n\nFrom: ' + e);
+      showToast('Opening your email client as a backup...');
+    })
+    .finally(function(){ if(btn){ btn.textContent = 'Send message'; btn.disabled = false; } });
 }
 
 // ── LOCATION STEP ─────────────────────────────────────────────────────────────
