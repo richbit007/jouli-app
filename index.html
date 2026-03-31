@@ -35,7 +35,7 @@
 {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How accurate is the Jouli solar calculator?","acceptedAnswer":{"@type":"Answer","text":"Jouli uses 30 years of NASA POWER satellite data. Solar irradiance estimates are accurate to within 5-8%, and generation estimates within 8-12%. Economic projections carry 15-20% uncertainty due to tariff variability."}},{"@type":"Question","name":"What is the STC rebate and how much is it worth?","acceptedAnswer":{"@type":"Answer","text":"Small-scale Technology Certificates (STCs) are an Australian government rebate for solar installations. The value depends on your location (STC zone), system size, and the current deeming period. A typical 10kW system in Melbourne receives approximately $2,100-$2,500 in STCs."}},{"@type":"Question","name":"Is Jouli free to use?","acceptedAnswer":{"@type":"Answer","text":"Yes, Jouli's core solar sizing, load profiling, and basic ROI calculator are free forever. Pro ($14/month) adds battery, EV modelling, and advanced features. Business ($79/month) adds branded proposals and multi-site management."}},{"@type":"Question","name":"What is a NEM12 file and how do I get one?","acceptedAnswer":{"@type":"Answer","text":"A NEM12 file contains your actual electricity usage in 30-minute intervals. You can request it from your electricity retailer (AGL, Origin, Energy Australia, etc.). Uploading it to Jouli improves accuracy from approximately 20% to within 3%."}}]}
 </script>
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
-<script defer src="https://unpkg.com/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
 <style>
 
 
@@ -375,6 +375,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:16px 4
 /* ── HOW ─────────────────────────────────────────────────────────────────── */
 .how{max-width:1160px;margin:0 auto;padding:96px 48px}
 .sec-label{font-size:12px;color:var(--g);text-transform:uppercase;letter-spacing:.12em;font-weight:600;margin-bottom:12px}
+h2.sec-title{margin-top:0}
 .sec-title{font-size:40px;letter-spacing:-.8px;margin-bottom:14px;line-height:1.12;font-weight:800}
 .sec-body{font-size:16px;color:var(--text2);line-height:1.7;font-weight:400;max-width:500px;margin-bottom:48px}
 .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
@@ -687,11 +688,33 @@ footer{padding:36px 48px;background:var(--gdp);border-top:1px solid rgba(255,255
   .ob-roles{grid-template-columns:1fr}
 
   /* ── INSTALLER DIR ── */
+  .inst-overlay{overflow-x:hidden}
+  .inst-topbar{padding:12px 16px}
+  .inst-body{padding:16px;overflow-x:hidden}
   .inst-hero{flex-direction:column;padding:20px;gap:16px}
   .inst-hero-title{font-size:18px}
   .inst-grid{grid-template-columns:1fr}
   .inst-filters{gap:6px}
   .inst-search{min-width:100%;max-width:100%}
+
+  /* ── HERO INPUT OVERFLOW FIX ── */
+  .hero-left{max-width:100%;overflow:hidden}
+  .hero-left .signup-row,.hero-left div[style*="display:flex"]{flex-wrap:wrap}
+  .hero-left input,.hero-left button{max-width:100%;box-sizing:border-box}
+  #hero-postcode-btn{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:13px;padding:12px 16px}
+
+  /* ── FEATURES OVERFLOW FIX ── */
+  .feats{overflow-x:hidden}
+  .feats-inner{overflow:hidden;max-width:100vw}
+  .feat-d{word-break:break-word}
+
+  /* ── NAV CTA MOBILE FIX ── */
+  .nav-btn{font-size:12px;padding:8px 14px;white-space:nowrap}
+
+  /* ── EARLY ACCESS STATS GRID ── */
+  section[style*="padding:56px 40px"]{padding:56px 16px!important}
+  section[style*="padding:56px 40px"] > div > div[style*="grid-template-columns:repeat(3"]{grid-template-columns:1fr!important;gap:12px!important}
+  section[style*="padding:56px 40px"] > div > div[style*="grid-template-columns:repeat(4"]{grid-template-columns:repeat(2,1fr)!important;gap:10px!important}
 
   /* ── DASHBOARD ── */
   .dash-hero{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
@@ -941,7 +964,7 @@ posthog.init('phc_ENTgdxizjfqwyiu4WeAfQhkMKXvuBoLzUqhCpnK8tG0',{api_host:'https:
     <a href="#how-section" onclick="event.preventDefault();scrollToSection('how-section');document.querySelector('.nav-links').classList.remove('mobile-open')">How it works</a>
     <a href="#feat-section" onclick="event.preventDefault();scrollToSection('feat-section');document.querySelector('.nav-links').classList.remove('mobile-open')">Features</a>
     <a href="#price-section" onclick="event.preventDefault();scrollToSection('price-section');document.querySelector('.nav-links').classList.remove('mobile-open')">Pricing</a>
-    <a href="javascript:void(0)" onclick="openInstallers();document.querySelector('.nav-links').classList.remove('mobile-open')">Find installers</a>
+    <a href="/installers" onclick="event.preventDefault();openInstallers();document.querySelector('.nav-links').classList.remove('mobile-open')">Find installers</a>
   </div>
   <button class="nav-btn" onclick="openApp()" aria-label="Start using Jouli for free">Try Jouli free</button>
 </nav>
@@ -1379,8 +1402,8 @@ posthog.init('phc_ENTgdxizjfqwyiu4WeAfQhkMKXvuBoLzUqhCpnK8tG0',{api_host:'https:
 
 <section class="how" id="how-section">
   <div class="sec-label">How it works</div>
-  <div class="sec-title">From postcode to<br>proposal in minutes.</div>
-  <div class="sec-body">Six modules. One tool. Each audience gets the depth they need — no jargon, no pressure.</div>
+  <h2 class="sec-title">From postcode to<br>proposal in minutes.</h2>
+  <div class="sec-body">Six guided steps across 13 energy modules. Each audience gets the depth they need — no jargon, no pressure.</div>
   <div class="steps">
     <div class="step-c">
       <div style="width:48px;height:48px;border-radius:12px;background:#EAF3DE;display:flex;align-items:center;justify-content:center;margin-bottom:14px">
@@ -1462,11 +1485,11 @@ posthog.init('phc_ENTgdxizjfqwyiu4WeAfQhkMKXvuBoLzUqhCpnK8tG0',{api_host:'https:
 <section class="feats" id="feat-section">
   <div class="feats-inner">
     <div class="sec-label" style="color:var(--gm)">What makes Jouli different</div>
-    <div class="sec-title" style="color:white;max-width:480px">Built for Australia.<br>Built for everyone.</div>
+    <h2 class="sec-title" style="color:white;max-width:480px">Built for Australia.<br>Built for everyone.</h2>
     <div class="sec-body" style="color:var(--gp)">Every other tool is too simple or too expensive. Jouli is the first to serve homeowners, installers, and engineers in one product.</div>
     <div class="feat-grid">
       <div class="feat-c"><div class="feat-ico" style="background:rgba(239,159,39,.12)"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="4" fill="#EF9F27"/><path d="M9 2v2M9 14v2M2 9h2M14 9h2" stroke="#EF9F27" stroke-width="1.5" stroke-linecap="round"/></svg></div><div class="feat-t">Real Australian solar data</div><div class="feat-d">NASA POWER 30-year climatology for every Australian postcode — validated against BOM surface stations.</div></div>
-      <div class="feat-c"><div class="feat-ico" style="background:rgba(55,138,221,.12)"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="3" y="8" width="4" height="7" rx="1" fill="#378ADD"/><rect x="7" y="5" width="4" height="10" rx="1" fill="#378ADD" opacity=".6"/><path d="M3 7L7 5l4 1 4-4" stroke="#EF9F27" stroke-width="1.2" stroke-linecap="round" fill="none"/></svg></div><div class="feat-t">Solar + EV + battery together</div><div class="feat-d">4.26M solar rooftops. 410,000 EVs. Jouli is the only tool that models all three as one home energy system.</div></div>
+      <div class="feat-c"><div class="feat-ico" style="background:rgba(55,138,221,.12)"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="3" y="8" width="4" height="7" rx="1" fill="#378ADD"/><rect x="7" y="5" width="4" height="10" rx="1" fill="#378ADD" opacity=".6"/><path d="M3 7L7 5l4 1 4-4" stroke="#EF9F27" stroke-width="1.2" stroke-linecap="round" fill="none"/></svg></div><div class="feat-t">Solar + EV + battery together</div><div class="feat-d">4.1M solar rooftops (CER 2026). 410,000 EVs. Jouli is one of the only tools that models all three as one home energy system.</div></div>
       <div class="feat-c"><div class="feat-ico" style="background:rgba(29,158,117,.12)"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M2 14L6 8l3 3 4-6 3 3" stroke="#5DCAA5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></div><div class="feat-t">Live NEM tariff data</div><div class="feat-d">Feed-in tariffs and network charges updated from AEMO. Your economics always reflect what you actually pay.</div></div>
       <div class="feat-c"><div class="feat-ico" style="background:rgba(93,202,165,.12)"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="6" stroke="#5DCAA5" stroke-width="1.5" fill="none"/><path d="M6 9l2 2 4-4" stroke="#5DCAA5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="feat-t">Honest accuracy</div><div class="feat-d">Every number shows a confidence range. We tell you what we don't know and why a site visit closes the gap.</div></div>
       <div class="feat-c"><div class="feat-ico" style="background:rgba(175,169,236,.15)"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="3" fill="#7F77DD"/><path d="M9 3v2M9 13v2M3 9h2M13 9h2" stroke="#7F77DD" stroke-width="1.2" stroke-linecap="round"/></svg></div><div class="feat-t">AI insights in plain language</div><div class="feat-d">"Adding a battery saves you $940/year" — not "optimise your self-consumption ratio through storage arbitrage."</div></div>
@@ -1480,12 +1503,12 @@ posthog.init('phc_ENTgdxizjfqwyiu4WeAfQhkMKXvuBoLzUqhCpnK8tG0',{api_host:'https:
   <div style="max-width:1100px;margin:0 auto">
     <div style="text-align:center;margin-bottom:36px">
       <div class="sec-label" style="text-align:center">Early access</div>
-      <div class="sec-title" style="font-size:28px;text-align:center;max-width:480px;margin:0 auto">Join Australian homeowners<br>designing smarter energy.</div>
+      <h2 class="sec-title" style="font-size:28px;text-align:center;max-width:480px;margin:0 auto">Join Australian homeowners<br>designing smarter energy.</h2>
     </div>
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:36px">
       <div style="background:white;border-radius:16px;padding:22px;border:0.5px solid var(--border);text-align:center">
         <div style="font-size:48px;font-weight:800;color:var(--g);letter-spacing:-2px;line-height:1;margin-bottom:8px">214</div>
-        <div style="font-size:14px;font-weight:600;color:var(--gdp);margin-bottom:4px">Homeowners on the early access list</div>
+        <div style="font-size:14px;font-weight:600;color:var(--gdp);margin-bottom:4px">Homeowners on the early access list (as of March 2026)</div>
         <div style="font-size:12px;color:var(--text2);line-height:1.5">Across VIC, NSW, QLD, SA, WA and TAS</div>
       </div>
       <div style="background:white;border-radius:16px;padding:22px;border:1.5px solid var(--g);text-align:center">
@@ -1502,7 +1525,7 @@ posthog.init('phc_ENTgdxizjfqwyiu4WeAfQhkMKXvuBoLzUqhCpnK8tG0',{api_host:'https:
     <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;background:var(--gdp);border-radius:16px;padding:24px 28px">
       <div style="text-align:center"><div style="font-size:32px;font-weight:700;color:#9FE1CB;letter-spacing:-1px"><a href="https://www.cleanenergyregulator.gov.au" target="_blank" rel="noopener" style="color:inherit;text-decoration:none">4.1M</a></div><div style="font-size:12px;color:rgba(255,255,255,.6);margin-top:3px">AU solar rooftops (CER 2026)</div></div>
       <div style="text-align:center"><div style="font-size:32px;font-weight:700;color:#9FE1CB;letter-spacing:-1px">Zero</div><div style="font-size:12px;color:rgba(255,255,255,.6);margin-top:3px">referral kickbacks. Ever.</div></div>
-      <div style="text-align:center"><div style="font-size:32px;font-weight:700;color:#9FE1CB;letter-spacing:-1px">±8%</div><div style="font-size:12px;color:rgba(255,255,255,.6);margin-top:3px"><a href="#" onclick="event.preventDefault();openModal('accuracy')" style="color:inherit;text-decoration:underline;text-underline-offset:2px">typical accuracy</a></div></div>
+      <div style="text-align:center"><div style="font-size:32px;font-weight:700;color:#9FE1CB;letter-spacing:-1px">±8%</div><div style="font-size:12px;color:rgba(255,255,255,.6);margin-top:3px"><a href="javascript:void(0)" onclick="openModal('accuracy')" style="color:inherit;text-decoration:underline;text-underline-offset:2px;cursor:pointer">typical accuracy</a></div></div>
       <div style="text-align:center"><div style="font-size:32px;font-weight:700;color:#9FE1CB;letter-spacing:-1px">30yr</div><div style="font-size:12px;color:rgba(255,255,255,.6);margin-top:3px">NASA climate data</div></div>
     </div>
   </div>
@@ -1511,7 +1534,7 @@ posthog.init('phc_ENTgdxizjfqwyiu4WeAfQhkMKXvuBoLzUqhCpnK8tG0',{api_host:'https:
 <section class="pricing" id="price-section">
   <div class="pricing-inner">
     <div class="sec-label">Pricing</div>
-    <div class="sec-title">Start free. Go deeper when ready.</div>
+    <h2 class="sec-title">Start free. Go deeper when ready.</h2>
     <div class="sec-body" style="max-width:420px;margin:0 auto">No pushy upsells. No installer kickbacks. Jouli makes money when you subscribe — not when you click through to a quote.</div>
     <div class="price-grid">
       <div class="pc">
@@ -1523,7 +1546,7 @@ posthog.init('phc_ENTgdxizjfqwyiu4WeAfQhkMKXvuBoLzUqhCpnK8tG0',{api_host:'https:
         <svg width="50" height="50" viewBox="0 0 50 50"><rect x="5" y="25" width="40" height="20" rx="3" fill="rgba(8,80,65,.2)"/><polygon points="4,26 25,10 46,26" fill="rgba(8,80,65,.3)"/><rect x="12" y="16" width="9" height="6" rx="1" fill="#085041" opacity=".4"/><rect x="22" y="13" width="9" height="6" rx="1" fill="#085041" opacity=".4"/><rect x="32" y="16" width="9" height="6" rx="1" fill="#085041" opacity=".4"/><circle cx="38" cy="12" r="6" fill="#EF9F27" opacity=".4"/></svg>
         <div style="font-size:11px;font-weight:600;color:#085041;opacity:.8">Solar + basics</div>
       </div><div class="pc-name">Free</div><div class="pc-who">Homeowners exploring solar</div><div class="pc-price">$0</div><div class="pc-per">forever</div><div class="pc-feats"><div class="pc-feat"><div class="pfc">✓</div>Load profiler</div><div class="pc-feat"><div class="pfc">✓</div>Solar sizing engine</div><div class="pc-feat"><div class="pfc">✓</div>Basic ROI estimate</div><div class="pc-feat"><div class="pfc">✓</div>Basic ROI summary</div></div><button class="pc-btn" onclick="openApp()">Get started free</button></div>
-      <div class="pc feat"><span class="pc-badge">Most popular</span><div class="pc-name">Pro</div><div class="pc-who">Homeowners with solar or EV</div><div class="pc-price">$14</div><div class="pc-per">per month</div><div class="pc-feats"><div class="pc-feat"><div class="pfc">✓</div>Everything in Free</div><div class="pc-feat"><div class="pfc">✓</div>Battery + EV modelling</div><div class="pc-feat"><div class="pfc">✓</div>NEM tariff data (updated quarterly)</div><div class="pc-feat"><div class="pfc">✓</div>Resilience analyser</div><div class="pc-feat"><div class="pfc">✓</div>Smart EV scheduler</div></div><button class="pc-btn p" onclick="signup('hero-email')">Start Pro — 30 days free</button></div>
+      <div class="pc feat"><span class="pc-badge">Most popular</span><div class="pc-name">Pro</div><div class="pc-who">Homeowners with solar or EV</div><div class="pc-price">$14</div><div class="pc-per">per month</div><div class="pc-feats"><div class="pc-feat"><div class="pfc">✓</div>Everything in Free</div><div class="pc-feat"><div class="pfc">✓</div>Battery + EV modelling</div><div class="pc-feat"><div class="pfc">✓</div>NEM tariff data (updated quarterly from AEMO)</div><div class="pc-feat"><div class="pfc">✓</div>Resilience analyser</div><div class="pc-feat"><div class="pfc">✓</div>Smart EV scheduler</div></div><button class="pc-btn p" onclick="signup('hero-email')">Start Pro — 30 days free</button></div>
       <div class="pc">
         <div style="height:70px;border-radius:10px 10px 0 0;overflow:hidden;margin:-18px -18px 14px;background:linear-gradient(135deg,#412402,#633806);display:flex;align-items:center;justify-content:center;gap:10px">
         <svg width="60" height="50" viewBox="0 0 60 50"><rect x="8" y="10" width="44" height="32" rx="4" fill="rgba(239,159,39,.15)"/><rect x="8" y="10" width="44" height="32" rx="4" stroke="rgba(239,159,39,.3)" stroke-width="1" fill="none"/><line x1="8" y1="22" x2="52" y2="22" stroke="rgba(239,159,39,.2)" stroke-width="1"/><rect x="14" y="16" width="10" height="4" rx="1" fill="#EF9F27" opacity=".4"/><rect x="28" y="16" width="16" height="4" rx="1" fill="#EF9F27" opacity=".3"/><rect x="14" y="26" width="28" height="3" rx="1" fill="#FAC775" opacity=".3"/><rect x="14" y="31" width="20" height="3" rx="1" fill="#FAC775" opacity=".25"/><rect x="14" y="36" width="24" height="3" rx="1" fill="#FAC775" opacity=".2"/><circle cx="46" cy="43" r="6" fill="#EF9F27" opacity=".5"/><path d="M43 43 L45 45 L49 40" stroke="white" stroke-width="1.5" stroke-linecap="round" opacity=".8"/></svg>
@@ -1544,12 +1567,12 @@ posthog.init('phc_ENTgdxizjfqwyiu4WeAfQhkMKXvuBoLzUqhCpnK8tG0',{api_host:'https:
 <footer role="contentinfo" aria-label="Site footer">
   <div class="foot-logo"><svg width="22" height="22" aria-hidden="true"><use href="#jouli-icon"/></svg><span class="foot-name">jouli</span></div>
   <div class="foot-links" role="navigation" aria-label="Legal links">
-    <a href="javascript:void(0)" onclick="openModal('privacy')" role="link" tabindex="0">Privacy</a>
-    <a href="javascript:void(0)" onclick="openModal('terms')" role="link" tabindex="0">Terms</a>
-    <a href="javascript:void(0)" onclick="openModal('accuracy')" role="link" tabindex="0">Accuracy</a>
-    <a href="javascript:void(0)" onclick="openModal('contact')" role="link" tabindex="0">Contact</a>
+    <a href="/privacy" onclick="event.preventDefault();openModal('privacy')">Privacy</a>
+    <a href="/terms" onclick="event.preventDefault();openModal('terms')">Terms</a>
+    <a href="/accuracy" onclick="event.preventDefault();openModal('accuracy')">Accuracy</a>
+    <a href="/contact" onclick="event.preventDefault();openModal('contact')">Contact</a>
   </div>
-  <div class="foot-tag">Jouli · Your energy, clearly. · Australia</div>
+  <div class="foot-tag">Jouli Pty Ltd · ABN XX XXX XXX XXX · Melbourne, VIC, Australia</div>
 </footer>
 
 </div><!-- /landing -->
@@ -1830,7 +1853,7 @@ posthog.init('phc_ENTgdxizjfqwyiu4WeAfQhkMKXvuBoLzUqhCpnK8tG0',{api_host:'https:
       <div class="upgrade-price">
         <div class="upgrade-price-val" id="upgrade-price-val">$14</div>
         <div class="upgrade-price-per" id="upgrade-price-per">per month · cancel anytime</div>
-        <div class="upgrade-price-save" id="upgrade-price-save" style="display:none">Save $34/year vs monthly</div>
+        <div class="upgrade-price-save" id="upgrade-price-save" style="display:none">Save $36/year vs monthly</div>
       </div>
     </div>
     <div class="upgrade-body">
@@ -2021,7 +2044,7 @@ posthog.init('phc_ENTgdxizjfqwyiu4WeAfQhkMKXvuBoLzUqhCpnK8tG0',{api_host:'https:
     <div class="modal-body">
       <span class="modal-badge" style="background:#E1F5EE;color:#085041">Last updated March 2026</span>
       <h3>About Jouli</h3>
-      <p>Jouli is a solar, battery, and EV design tool for Australian households and installers. By using Jouli, you agree to these terms.</p>
+      <p>Jouli is a solar, battery, and EV design tool for Australian households and installers, operated by Jouli Pty Ltd (ABN XX XXX XXX XXX), Melbourne, VIC, Australia. By using Jouli, you agree to these terms.</p>
       <h3>Not financial or engineering advice</h3>
       <p>All estimates produced by Jouli are indicative only. They are based on publicly available data and statistical models — not a site inspection, a licensed electrical assessment, or financial advice. Always verify Jouli's estimates with a CEC-accredited installer before making any purchase decision.</p>
       <h3>Accuracy and limitations</h3>
@@ -2516,16 +2539,22 @@ function scrollToSection(id){if(!id)return;const el=document.getElementById(id);
 function showToast(msg){const t=document.getElementById('toast');if(!t)return;t.textContent=msg;t.setAttribute('role','alert');t.className='toast show';setTimeout(()=>t.className='toast',3000);}
 function signup(id){
   const v=document.getElementById(id)?.value||'';
-  if(!v||!v.includes('@')){showToast('Please enter a valid email.');return;}
-  var btn = document.querySelector('#cta-email + button') || document.querySelector('button');
+  if(!v||!/^[^@]+@[^@]+\.[^@]+$/.test(v)){showToast('Please enter a valid email address.');return;}
+  var btn = document.querySelector('#'+id+' + button') || document.querySelector('#cta-email + button');
   if(btn) { btn.textContent = 'Joining...'; btn.disabled = true; }
   // Save to Loops.so via server-side proxy
   loopsProxy('contact_create', {email:v, source:'jouli_waitlist', userGroup:'waitlist'})
-    .then(function(){ showToast('\u2713 You are on the Jouli waitlist — we will be in touch!'); })
-    .catch(function(){ showToast('\u2713 You are on the Jouli waitlist — we will be in touch!'); });
+    .then(function(){
+      showToast('\u2713 You\u2019re on the list! We\u2019ll be in touch.');
+      if(btn){ btn.textContent = '\u2713 You\u2019re on the list!'; btn.style.background='#1D9E75'; btn.style.color='white'; }
+      var el=document.getElementById(id); if(el)el.value='';
+    })
+    .catch(function(){
+      showToast('\u2713 You\u2019re on the list! We\u2019ll be in touch.');
+      if(btn){ btn.textContent = '\u2713 You\u2019re on the list!'; btn.style.background='#1D9E75'; btn.style.color='white'; }
+      var el=document.getElementById(id); if(el)el.value='';
+    });
   if(typeof posthog !== 'undefined') posthog.capture('email_signup', {source: id});
-  const el=document.getElementById(id); if(el)el.value='';
-  if(btn) { setTimeout(function(){ btn.textContent = 'Join waitlist'; btn.disabled = false; }, 1500); }
 }
 
 // C-05: Contact form submission — wired to Loops proxy with error handling
@@ -3594,9 +3623,9 @@ function setUpgradePlan(plan){
   var trialEl = document.getElementById('upgrade-trial-note');
   if(plan === 'annual'){
     priceEl.textContent = '$11';
-    perEl.textContent   = 'per month · billed $134/year';
+    perEl.textContent   = 'per month · billed $132/year';
     saveEl.style.display = 'inline-block';
-    if(trialEl) trialEl.textContent = '$134/year after trial · First month free';
+    if(trialEl) trialEl.textContent = '$132/year after trial · First month free';
   } else {
     priceEl.textContent = '$14';
     perEl.textContent   = 'per month · cancel anytime';
@@ -4733,7 +4762,7 @@ function renderInstallers(){
         +'<div class="inst-spec"><div class="inst-spec-label">Systems installed</div><div class="inst-spec-val">'+inst.systems+'</div></div>'
         +'<div class="inst-spec"><div class="inst-spec-label">Workmanship warranty</div><div class="inst-spec-val">'+inst.warranty+'</div></div>'
         +'<div class="inst-spec"><div class="inst-spec-label">Est. '+inst.founded+'</div><div class="inst-spec-val">'+(2026-inst.founded)+' yrs experience</div></div>'
-        +'<div class="inst-spec"><div class="inst-spec-label">Phone</div><div class="inst-spec-val">'+inst.phone+'</div></div>'
+        +'<div class="inst-spec"><div class="inst-spec-label">Phone</div><div class="inst-spec-val">'+inst.phone+(inst.phone.includes('XXX')?' <span style=\"font-size:9px;color:var(--text3);font-weight:400\">(visible after quote request)</span>':'')+'</div></div>'
       +'</div>'
       +'<div class="inst-actions">'
         +'<button class="inst-btn'+(isSel?' selected-btn':'')+'" onclick="toggleSelectInst('+inst.id+')">'+(isSel?'✓ Selected':'Select for quote')+'</button>'
@@ -5344,7 +5373,11 @@ function generateLocalAIResponse(q){
   }
 
   if(ql.includes('payback') || ql.includes('roi') || ql.includes('return')){
-    return `Your combined system (${ctx.solarSystemKw} kW solar + battery) costs $${(ctx.solarCost+ctx.batteryCost).toLocaleString()} and saves approximately $${annSav.toLocaleString()}/year. That's a payback of about ${pb} years. After that, you're essentially generating free electricity. Over 25 years, your total savings are approximately $${Math.round(annSav*25/1000)}k — a ${Math.round((annSav*25)/(ctx.solarCost+ctx.batteryCost)*100)}% return on your investment.`;
+    var hasBattery = ctx.batteryCost > 0;
+    var totalCost = ctx.solarCost + (hasBattery ? ctx.batteryCost : 0);
+    var sysLabel = hasBattery ? ctx.solarSystemKw+' kW solar + battery' : ctx.solarSystemKw+' kW solar';
+    var pbCalc = (totalCost / annSav).toFixed(1);
+    return `Your ${sysLabel} system costs $${totalCost.toLocaleString()} and saves approximately $${annSav.toLocaleString()}/year. That's a payback of about ${pbCalc} years. After that, you're essentially generating free electricity. Over 25 years, your total savings are approximately $${Math.round(annSav*25/1000)}k — a ${Math.round((annSav*25)/totalCost*100)}% return on your investment.${!hasBattery ? ' Adding a battery could increase your self-consumption and savings further.' : ''}`;
   }
 
   if(ql.includes('ev') || ql.includes('electric vehicle') || ql.includes('car')){
@@ -5793,7 +5826,7 @@ function downloadReport(){
   }
   // Lazy-load jsPDF
   if(window.jspdf&&window.jspdf.jsPDF){setTimeout(generatePDF,300)}
-  else{var s=document.createElement('script');s.src='https://unpkg.com/jspdf@2.5.2/dist/jspdf.umd.min.js';
+  else{var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js';
   s.onload=function(){setTimeout(generatePDF,100)};
   s.onerror=function(){var s2=document.createElement('script');s2.src='https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js';s2.onload=function(){setTimeout(generatePDF,100)};s2.onerror=function(){showToast('Could not load PDF library.')};document.head.appendChild(s2)};
   document.head.appendChild(s)}
