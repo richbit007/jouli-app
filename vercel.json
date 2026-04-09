@@ -1,0 +1,9 @@
+{
+  "rewrites": [
+    { "source": "/dashboard", "destination": "/" },
+    { "source": "/privacy", "destination": "/" },
+    { "source": "/terms", "destination": "/" },
+    { "source": "/contact", "destination": "/" },
+    { "source": "/installers", "destination": "/" }
+  ]
+}
