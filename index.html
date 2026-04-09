@@ -6298,13 +6298,18 @@ async function heroPostcodeLookup(){
 }
 
 function openAppWithHeroData(){
+  openApp();
+  // Apply hero data AFTER openApp() resets STATE
   if(HERO_DATA){
     STATE.liveIrr = HERO_DATA.irr;
     STATE.liveName = HERO_DATA.name;
     STATE.lat = HERO_DATA.lat;
     STATE.lon = HERO_DATA.lon;
+    STATE.city = null; // clear city fallback so live data is used
+    // Update sidebar with live location
+    var locVal = document.getElementById('sb-loc-val');
+    if(locVal) locVal.textContent = HERO_DATA.name.split(',')[0];
   }
-  openApp();
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
