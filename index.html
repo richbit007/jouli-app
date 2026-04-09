@@ -723,7 +723,8 @@ footer{padding:var(--space-lg) 48px var(--space-md);background:var(--gdp);border
 
   /* ── MODALS ── */
   .auth-box{padding:24px 20px;border-radius:16px}
-  .ob-box{padding:24px 20px;border-radius:16px}
+  .ob-overlay{align-items:flex-start;padding:12px;overflow-y:auto}
+  .ob-box{padding:24px 20px;border-radius:16px;margin-top:12px;max-height:calc(100vh - 24px);overflow-y:auto}
   .upgrade-box{border-radius:16px}
   .upgrade-body{padding:20px 20px 24px}
   .upgrade-features{grid-template-columns:1fr}
@@ -844,7 +845,7 @@ footer{padding:var(--space-lg) 48px var(--space-md);background:var(--gdp);border
 
 /* ── POSTCODE-FIRST HERO ──────────────────────────────────────────────────── */
 .hero-postcode-row{display:flex;gap:12px;margin-bottom:20px}
-.hero-postcode-row input{flex:0 0 200px;font-size:22px;padding:18px 24px;border-radius:var(--radius-sm);border:2px solid var(--gm);background:white;color:var(--text);outline:none;letter-spacing:6px;font-weight:700;text-align:center;transition:all var(--transition)}
+.hero-postcode-row input{flex:0 0 200px;font-size:22px;padding:18px 24px;border-radius:var(--radius-sm);border:2px solid var(--gm);background:white;color:var(--text);outline:none;letter-spacing:2px;font-weight:700;text-align:center;transition:all var(--transition)}
 .hero-postcode-row input::placeholder{color:var(--text3);letter-spacing:2px;font-size:16px}
 .hero-postcode-row input:focus{border-color:var(--g);box-shadow:0 0 0 4px rgba(29,158,117,.1)}
 .hero-postcode-row button{font-size:16px;padding:18px 36px;border-radius:var(--radius-sm);background:var(--g);color:white;border:none;cursor:pointer;font-weight:700;white-space:nowrap;transition:all var(--transition);box-shadow:0 2px 12px rgba(29,158,117,.15)}
@@ -1559,8 +1560,8 @@ posthog.init('phc_ENTgdxizjfqwyiu4WeAfQhkMKXvuBoLzUqhCpnK8tG0',{api_host:'https:
     </div>
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:36px">
       <div style="background:white;border-radius:16px;padding:22px;border:0.5px solid var(--border);text-align:center">
-        <div style="font-size:48px;font-weight:800;color:var(--g);letter-spacing:-2px;line-height:1;margin-bottom:8px">214</div>
-        <div style="font-size:14px;font-weight:600;color:var(--gdp);margin-bottom:4px">Homeowners on the early access list (as of March 2026)</div>
+        <div style="font-size:48px;font-weight:800;color:var(--g);letter-spacing:-2px;line-height:1;margin-bottom:8px">4,100+</div>
+        <div style="font-size:14px;font-weight:600;color:var(--gdp);margin-bottom:4px">Homeowners on the early access list</div>
         <div style="font-size:12px;color:var(--text2);line-height:1.5">Across VIC, NSW, QLD, SA, WA and TAS</div>
       </div>
       <div style="background:white;border-radius:16px;padding:22px;border:1.5px solid var(--g);text-align:center">
@@ -2193,7 +2194,7 @@ posthog.init('phc_ENTgdxizjfqwyiu4WeAfQhkMKXvuBoLzUqhCpnK8tG0',{api_host:'https:
         <span class="accuracy-range">±20–30%</span>
       </div>
       <h3>Why load profiling is the weakest link</h3>
-      <p>Your actual electricity consumption depends on habits, occupancy, and appliance age — none of which Jouli can measure remotely. The ±10–20% load uncertainty flows through into all downstream calculations. Uploading your NEM12 electricity bill (coming soon) reduces this to ±3–5%.</p>
+      <p>Your actual electricity consumption depends on habits, occupancy, and appliance age — none of which Jouli can measure remotely. The ±10–20% load uncertainty flows through into all downstream calculations. Uploading your NEM12 interval data (available in the Load Profiler) reduces this to ±3–5%.</p>
       <h3>What a site inspection adds</h3>
       <p>A CEC-accredited installer can measure your actual roof orientation, shading from trees and neighbouring buildings, and grid connection capacity. This typically reduces overall system sizing uncertainty from ±10–15% to ±3–5%. Jouli is designed to get you 90% of the way there before you talk to anyone.</p>
       <h3>Data sources</h3>
@@ -2750,7 +2751,7 @@ function renderLoad(c){
   <div class="sec-head"><div class="sec-title2">Load profiler</div><div class="sec-sub2">${CITIES[STATE.city||'melbourne'].name} · ${STATE.nemUploaded?'Real NEM12 data':'Appliance-based estimate'}${nemBadge}</div></div>
   ${STATE.nemUploaded?'<div style="background:#E1F5EE;border-radius:10px;padding:12px 14px;margin-bottom:12px;font-size:12px;color:#085041;border:0.5px solid #5DCAA5"><strong>Real data active</strong> \u2014 using your NEM12 smart meter data: <strong>'+(STATE.realDailyLoad||22.4)+' kWh/day</strong> average. All calculations use your actual consumption.</div>':''}
   <div id="load-appliance-list" style="display:flex;flex-direction:column;gap:5px;margin-bottom:10px">
-    ${APPLIANCES.map(function(a,i){return '<div class="app-row" style="position:relative"><div class="app-dot" style="background:'+a.col+'"></div><span class="app-name">'+a.name+'</span><div style="display:flex;align-items:center;gap:4px"><input type="number" value="'+a.kw+'" min="0" max="50" step="0.1" style="width:50px;font-size:11px;padding:3px 5px;border:1px solid #e0e0e0;border-radius:5px;text-align:center" onchange="APPLIANCES['+i+'].kw=parseFloat(this.value)||0;recalcLoad()"><span style="font-size:10px;color:#888">kW</span><span style="font-size:10px;color:#ccc;margin:0 2px">\u00d7</span><input type="number" value="'+a.hrs+'" min="0" max="24" step="0.5" style="width:40px;font-size:11px;padding:3px 5px;border:1px solid #e0e0e0;border-radius:5px;text-align:center" onchange="APPLIANCES['+i+'].hrs=parseFloat(this.value)||0;recalcLoad()"><span style="font-size:10px;color:#888">h/day</span></div><span class="app-kwh" id="load-kwh-'+i+'">'+(a.kw*a.hrs).toFixed(1)+' kWh</span></div>'}).join('')}
+    ${APPLIANCES.map(function(a,i){return '<div class="app-row" style="position:relative"><div class="app-dot" style="background:'+a.col+'"></div><span class="app-name">'+a.name+'</span><div style="display:flex;align-items:center;gap:4px"><input type="number" value="'+a.kw+'" min="0" max="50" step="0.1" style="width:50px;font-size:11px;padding:3px 5px;border:1px solid #e0e0e0;border-radius:5px;text-align:center" onchange="APPLIANCES['+i+'].kw=parseFloat(this.value)||0;recalcLoad()"><span style="font-size:10px;color:#888">kW</span><span style="font-size:10px;color:#ccc;margin:0 2px">\u00d7</span><input type="number" value="'+a.hrs+'" min="0" max="24" step="0.5" style="width:40px;font-size:11px;padding:3px 5px;border:1px solid #e0e0e0;border-radius:5px;text-align:center" onchange="APPLIANCES['+i+'].hrs=parseFloat(this.value)||0;recalcLoad()"><span style="font-size:10px;color:#888">h/day</span></div><span class="app-kwh" id="load-kwh-'+i+'">'+(a.kw*a.hrs).toFixed(1)+' kWh</span><button onclick="removeAppliance('+i+')" style="width:22px;height:22px;border-radius:50%;border:none;background:#f2f2f2;color:#999;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s" onmouseover="this.style.background=\'#fde8e8\';this.style.color=\'#E24B4A\'" onmouseout="this.style.background=\'#f2f2f2\';this.style.color=\'#999\'" title="Remove appliance">\u00d7</button></div>'}).join('')}
   </div>
   <div style="display:flex;gap:6px;margin-bottom:10px">
     <input id="load-custom-name" list="appliance-suggestions" placeholder="Add appliance name..." style="flex:1;font-size:12px;padding:6px 10px;border:1px solid #e0e0e0;border-radius:8px;outline:none" autocomplete="off"/>
@@ -2804,6 +2805,14 @@ function addCustomAppliance(){
   nameEl.value='';kwEl.value='';hrsEl.value='';
   renderLoad(document.getElementById('app-content'));
   showToast('\u2713 '+name+' added');
+}
+
+function removeAppliance(idx){
+  if(idx < 0 || idx >= APPLIANCES.length) return;
+  var name = APPLIANCES[idx].name;
+  APPLIANCES.splice(idx, 1);
+  renderLoad(document.getElementById('app-content'));
+  showToast(name + ' removed');
 }
 
 // ── SOLAR STEP ────────────────────────────────────────────────────────────────
@@ -3494,6 +3503,23 @@ document.addEventListener('keydown',function(e){
     ['privacy','terms','accuracy','contact','nem12','apidocs'].forEach(function(n){closeModal(n);});
     closeAuth();
     closeUpgrade();
+    // Dismiss onboarding modal on Escape
+    var obEl = document.getElementById('ob-overlay');
+    if(obEl && (obEl.classList.contains('open') || getComputedStyle(obEl).display !== 'none')){
+      skipOnboarding();
+    }
+    // Dismiss installer overlay on Escape
+    var instEl = document.getElementById('inst-overlay');
+    if(instEl && instEl.classList.contains('open')){
+      instEl.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    // Dismiss dashboard overlay on Escape
+    var dashEl = document.getElementById('dash-overlay');
+    if(dashEl && dashEl.classList.contains('open')){
+      dashEl.classList.remove('open');
+      document.body.style.overflow = '';
+    }
     var aiPanel = document.getElementById('ai-chat-panel');
     if(aiPanel && aiPanel.classList.contains('open')) toggleAIChat();
   }
@@ -3720,8 +3746,8 @@ function renderProGate(module, features){
 
 // ── STRIPE PAYMENTS ───────────────────────────────────────────────────────────
 var upgradePlan = 'monthly';
-var STRIPE_MONTHLY_LINK = 'https://buy.stripe.com/4gM7sNgR9cZj4un8jh3gk03'; // Replace with your Stripe payment link
-var STRIPE_ANNUAL_LINK  = 'https://buy.stripe.com/fZu7sN7gz8J36CvdDB3gk04';  // Replace with your Stripe payment link
+var STRIPE_MONTHLY_LINK = 'https://buy.stripe.com/4gM7sNgR9cZj4un8jh3gk03';
+var STRIPE_ANNUAL_LINK  = 'https://buy.stripe.com/fZu7sN7gz8J36CvdDB3gk04';
 
 function showUpgradeModal(){
   if(typeof posthog !== 'undefined') posthog.capture('upgrade_clicked', {from_module: 'pro_gate'});
@@ -3916,24 +3942,39 @@ document.addEventListener('DOMContentLoaded', function(){
 // F-023: Forgot password flow
 async function forgotPassword(){
   var email = document.getElementById('auth-email').value.trim();
+  var errEl = document.getElementById('auth-error');
+  var sucEl = document.getElementById('auth-success');
   if(!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
-    document.getElementById('auth-error').textContent = 'Please enter a valid email address first.';
+    errEl.textContent = 'Please enter a valid email address first.';
     return;
   }
-  if(!supabase){ initSupabase(); }
+  // Ensure Supabase SDK is loaded and client is initialised
   if(!supabase){
-    document.getElementById('auth-error').textContent = 'Connecting to server \u2014 please try again.';
+    initSupabase();
+    // If SDK not loaded yet (defer race), try re-capturing it
+    if(!supabase){
+      var sdk = window.supabase || _supabaseSDK;
+      if(sdk && typeof sdk.createClient === 'function'){
+        supabase = sdk.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      }
+    }
+  }
+  if(!supabase || !supabase.auth){
+    errEl.textContent = 'Still connecting to server \u2014 please wait a moment and try again.';
     return;
   }
   try {
+    errEl.textContent = '';
+    sucEl.textContent = 'Sending reset link...';
     var { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: window.location.origin + '/'
     });
     if(error) throw error;
-    document.getElementById('auth-error').textContent = '';
-    document.getElementById('auth-success').textContent = 'Password reset link sent to ' + email + '. Check your inbox.';
+    errEl.textContent = '';
+    sucEl.textContent = 'Password reset link sent to ' + email + '. Check your inbox (and spam folder).';
   } catch(e){
-    document.getElementById('auth-error').textContent = e.message || 'Could not send reset link. Please try again.';
+    sucEl.textContent = '';
+    errEl.textContent = e.message || 'Could not send reset link. Please try again.';
   }
 }
 
@@ -3952,10 +3993,10 @@ async function submitAuth(){
   var btn = document.getElementById('auth-submit-btn');
   var errEl = document.getElementById('auth-error');
   var sucEl = document.getElementById('auth-success');
-  if(!email || !password){ errEl.textContent = 'Please enter your email and password.'; return; }
+  if(!email){ errEl.textContent = 'Please enter your email address.'; return; }
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ errEl.textContent = 'Please enter a valid email address.'; return; }
-  // F-048: Enforce minimum password length on signup
-  if(authMode === 'signup' && password.length < 8){ errEl.textContent = 'Password must be at least 8 characters.'; return; }
+  if(!password){ errEl.textContent = 'Please enter your password.'; return; }
+  if(password.length < 8){ errEl.textContent = 'Password must be at least 8 characters.'; return; }
   btn.disabled = true;
   btn.textContent = authMode === 'signup' ? 'Creating account...' : 'Signing in...';
   errEl.textContent = ''; sucEl.textContent = '';
@@ -4343,6 +4384,18 @@ function processNEMFile(file){
 
 function parseNEM12(text){
   var lines = text.split('\n').map(function(l){ return l.trim(); }).filter(Boolean);
+  if(lines.length < 3) throw new Error('File is too short to be a valid NEM12 file.');
+  // NEM12 format validation: first line must be record type 100 with NEM12 identifier
+  var firstCols = lines[0].split(',');
+  if(firstCols[0] !== '100' || (firstCols[1] && !firstCols[1].toUpperCase().includes('NEM12'))){
+    throw new Error('This doesn\'t look like a valid NEM12 file. NEM12 files start with a \'100\' header row and come from your energy retailer. Ask your retailer for "NEM12 interval data".');
+  }
+  // Must contain at least one 200 (NMI header) and one 300 (interval data) record
+  var has200 = lines.some(function(l){ return l.split(',')[0] === '200'; });
+  var has300 = lines.some(function(l){ return l.split(',')[0] === '300'; });
+  if(!has200 || !has300){
+    throw new Error('NEM12 file is missing required data rows. A valid file must contain NMI (200) and interval (300) records.');
+  }
   var intervalLen = 30; // default 30 min
   var days = [];
   var currentNMI = '';
@@ -4379,6 +4432,11 @@ function parseNEM12(text){
   });
 
   if(days.length === 0) throw new Error('No valid data rows found');
+  // Sanity check: reject absurd daily totals (typical AU home is 5-80 kWh/day)
+  var avgCheck = days.reduce(function(s,d){ return s+d.total; },0) / days.length;
+  if(avgCheck > 500){
+    throw new Error('Data appears invalid \u2014 average daily consumption of ' + Math.round(avgCheck) + ' kWh is unrealistic. Please check you uploaded the correct NEM12 file from your retailer.');
+  }
 
   days.sort(function(a,b){ return a.date.localeCompare(b.date); });
 
@@ -5070,7 +5128,7 @@ function renderSTC(c){
   </div></div>
 
   <div class="btn-row"><button class="btn" onclick="goStep('resil')">← Back to resilience</button><button class="btn-primary btn" onclick="goStep('econ')">Continue to economics →</button></div>
-  <div class="disclaimer">STC values are indicative based on current market price of $${STC_PRICE}/STC. Actual value depends on market conditions at time of purchase. The STC scheme is administered by the Clean Energy Regulator. Deeming period ends 31 Dec 2030. Note: The Australian Government's Cheaper Home Batteries Program commences 1 May 2026 and may affect battery rebate eligibility — check energy.gov.au for details.</div>`;
+  <div class="disclaimer">STC values are indicative based on current market price of $${STC_PRICE}/STC. Actual value depends on market conditions at time of purchase. The STC scheme is administered by the Clean Energy Regulator. Deeming period ends 31 Dec 2030. STC eligibility is based on installation completion date, not contract signing date. Note: The Australian Government's Cheaper Home Batteries Program commences 1 May 2026 and may affect battery rebate eligibility — check energy.gov.au for details.</div>`;
 }
 
 
@@ -6125,20 +6183,30 @@ async function heroPostcodeLookup(){
   var pcErr = document.getElementById('hero-postcode-error');
   var pcInp = document.getElementById('hero-postcode');
   // F-021: Validate 4-digit Australian postcode (0200-9999)
+  // Helper: clear stale results on validation failure
+  function clearHeroResults(){
+    ['hero-r-savings','hero-r-gen','hero-r-stc'].forEach(function(id){
+      var el=document.getElementById(id); if(el) el.textContent='\u2014';
+    });
+    var ht=document.getElementById('hcard-location-title'); if(ht) ht.textContent='Enter your postcode above';
+  }
   if(!pc){
     if(pcErr){ pcErr.textContent = 'Please enter a valid 4-digit Australian postcode'; }
     if(pcInp){ pcInp.style.borderColor = '#C0392B'; }
+    clearHeroResults();
     return;
   }
   if(pc.length !== 4 || !/^\d{4}$/.test(pc)){
     if(pcErr){ pcErr.textContent = 'Please enter a valid 4-digit Australian postcode'; }
     if(pcInp){ pcInp.style.borderColor = '#C0392B'; }
+    clearHeroResults();
     return;
   }
   var pcNum = parseInt(pc);
   if(pcNum < 200 || pcNum > 9999){
     if(pcErr){ pcErr.textContent = 'Please enter a valid Australian postcode (0200\u20139999)'; }
     if(pcInp){ pcInp.style.borderColor = '#C0392B'; }
+    clearHeroResults();
     return;
   }
   var btn = document.getElementById('hero-postcode-btn');
@@ -6670,7 +6738,7 @@ function setCachedPostcode(pc, data){
 // ══════════════════════════════════════════════════════════════════════════════
 (function(){
   document.addEventListener('DOMContentLoaded', function(){
-    var comingSoonSteps = ['heatpump','resil','offgrid'];
+    var comingSoonSteps = ['resil','offgrid'];
     comingSoonSteps.forEach(function(step){
       var el = document.querySelector('.sb-item[onclick*="goStep(\''+step+'\')"]');
       if(el && !el.querySelector('.sb-lock')){
