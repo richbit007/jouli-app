@@ -2638,7 +2638,7 @@ function goStep(s){
   // Update floating system bar
   if(typeof updateSystemBar === 'function') setTimeout(updateSystemBar, 300);
   // Auto-save on step change if logged in
-  if(typeof currentUser !== 'undefined' && currentUser && typeof supabase !== 'undefined' && supabase && s !== 'loc'){
+  if(typeof currentUser !== 'undefined' && currentUser && _supabaseClient && s !== 'loc'){
     setTimeout(function(){ if(typeof saveDesign === 'function') saveDesign(); }, 800);
   }
 }
@@ -3835,19 +3835,25 @@ document.addEventListener('keydown', function(e){
 // ── SUPABASE AUTH + SAVE/RETURN ───────────────────────────────────────────────
 var SUPABASE_URL = 'https://oodkonxwgpefahwrecfj.supabase.co';
 var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9vZGtvbnh3Z3BlZmFod3JlY2ZqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyODI2MDksImV4cCI6MjA4OTg1ODYwOX0.IDRjJF2lasW6n1SfLqk12dr_3wdlenMrw_WYPdd9Wpg';
-var supabase = null;
+var _supabaseClient = null;  // The actual Supabase client (has .auth, .from)
 var currentUser = null;
 var authMode = 'signup';
-var _supabaseInitAttempts = 0;
 
-// Reliable Supabase init — handles defer script race condition
+// Reliable Supabase init — handles CDN defer script race condition
+// CDN UMD build sets window.supabase = SDK module (has createClient)
+// We call createClient() to get the actual client (has .auth, .from)
 function initSupabase(){
-  if(supabase) return true;
+  // Already have a working client
+  if(_supabaseClient && typeof _supabaseClient.auth === 'object' && typeof _supabaseClient.auth.getSession === 'function') return true;
   if(!SUPABASE_URL || !SUPABASE_ANON_KEY) return false;
+  _supabaseClient = null; // reset any stale reference
   try {
+    // Find the SDK module — CDN puts it at window.supabase
     var sdk = window.supabase;
-    if(sdk && typeof sdk.createClient === 'function'){
-      supabase = sdk.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    if(!sdk || typeof sdk.createClient !== 'function') return false;
+    var client = sdk.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    if(client && client.auth && typeof client.auth.getSession === 'function'){
+      _supabaseClient = client;
       checkSession();
       return true;
     }
@@ -3858,22 +3864,25 @@ function initSupabase(){
 // Promise-based helper — all auth functions use this
 function ensureSupabase(){
   return new Promise(function(resolve, reject){
-    if(supabase) return resolve(supabase);
-    if(initSupabase()) return resolve(supabase);
+    if(_supabaseClient && _supabaseClient.auth && typeof _supabaseClient.auth.getSession === 'function'){
+      return resolve(_supabaseClient);
+    }
+    if(initSupabase()) return resolve(_supabaseClient);
     // Poll for defer script to load (max 5s)
     var attempts = 0;
     var poll = setInterval(function(){
       attempts++;
-      if(initSupabase()){ clearInterval(poll); resolve(supabase); }
+      if(initSupabase()){ clearInterval(poll); resolve(_supabaseClient); }
       else if(attempts > 25){ clearInterval(poll); reject(new Error('Could not connect to server. Please refresh and try again.')); }
     }, 200);
   });
 }
 
+
 async function checkSession(){
-  if(!supabase) return;
+  if(!_supabaseClient) return;
   try {
-    var { data } = await supabase.auth.getSession();
+    var { data } = await _supabaseClient.auth.getSession();
     if(data && data.session && data.session.user){
       setLoggedIn(data.session.user);
     } else {
@@ -3916,9 +3925,9 @@ async function setLoggedIn(user){
   if(typeof posthog !== 'undefined') posthog.identify(email);
 
   // Fetch profile from DB for Pro status + full name
-  if(supabase){
+  if(_supabaseClient){
     try {
-      var { data: profile } = await supabase.from('profiles').select('is_pro, full_name, subscription_status').eq('id', user.id).single();
+      var { data: profile } = await _supabaseClient.from('profiles').select('is_pro, full_name, subscription_status').eq('id', user.id).single();
       if(profile){
         USER.isPro = profile.is_pro || false;
         if(profile.full_name && profile.full_name.trim()){
@@ -4079,7 +4088,7 @@ async function submitAuth(){
 }
 
 async function signOut(){
-  if(supabase) await supabase.auth.signOut();
+  if(_supabaseClient) await _supabaseClient.auth.signOut();
   setLoggedOut();
   closeUserMenu();
   showToast('Signed out. Your designs are saved.');
@@ -6600,17 +6609,15 @@ function showReferralInMenu(){
 // ══════════════════════════════════════════════════════════════════════════════
 
 async function savePostcodeStats(postcode){
-  if(!supabase || !postcode) return;
+  if(!_supabaseClient || !postcode) return;
   try {
-    // Increment design count for this postcode
-    await supabase.rpc('increment_postcode_stat', {
+    await _supabaseClient.rpc('increment_postcode_stat', {
       p_postcode: postcode,
       p_suburb: STATE.liveName || '',
       p_sys_kw: STATE.sysKw || 10,
       p_annual_saving: STATE.annualSav || 0
     }).catch(function(){
-      // If RPC doesn't exist, just upsert directly
-      supabase.from('postcode_stats').upsert({
+      _supabaseClient.from('postcode_stats').upsert({
         postcode: postcode,
         suburb: STATE.liveName || '',
         design_count: 1,
@@ -6623,9 +6630,9 @@ async function savePostcodeStats(postcode){
 }
 
 async function getPostcodeStats(postcode){
-  if(!supabase || !postcode) return null;
+  if(!_supabaseClient || !postcode) return null;
   try {
-    var result = await supabase.from('postcode_stats').select('*').eq('postcode', postcode).single();
+    var result = await _supabaseClient.from('postcode_stats').select('*').eq('postcode', postcode).single();
     return result.data;
   } catch(e){ return null; }
 }
